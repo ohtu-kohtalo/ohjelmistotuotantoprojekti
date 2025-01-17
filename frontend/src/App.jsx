@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  // Default states in the beginning
+  const [query, setQuery] = useState("");
+  const [response, setResponse] = useState("");
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!query.trim()) {
+      setResponse("Please enter a valid query.");
+      return;
+    }
+
+    try {
+      const data = { reply: `You asked: "${query}"` }; // Mock response
+      setResponse(data.reply);
+    } catch (exception) {
+      setResponse("Something went wrong. Please try again.");
+    }
+
+    setQuery(""); // Clear the input field
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}>
+      <h1>AI Query Form</h1>
+      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+        <label htmlFor="query" style={{ display: "block", marginBottom: "10px" }}>
+          Enter your query:
+        </label>
+        <input
+          type="text"
+          id="query"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Type your question here..."
+          style={{
+            padding: "10px",
+            width: "100%",
+            maxWidth: "400px",
+            marginBottom: "10px",
+            fontSize: "16px",
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#007BFF",
+            color: "#FFF",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Submit
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      </form>
+      {response && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#F8F9FA",
+            border: "1px solid #DDD",
+            borderRadius: "5px",
+            maxWidth: "400px",
+          }}
+        >
+          <strong>AI Response:</strong>
+          <p>{response}</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
-export default App
+export default App;
