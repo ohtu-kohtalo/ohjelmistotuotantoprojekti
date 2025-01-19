@@ -1,10 +1,20 @@
 import React, { useState } from "react";
+import "./index.css";
 
 const App = () => {
-  // Default states in the beginning
+  // Initial states
   const [query, setQuery] = useState("");
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState([]);
 
+  /**
+   * Handles the form submission event.
+   * Prevents the default form submission behavior, checks if the query is not empty,
+   * and sets the messages state with the user's query and a mock bot response.
+   * If an error occurs, sets the messages state with an error message.
+   *
+   * @param {Event} event - The form submission event.
+   * @returns {void}
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!query.trim()) {
@@ -13,65 +23,52 @@ const App = () => {
     }
 
     try {
-      const data = { reply: `You asked: "${query}"` }; // Mock response
-      setResponse(data.reply);
+      const data = { reply: `\"${query}\"` }; // Mock response
+      setResponse([
+        { type: "query", text: query },
+        { type: "bot", text: data.reply },
+      ]);
     } catch (exception) {
-      setResponse("Something went wrong. Please try again.");
+      setResponse([
+        { type: "query", text: query },
+        { type: "bot", text: "Cannot retrieve company data. Please try again." },
+      ]);
     }
 
     setQuery(""); // Clear the input field
   };
 
+  // Separate into own components
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px" }}>
-      <h1>AI Query Form</h1>
-      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-        <label htmlFor="query" style={{ display: "block", marginBottom: "10px" }}>
-          Enter your query:
+    <div className="app-container">
+      <h1 className="title">AI Query Form</h1>
+      <form onSubmit={handleSubmit} className="form">
+        <label htmlFor="query" className="label">
+          Company name:
         </label>
         <input
           type="text"
           id="query"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Type your question here..."
-          style={{
-            padding: "10px",
-            width: "100%",
-            maxWidth: "400px",
-            marginBottom: "10px",
-            fontSize: "16px",
-          }}
+          placeholder="Enter company for data retrieval..."
+          className="input"
         />
-        <button
-          type="submit"
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            backgroundColor: "#007BFF",
-            color: "#FFF",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
+        <button type="submit" className="button">
           Submit
         </button>
       </form>
-      {response && (
-        <div
-          style={{
-            padding: "10px",
-            backgroundColor: "#F8F9FA",
-            border: "1px solid #DDD",
-            borderRadius: "5px",
-            maxWidth: "400px",
-          }}
-        >
-          <strong>AI Response:</strong>
-          <p>{response}</p>
-        </div>
-      )}
+      <div className="chat-container">
+        {response.map((message, index) => (
+          <div
+            key={index}
+            className={`chat-message ${message.type}`}
+          >
+            <strong>{message.type === "query" ? "Query:" : "Response:"}</strong>
+            <p>{message.text}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
