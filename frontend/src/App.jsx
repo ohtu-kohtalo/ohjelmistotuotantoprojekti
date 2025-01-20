@@ -51,7 +51,8 @@ const App = () => {
     }
   };
 
-  // Separate into own components
+  // Title = title, error for error message, isLoading for showing a loading state,QueryForm for handling query submits
+  // ChatContainer for showing responses of queries
   return (
     <div className="app-container">
       <Title text="AI Query Form" />
