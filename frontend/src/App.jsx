@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./index.css";
+import Title from "./components/Title"
+import QueryForm from "./components/QueryForm";
 
 const App = () => {
   // Initial states
@@ -41,23 +43,12 @@ const App = () => {
   // Separate into own components
   return (
     <div className="app-container">
-      <h1 className="title">AI Query Form</h1>
-      <form onSubmit={handleSubmit} className="form">
-        <label htmlFor="query" className="label">
-          Company name:
-        </label>
-        <input
-          type="text"
-          id="query"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter company for data retrieval..."
-          className="input"
-        />
-        <button type="submit" className="button">
-          Submit
-        </button>
-      </form>
+      <Title text="AI Query Form" />
+      <QueryForm
+        query={query}
+        setQuery={setQuery}
+        handleSubmit={handleSubmit}
+      />
       <div className="chat-container">
         {response.map((message, index) => (
           <div
