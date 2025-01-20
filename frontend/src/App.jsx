@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./index.css";
 import Title from "./components/Title"
 import QueryForm from "./components/QueryForm";
+import ChatContainer from "./components/ChatContainer";
 
 const App = () => {
   // Initial states
@@ -49,17 +50,7 @@ const App = () => {
         setQuery={setQuery}
         handleSubmit={handleSubmit}
       />
-      <div className="chat-container">
-        {response.map((message, index) => (
-          <div
-            key={index}
-            className={`chat-message ${message.type}`}
-          >
-            <strong>{message.type === "query" ? "Query:" : "Response:"}</strong>
-            <p>{message.text}</p>
-          </div>
-        ))}
-      </div>
+      <ChatContainer response={response} />
     </div>
   );
 };
