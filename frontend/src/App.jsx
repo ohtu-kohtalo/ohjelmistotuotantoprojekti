@@ -4,12 +4,14 @@ import Title from "./components/Title"
 import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
+import LoadingIndicator from "./components/LoadingIndicator";
 
 const App = () => {
   // Initial states
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   /**
    * Handles the form submission event.
@@ -27,12 +29,11 @@ const App = () => {
 
       setTimeout(() => {
       setError("");
-    }, 5000);
+    }, 5000); //sets an error message of 5 seconds if an empty query is submitted
       return;
     }
 
-    setError("");
-
+    setIsLoading(true); //sets a loading state while waiting for a response
     try {
       const data = { reply: `\"${query}\"` }; // Mock response
       setResponse([
@@ -44,9 +45,10 @@ const App = () => {
         { type: "query", text: query },
         { type: "bot", text: "Cannot retrieve company data. Please try again." },
       ]);
+    } finally {
+      setIsLoading(false); //Disables the loading state
+      setQuery("") //Clear input field
     }
-
-    setQuery(""); // Clear the input field
   };
 
   // Separate into own components
@@ -54,6 +56,7 @@ const App = () => {
     <div className="app-container">
       <Title text="AI Query Form" />
       {error && <ErrorMessage message={error} />}
+      {isLoading && <LoadingIndicator />}
       <QueryForm
         query={query}
         setQuery={setQuery}
