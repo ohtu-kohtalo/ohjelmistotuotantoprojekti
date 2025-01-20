@@ -3,11 +3,13 @@ import "./index.css";
 import Title from "./components/Title"
 import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
+import ErrorMessage from "./components/ErrorMessage";
 
 const App = () => {
   // Initial states
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState([]);
+  const [error, setError] = useState("")
 
   /**
    * Handles the form submission event.
@@ -21,9 +23,15 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!query.trim()) {
-      setResponse("Please enter a valid query.");
+      setError("Please enter a valid query.");
+
+      setTimeout(() => {
+      setError("");
+    }, 5000);
       return;
     }
+
+    setError("");
 
     try {
       const data = { reply: `\"${query}\"` }; // Mock response
@@ -45,6 +53,7 @@ const App = () => {
   return (
     <div className="app-container">
       <Title text="AI Query Form" />
+      {error && <ErrorMessage message={error} />}
       <QueryForm
         query={query}
         setQuery={setQuery}
