@@ -5,6 +5,9 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 const App = () => {
   // Initial states
@@ -12,6 +15,7 @@ const App = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
    * Handles the form submission event.
@@ -35,10 +39,14 @@ const App = () => {
 
     setIsLoading(true); //sets a loading state while waiting for a response
     try {
-      const data = { reply: `\"${query}\"` }; // Mock response
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const prompt = `Study the company ${query} existing market`
+      const result = await model.generateContent(prompt);
+      const text = result.response.text();
+
       setResponse([
         { type: "query", text: query },
-        { type: "bot", text: data.reply },
+        { type: "bot", text: text },
       ]);
     } catch (exception) {
       setResponse([
