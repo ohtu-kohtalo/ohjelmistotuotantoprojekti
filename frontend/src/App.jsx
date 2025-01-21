@@ -51,26 +51,33 @@ const App = () => {
     } catch (exception) {
       setResponse([
         { type: "query", text: query },
-        { type: "bot", text: "Cannot retrieve company data. Please try again." },
+        {
+          type: "bot",
+          text: exception.message.includes("API key not valid") // API-key incorrect, easier to debug
+        ? "Cannot retrieve company data. Incorrect API-key. Please try again."
+        : `Cannot retrieve company data. Error. Please try again.`
+        },
       ]);
     } finally {
       setIsLoading(false); //Disables the loading state
-      setQuery("") //Clear input field
+      setQuery("") // Clear input field
     }
   };
 
-  // Title = title, error for error message, isLoading for showing a loading state,QueryForm for handling query submits
+  // Title = title, error for error message,
+  // isLoading for showing a loading state,
+  // QueryForm for handling query submits,
   // ChatContainer for showing responses of queries
   return (
     <div className="app-container">
       <Title text="AI Query Form" />
       {error && <ErrorMessage message={error} />}
-      {isLoading && <LoadingIndicator />}
       <QueryForm
         query={query}
         setQuery={setQuery}
         handleSubmit={handleSubmit}
-      />
+        />
+      {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
     </div>
   );
