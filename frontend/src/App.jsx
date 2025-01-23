@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "./index.css";
-import Title from "./components/Title"
+import Title from "./components/Title";
 import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -13,8 +13,8 @@ const App = () => {
   // Initial states
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState([]);
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
@@ -32,15 +32,15 @@ const App = () => {
       setError("Please enter a valid query.");
 
       setTimeout(() => {
-      setError("");
-    }, 5000); //sets an error message of 5 seconds if an empty query is submitted
+        setError("");
+      }, 5000); //sets an error message of 5 seconds if an empty query is submitted
       return;
     }
 
     setIsLoading(true); //sets a loading state while waiting for a response
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `Study the company ${query} existing market`
+      const prompt = `Study the company ${query} existing market`;
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
@@ -54,13 +54,13 @@ const App = () => {
         {
           type: "bot",
           text: exception.message.includes("API key not valid") // API-key incorrect, easier to debug
-        ? "Cannot retrieve company data. Incorrect API-key. Please try again."
-        : `Cannot retrieve company data. Error. Please try again.`
+            ? "Cannot retrieve company data. Incorrect API-key. Please try again."
+            : `Cannot retrieve company data. Error. Please try again.`,
         },
       ]);
     } finally {
       setIsLoading(false); //Disables the loading state
-      setQuery("") // Clear input field
+      setQuery(""); // Clear input field
     }
   };
 
@@ -76,7 +76,7 @@ const App = () => {
         query={query}
         setQuery={setQuery}
         handleSubmit={handleSubmit}
-        />
+      />
       {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
     </div>

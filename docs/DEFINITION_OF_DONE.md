@@ -1,4 +1,5 @@
 # Definition of done:
+
 - User story requirements fulfilled
 - Minimum 70% unit test coverage
 - Code passes the CI process

@@ -35,13 +35,13 @@ const genAI = new GoogleGenerativeAI(apiKey);
    npm install
    ```
 
-2. Run the project:
+1. Run the project:
 
    ```bash
    npm run dev
    ```
 
-3. The application will now have access to the Google Generative AI API using the API key specified in the `.env` file.
+1. The application will now have access to the Google Generative AI API using the API key specified in the `.env` file.
 
 ## General Notes
 

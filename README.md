@@ -17,11 +17,13 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 ## Installation
 
 Clone the repository:
+
 ```bash
 git clone https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti.git
 ```
 
 Navigate to the project folder:
+
 ```bash
 cd ohjelmistotuotantoprojekti
 ```
@@ -29,10 +31,10 @@ cd ohjelmistotuotantoprojekti
 > [!IMPORTANT]
 > Do the next installation steps in order
 
-
 ### Backend
 
 Install frontend dependencies:
+
 ```bash
 cd frontend && npm install
 ```
@@ -40,6 +42,8 @@ cd frontend && npm install
 ### Frontend
 
 Install backend dependencies:
+
 ```bash
 cd ../backend && poetry install
 
+```
