@@ -18,8 +18,9 @@ const App = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [customInput, setCustomInput] = useState("");
+  const [selectedOption, setSelectedOption] = useState("")
+  const [customInput, setCustomInput] = useState("")
+  const [website, setWebsite] = useState("")
   const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
@@ -69,8 +70,11 @@ const App = () => {
     setIsLoading(true); //sets a loading state while waiting for a response
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `Study the company ${query} existing market. The company's industry is ${industry}`;
-      console.log(prompt);
+      let prompt = `Study the company ${query} existing market. The company's industry is ${industry}.`;
+      if (website.trim()) {
+        prompt += ` The company's website is ${website}`;
+      }
+      console.log(prompt)
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
@@ -91,8 +95,9 @@ const App = () => {
     } finally {
       setIsLoading(false); //Disables the loading state
       setQuery(""); // Clear input field
-      setCustomInput("");
-      setSelectedOption("");
+      setCustomInput("")
+      setSelectedOption("")
+      setWebsite("")
     }
   };
 
@@ -110,6 +115,8 @@ const App = () => {
         selectedOption={selectedOption}
         setSelectedOption={setSelectedOption}
         customInput={customInput}
+        website={website}
+        setWebsite={setWebsite}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         handleCustomInputChange={handleCustomInputChange}
