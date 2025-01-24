@@ -2,6 +2,12 @@
 
 This program is being developed for [VTT](https://www.vttresearch.com/en) as part of a University of Helsinki course project.
 
+![Prettier]
+(https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/black.yml/badge.svg)
+
+![Black]
+(https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/prettier.yml/badge.svg)
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
