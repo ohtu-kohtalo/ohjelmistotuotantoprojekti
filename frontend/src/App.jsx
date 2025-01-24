@@ -18,9 +18,9 @@ const App = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("")
-  const [customInput, setCustomInput] = useState("")
-  const [website, setWebsite] = useState("")
+  const [selectedOption, setSelectedOption] = useState("");
+  const [customInput, setCustomInput] = useState("");
+  const [website, setWebsite] = useState("");
   const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
@@ -74,7 +74,7 @@ const App = () => {
       if (website.trim()) {
         prompt += ` The company's website is ${website}`;
       }
-      console.log(prompt)
+      console.log(prompt);
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
@@ -95,9 +95,9 @@ const App = () => {
     } finally {
       setIsLoading(false); //Disables the loading state
       setQuery(""); // Clear input field
-      setCustomInput("")
-      setSelectedOption("")
-      setWebsite("")
+      setCustomInput("");
+      setSelectedOption("");
+      setWebsite("");
     }
   };
 
