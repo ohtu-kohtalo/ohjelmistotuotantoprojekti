@@ -74,7 +74,7 @@ const App = () => {
       if (website.trim()) {
         prompt += ` The company's website is ${website}`;
       }
-      console.log(prompt);
+      console.log(prompt); // remember to delete!!
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
