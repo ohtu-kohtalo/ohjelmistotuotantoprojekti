@@ -5,7 +5,10 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
-import { ExecutableCodeLanguage, GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  ExecutableCodeLanguage,
+  GoogleGenerativeAI,
+} from "@google/generative-ai";
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -15,8 +18,8 @@ const App = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("")
-  const [customInput, setCustomInput] = useState("")
+  const [selectedOption, setSelectedOption] = useState("");
+  const [customInput, setCustomInput] = useState("");
   const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
@@ -29,8 +32,8 @@ const App = () => {
    * @returns {void}
    */
   const handleChange = async (event) => {
-    const value = event.target.value
-    setSelectedOption(value)
+    const value = event.target.value;
+    setSelectedOption(value);
 
     if (value !== "other") {
       setCustomInput("");
@@ -38,8 +41,8 @@ const App = () => {
   };
 
   const handleCustomInputChange = async (event) => {
-    setCustomInput(event.target.value)
-  }
+    setCustomInput(event.target.value);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -59,7 +62,7 @@ const App = () => {
 
       setTimeout(() => {
         setError("");
-      }, 5000) // sets an error message of 5 seconds
+      }, 5000); // sets an error message of 5 seconds
       return;
     }
 
@@ -67,7 +70,7 @@ const App = () => {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
       const prompt = `Study the company ${query} existing market. The company's industry is ${industry}`;
-      console.log(prompt)
+      console.log(prompt);
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
@@ -88,8 +91,8 @@ const App = () => {
     } finally {
       setIsLoading(false); //Disables the loading state
       setQuery(""); // Clear input field
-      setCustomInput("")
-      setSelectedOption("")
+      setCustomInput("");
+      setSelectedOption("");
     }
   };
 

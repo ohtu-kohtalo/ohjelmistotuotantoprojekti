@@ -1,7 +1,15 @@
 import React from "react";
 
-const QueryForm = ({ query, setQuery, selectedOption, setSelectedOption, customInput,
-  handleSubmit, handleChange, handleCustomInputChange }) => (
+const QueryForm = ({
+  query,
+  setQuery,
+  selectedOption,
+  setSelectedOption,
+  customInput,
+  handleSubmit,
+  handleChange,
+  handleCustomInputChange,
+}) => (
   <form onSubmit={handleSubmit} className="form">
     <label htmlFor="query" className="label">
       Company name:
@@ -14,14 +22,19 @@ const QueryForm = ({ query, setQuery, selectedOption, setSelectedOption, customI
       placeholder="Enter company for data retrieval..."
       className="input"
     />
-    <select id="dropdown" value={selectedOption} onChange={handleChange} className="dropdown">
+    <select
+      id="dropdown"
+      value={selectedOption}
+      onChange={handleChange}
+      className="dropdown"
+    >
       <option value="">Select...</option>
       <option value="option1">Option 1</option>
       <option value="option2">Option 2</option>
       <option value="option3">Option 3</option>
       <option value="other">Other</option>
     </select>
-    { selectedOption === "other" && (
+    {selectedOption === "other" && (
       <input
         type="text"
         value={customInput}
