@@ -1,0 +1,23 @@
+name: Format with prettier
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write **/*.{js,jsx,md}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
