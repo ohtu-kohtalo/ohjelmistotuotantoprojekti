@@ -51,3 +51,15 @@ Install backend dependencies:
 cd ../backend && poetry install
 
 ```
+
+## Usage
+
+1. Start the backend server in the backend/backend folder:
+```bash
+poetry run python app.py
+```
+
+2. Start the frontend application in the frontend folder:
+```bash
+npm run dev
+```
