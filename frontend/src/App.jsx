@@ -5,7 +5,7 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { ExecutableCodeLanguage, GoogleGenerativeAI } from "@google/generative-ai";
 
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -15,6 +15,8 @@ const App = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("")
+  const [customInput, setCustomInput] = useState("")
   const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
@@ -26,6 +28,19 @@ const App = () => {
    * @param {Event} event - The form submission event.
    * @returns {void}
    */
+  const handleChange = async (event) => {
+    const value = event.target.value
+    setSelectedOption(value)
+
+    if (value !== "other") {
+      setCustomInput("");
+    }
+  };
+
+  const handleCustomInputChange = async (event) => {
+    setCustomInput(event.target.value)
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!query.trim()) {
@@ -37,10 +52,22 @@ const App = () => {
       return;
     }
 
+    const industry = selectedOption === "other" ? customInput : selectedOption; // checks whether a custom input has been given to industry
+
+    if (!industry.trim()) {
+      setError("Please enter a valid industry."); //checks that industry input is not empty
+
+      setTimeout(() => {
+        setError("");
+      }, 5000) // sets an error message of 5 seconds
+      return;
+    }
+
     setIsLoading(true); //sets a loading state while waiting for a response
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `Study the company ${query} existing market`;
+      const prompt = `Study the company ${query} existing market. The company's industry is ${industry}`;
+      console.log(prompt)
       const result = await model.generateContent(prompt);
       const text = result.response.text();
 
@@ -61,6 +88,8 @@ const App = () => {
     } finally {
       setIsLoading(false); //Disables the loading state
       setQuery(""); // Clear input field
+      setCustomInput("")
+      setSelectedOption("")
     }
   };
 
@@ -75,7 +104,12 @@ const App = () => {
       <QueryForm
         query={query}
         setQuery={setQuery}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        customInput={customInput}
         handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        handleCustomInputChange={handleCustomInputChange}
       />
       {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
