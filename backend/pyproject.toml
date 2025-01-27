@@ -20,4 +20,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
+pytest = "^8.3.4"
 
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
