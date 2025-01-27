@@ -8,6 +8,6 @@
 
 2. Add the following line to the `.env` file:
 
-    ```env
-    GEMINI_API_KEY=your-api-key-here
-    ```
+   ```env
+   GEMINI_API_KEY=your-api-key-here
+   ```
