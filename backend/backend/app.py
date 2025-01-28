@@ -9,10 +9,19 @@ generate = Generator()
 
 @app.route("/create_agent", methods=["POST"])
 def create_agent():
+    """
+    Create an agent based on the provided company and industry information.
+    This function retrieves JSON data from the request, extracts the company and industry
+    information, and uses these to generate agents. The generated agents are then returned
+    in a JSON response.
+    Returns:
+        Response: A JSON response containing the generated agents.
+    """
+
     data = request.get_json()
     company = data.get("query")
     industry = data.get("industry")
-    # website = data.get("website")
+    # website = data.get("website") // Not used in the current implementation, needs to be specified what data is retrieved from the website
     response = generate.create_agents(company, industry, "3")
     response = {"message": response}
     response = jsonify(response)
