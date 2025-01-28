@@ -6,7 +6,6 @@ import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
 
-
 const App = () => {
   // Initial states
   const [query, setQuery] = useState("");
@@ -84,7 +83,7 @@ const App = () => {
       setResponse([
         { type: "query", text: query },
         // Backend sends a JSON object with a 'message' key
-        { type: "bot", text: data.message }, 
+        { type: "bot", text: data.message },
       ]);
     } catch (exception) {
       setResponse([
