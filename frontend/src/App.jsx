@@ -5,12 +5,7 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
-import {
-  ExecutableCodeLanguage,
-  GoogleGenerativeAI,
-} from "@google/generative-ai";
 
-const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 const App = () => {
   // Initial states
@@ -21,7 +16,6 @@ const App = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [website, setWebsite] = useState("");
-  const genAI = new GoogleGenerativeAI(apiKey);
 
   /**
    * Handles the form submission event.
@@ -67,33 +61,42 @@ const App = () => {
       return;
     }
 
-    setIsLoading(true); //sets a loading state while waiting for a response
+    setIsLoading(true); // sets a loading state while waiting for a response
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      let prompt = `Study the company ${query} existing market. The company's industry is ${industry}.`;
-      if (website.trim()) {
-        prompt += ` The company's website is ${website}`;
+      const response = await fetch("http://127.0.0.1:5000/create_agent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: query,
+          industry: industry,
+          website: website,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data from the backend.");
       }
-      console.log(prompt); // remember to delete!!
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+
+      const data = await response.json();
 
       setResponse([
         { type: "query", text: query },
-        { type: "bot", text: text },
+        // Backend sends a JSON object with a 'message' key
+        { type: "bot", text: data.message }, 
       ]);
     } catch (exception) {
       setResponse([
         { type: "query", text: query },
         {
           type: "bot",
-          text: exception.message.includes("API key not valid") // API-key incorrect, easier to debug
-            ? "Cannot retrieve company data. Incorrect API-key. Please try again."
-            : `Cannot retrieve company data. Error. Please try again.`,
+          text: "An error occurred while fetching the response. Please try again later.",
         },
       ]);
+      console.error(exception); // Log the error for debugging
     } finally {
-      setIsLoading(false); //Disables the loading state
+      setIsLoading(false); // Disables the loading state
       setQuery(""); // Clear input field
       setCustomInput("");
       setSelectedOption("");
