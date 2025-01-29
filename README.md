@@ -3,8 +3,8 @@
 This program is being developed for [VTT](https://www.vttresearch.com/en) as part of a University of Helsinki course project.
 
 ![Prettier](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/black.yml/badge.svg)
-
 ![Black](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/prettier.yml/badge.svg)
+![Unit tests](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/tests.yml/badge.svg)
 
 ## Table of Contents
 
@@ -17,6 +17,7 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 - **Python 3.12 or higher**
 - **Poetry 2.0.0 or higher**
 - **Node.js and npm**
+- [**A Gemini API key**](https://ai.google.dev/gemini-api/docs/api-key)
 
 ## Installation
 
@@ -35,7 +36,7 @@ cd ohjelmistotuotantoprojekti
 > [!IMPORTANT]
 > Do the next installation steps in order
 
-### Backend
+### Frontend
 
 Install frontend dependencies:
 
@@ -43,7 +44,7 @@ Install frontend dependencies:
 cd frontend && npm install
 ```
 
-### Frontend
+### Backend
 
 Install backend dependencies:
 
@@ -51,6 +52,18 @@ Install backend dependencies:
 cd ../backend && poetry install
 
 ```
+
+### .env file
+
+1. Create a `.env` file in the backend directory (not in the backend/backend directory).
+
+2. Add the following line into the `.env` file:
+
+   ```env
+   GEMINI_API_KEY=your-api-key-here
+   ```
+
+   Just replace `your-api-key-here` with your actual API key.
 
 ## Usage
 
