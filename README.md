@@ -62,6 +62,7 @@ cd ../backend && poetry install
    ```env
    GEMINI_API_KEY=your-api-key-here
    ```
+
    Just replace `your-api-key-here` with your actual API key.
 
 ## Usage
