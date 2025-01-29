@@ -1,6 +1,17 @@
 import React from "react";
 
-const QueryForm = ({ query, setQuery, handleSubmit }) => (
+const QueryForm = ({
+  query,
+  setQuery,
+  selectedOption,
+  setSelectedOption,
+  customInput,
+  handleSubmit,
+  handleChange,
+  handleCustomInputChange,
+  website,
+  setWebsite,
+}) => (
   <form onSubmit={handleSubmit} className="form">
     <label htmlFor="query" className="label">
       Company name:
@@ -13,6 +24,35 @@ const QueryForm = ({ query, setQuery, handleSubmit }) => (
       placeholder="Enter company for data retrieval..."
       className="input"
     />
+    <input
+      type="text"
+      id="website"
+      value={website}
+      onChange={(e) => setWebsite(e.target.value)}
+      placeholder="Set company's website (optional)"
+      className="input"
+    />
+    <select
+      id="dropdown"
+      value={selectedOption}
+      onChange={handleChange}
+      className="dropdown"
+    >
+      <option value="">Select...</option>
+      <option value="option1">Option 1</option>
+      <option value="option2">Option 2</option>
+      <option value="option3">Option 3</option>
+      <option value="other">Other</option>
+    </select>
+    {selectedOption === "other" && (
+      <input
+        type="text"
+        value={customInput}
+        onChange={handleCustomInputChange}
+        placeholder="Enter industry"
+        className="input"
+      />
+    )}
     <button type="submit" className="button">
       Submit
     </button>

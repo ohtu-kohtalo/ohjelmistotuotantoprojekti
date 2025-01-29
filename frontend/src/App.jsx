@@ -5,9 +5,6 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 const App = () => {
   // Initial states
@@ -15,7 +12,9 @@ const App = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [customInput, setCustomInput] = useState("");
+  const [website, setWebsite] = useState("");
 
   /**
    * Handles the form submission event.
@@ -26,6 +25,19 @@ const App = () => {
    * @param {Event} event - The form submission event.
    * @returns {void}
    */
+  const handleChange = async (event) => {
+    const value = event.target.value;
+    setSelectedOption(value);
+
+    if (value !== "other") {
+      setCustomInput("");
+    }
+  };
+
+  const handleCustomInputChange = async (event) => {
+    setCustomInput(event.target.value);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!query.trim()) {
@@ -37,30 +49,57 @@ const App = () => {
       return;
     }
 
-    setIsLoading(true); //sets a loading state while waiting for a response
+    const industry = selectedOption === "other" ? customInput : selectedOption; // checks whether a custom input has been given to industry
+
+    if (!industry.trim()) {
+      setError("Please enter a valid industry."); //checks that industry input is not empty
+
+      setTimeout(() => {
+        setError("");
+      }, 5000); // sets an error message of 5 seconds
+      return;
+    }
+
+    setIsLoading(true); // sets a loading state while waiting for a response
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = `Study the company ${query} existing market`;
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const response = await fetch("http://127.0.0.1:5000/create_agent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: query,
+          industry: industry,
+          website: website,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data from the backend.");
+      }
+
+      const data = await response.json();
 
       setResponse([
         { type: "query", text: query },
-        { type: "bot", text: text },
+        // Backend sends a JSON object with a 'message' key
+        { type: "bot", text: data.message },
       ]);
     } catch (exception) {
       setResponse([
         { type: "query", text: query },
         {
           type: "bot",
-          text: exception.message.includes("API key not valid") // API-key incorrect, easier to debug
-            ? "Cannot retrieve company data. Incorrect API-key. Please try again."
-            : `Cannot retrieve company data. Error. Please try again.`,
+          text: "An error occurred while fetching the response. Please try again later.",
         },
       ]);
+      console.error(exception); // Log the error for debugging
     } finally {
-      setIsLoading(false); //Disables the loading state
+      setIsLoading(false); // Disables the loading state
       setQuery(""); // Clear input field
+      setCustomInput("");
+      setSelectedOption("");
+      setWebsite("");
     }
   };
 
@@ -75,7 +114,14 @@ const App = () => {
       <QueryForm
         query={query}
         setQuery={setQuery}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        customInput={customInput}
+        website={website}
+        setWebsite={setWebsite}
         handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        handleCustomInputChange={handleCustomInputChange}
       />
       {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
