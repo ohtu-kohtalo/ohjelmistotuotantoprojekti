@@ -40,67 +40,70 @@ const App = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     if (!query.trim()) {
-      setError("⚠️ Please enter a valid query");
-
-      setTimeout(() => {
-        setError("");
-      }, 5000); //sets an error message of 5 seconds if an empty query is submitted
+      showError("⚠️ Please enter a valid query");
       return;
     }
 
-    const industry = selectedOption === "other" ? customInput : selectedOption; // checks whether a custom input has been given to industry
+    const industry =
+      selectedOption === "other" ? customInput.trim() : selectedOption.trim();
 
-    if (!industry.trim()) {
-      setError("⚠️ Please enter a valid industry"); //checks that industry input is not empty
-
-      setTimeout(() => {
-        setError("");
-      }, 5000); // sets an error message of 5 seconds
+    if (!industry) {
+      showError("⚠️ Please enter a valid industry");
       return;
     }
 
-    setIsLoading(true); // sets a loading state while waiting for a response
+    setIsLoading(true);
+
     try {
       const response = await fetch("http://127.0.0.1:5000/create_agent", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: query,
-          industry: industry,
-          website: website,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, industry, website }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch data from the backend.");
+        const errorMessage = `⚠️ Error: ${response.status} - ${response.statusText}`;
+        showError(errorMessage);
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-
       setResponse([
         { type: "query", text: query },
-        // Backend sends a JSON object with a 'message' key
-        { type: "bot", text: data.message },
+        { type: "bot", text: data.message || "No response message received." },
       ]);
-    } catch (exception) {
+    } catch (error) {
+      console.error("Fetch error:", error);
+      showError("⚠️ Could not retrieve data from backend");
       setResponse([
         { type: "query", text: query },
         {
           type: "bot",
-          text: "An error occurred while fetching the response. Please try again later.",
+          text:
+            "An error occurred while fetching the response. \n Error code: " +
+            error.message,
         },
       ]);
-      console.error(exception); // Log the error for debugging
     } finally {
-      setIsLoading(false); // Disables the loading state
-      setQuery(""); // Clear input field
-      setCustomInput("");
-      setSelectedOption("");
-      setWebsite("");
+      setIsLoading(false);
+      resetForm();
     }
+  };
+
+  // Helper function to display error messages
+  const showError = (message) => {
+    setError(message);
+    setTimeout(() => setError(""), 5000);
+  };
+
+  // Helper function to reset form fields
+  const resetForm = () => {
+    setQuery("");
+    setCustomInput("");
+    setSelectedOption("");
+    setWebsite("");
   };
 
   // Title = title, error for error message,
