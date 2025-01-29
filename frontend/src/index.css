@@ -11,7 +11,6 @@
 
 .title {
   font-size: 24px;
-  margin-bottom: 20px;
   color: #333;
 }
 
@@ -110,12 +109,45 @@
 }
 
 .error-message {
-  color: red;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
+  color: #b00020;
+  font-size: 16px;
+  font-weight: 650;
+  padding: 6px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 500px;
+  max-height: 20px;
+}
+
+@keyframes smooth-flash {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.error-message {
+  color: #b00020;
+  font-size: 16px;
+  font-weight: 650;
+  padding: 6px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 500px;
+  max-height: 20px;
+
+  /* Smooth Flashing Animation */
+  animation: smooth-flash 2.5s ease-in-out infinite;
 }
 
 .loading-indicator {

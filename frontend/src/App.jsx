@@ -41,7 +41,7 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!query.trim()) {
-      setError("Please enter a valid query.");
+      setError("⚠️ Please enter a valid query");
 
       setTimeout(() => {
         setError("");
@@ -52,7 +52,7 @@ const App = () => {
     const industry = selectedOption === "other" ? customInput : selectedOption; // checks whether a custom input has been given to industry
 
     if (!industry.trim()) {
-      setError("Please enter a valid industry."); //checks that industry input is not empty
+      setError("⚠️ Please enter a valid industry"); //checks that industry input is not empty
 
       setTimeout(() => {
         setError("");

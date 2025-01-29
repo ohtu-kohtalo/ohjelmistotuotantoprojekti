@@ -13,9 +13,7 @@ const QueryForm = ({
   setWebsite,
 }) => (
   <form onSubmit={handleSubmit} className="form">
-    <label htmlFor="query" className="label">
-      Company name:
-    </label>
+    <label htmlFor="query" className="label"></label>
     <input
       type="text"
       id="query"
