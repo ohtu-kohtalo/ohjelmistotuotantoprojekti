@@ -11,6 +11,8 @@ const QueryForm = ({
   handleCustomInputChange,
   website,
   setWebsite,
+  agentCount,
+  setAgentCount,
 }) => (
   <form onSubmit={handleSubmit} className="form">
     <label htmlFor="query" className="label"></label>
@@ -51,6 +53,18 @@ const QueryForm = ({
         className="input"
       />
     )}
+    <select
+      id="agentCount"
+      value={agentCount}
+      onChange={(e) => setAgentCount(Number(e.target.value))}
+      className="dropdown"
+    >
+      <option value="1">1 Agent</option>
+      <option value="2">2 Agents</option>
+      <option value="3">3 Agents</option>
+      <option value="4">4 Agents</option>
+      <option value="5">5 Agents</option>
+    </select>
     <button type="submit" className="button">
       Submit
     </button>

@@ -15,6 +15,7 @@ const App = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [website, setWebsite] = useState("");
+  const [agentCount, setAgentCount] = useState(1);
 
   /**
    * Handles the form submission event.
@@ -60,7 +61,7 @@ const App = () => {
       const response = await fetch("http://127.0.0.1:5000/create_agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, industry, website }),
+        body: JSON.stringify({ query, industry, website, agentCount }),
       });
 
       if (!response.ok) {
@@ -104,6 +105,7 @@ const App = () => {
     setCustomInput("");
     setSelectedOption("");
     setWebsite("");
+    setAgentCount(1);
   };
 
   // Title = title, error for error message,
@@ -122,6 +124,8 @@ const App = () => {
         customInput={customInput}
         website={website}
         setWebsite={setWebsite}
+        agentCount={agentCount}
+        setAgentCount={setAgentCount}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         handleCustomInputChange={handleCustomInputChange}
