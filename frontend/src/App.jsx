@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./index.css";
 import Title from "./components/Title";
 import QueryForm from "./components/QueryForm";
@@ -11,6 +11,7 @@ const App = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
+  const errorTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [customInput, setCustomInput] = useState("");
@@ -43,7 +44,7 @@ const App = () => {
     event.preventDefault();
 
     if (!query.trim()) {
-      showError("⚠️ Please enter a valid query");
+      showError("⚠️ Cannot submit an empty company name");
       return;
     }
 
@@ -51,7 +52,7 @@ const App = () => {
       selectedOption === "other" ? customInput.trim() : selectedOption.trim();
 
     if (!industry) {
-      showError("⚠️ Please enter a valid industry");
+      showError("⚠️ Industry field cannot be empty");
       return;
     }
 
@@ -96,7 +97,16 @@ const App = () => {
   // Helper function to display error messages
   const showError = (message) => {
     setError(message);
-    setTimeout(() => setError(""), 5000);
+
+    // Clear any existing timeout before setting a new one
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+    }
+
+    errorTimeoutRef.current = setTimeout(() => {
+      setError("");
+      errorTimeoutRef.current = null; // Reset ref after clearing error
+    }, 5000);
   };
 
   // Helper function to reset form fields
