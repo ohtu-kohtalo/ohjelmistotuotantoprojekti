@@ -14,10 +14,18 @@ dependencies = [
     "flask-cors (>=5.0.0,<6.0.0)"
 ]
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+# Legacy format for dependabot support
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["tuome <tonni@tuta.io>"]
+readme = "README.md"
+packages = [{include = "backend"}]
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
