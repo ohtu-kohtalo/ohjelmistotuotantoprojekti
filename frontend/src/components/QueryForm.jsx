@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const QueryForm = ({
   query,
@@ -14,12 +14,35 @@ const QueryForm = ({
   agentCount,
   setAgentCount,
 }) => {
-  // Submit button disabled if selected industry is empty or agent count is empty
+  const [isWebsiteValid, setIsWebsiteValid] = useState(null);
+
+  // Function to validate URL format
+  // Current implementation is a (overly) simple check for URL validity
+  const isValidUrl = (url) => {
+    try {
+      if (!url) return null; // If null (empty), no icon is shown
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  // Handle website input change and validation
+  const handleWebsiteChange = (e) => {
+    const value = e.target.value;
+    setWebsite(value);
+    setIsWebsiteValid(isValidUrl(value));
+  };
+
+  // Submit button disabled if selected industry or agent count is empty
   const isSubmitDisabled = selectedOption === "" || agentCount === "";
 
   return (
     <form onSubmit={handleSubmit} className="form">
-      <label htmlFor="query" className="label"></label>
+      <label htmlFor="query" className="label">
+        Company Name
+      </label>
       <input
         type="text"
         id="query"
@@ -28,14 +51,31 @@ const QueryForm = ({
         placeholder="Enter company for data retrieval..."
         className="input"
       />
-      <input
-        type="text"
-        id="website"
-        value={website}
-        onChange={(e) => setWebsite(e.target.value)}
-        placeholder="Set company's website (optional)"
-        className="input"
-      />
+
+      <label htmlFor="website" className="label input-container">
+        Company Website (Optional)
+        <div className="input-wrapper">
+          <input
+            type="text"
+            id="website"
+            value={website}
+            onChange={handleWebsiteChange}
+            placeholder="Enter website URL"
+            className="input"
+          />
+          {isWebsiteValid !== null && ( // Show icon only when field is not empty
+            <span
+              className={`validation-icon ${isWebsiteValid ? "valid" : "invalid"}`}
+            >
+              {isWebsiteValid ? "✅" : "❌"}
+            </span>
+          )}
+        </div>
+      </label>
+
+      <label htmlFor="dropdown" className="label">
+        Industry
+      </label>
       <select
         id="dropdown"
         value={selectedOption}
@@ -57,6 +97,10 @@ const QueryForm = ({
           className="input"
         />
       )}
+
+      <label htmlFor="agentCount" className="label">
+        Number of Agents
+      </label>
       <select
         id="agentCount"
         value={agentCount}
@@ -72,6 +116,7 @@ const QueryForm = ({
         <option value="4">4 Agents</option>
         <option value="5">5 Agents</option>
       </select>
+
       <button type="submit" className="button" disabled={isSubmitDisabled}>
         Submit
       </button>

@@ -37,6 +37,33 @@
   box-sizing: border-box;
 }
 
+.input-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.validation-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-70%);
+  font-size: 18px;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
+
 .dropdown {
   padding: 10px;
   width: 100%;
