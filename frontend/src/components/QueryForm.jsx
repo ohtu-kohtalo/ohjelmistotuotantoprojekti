@@ -38,10 +38,10 @@ const QueryForm = ({
       onChange={handleChange}
       className="dropdown"
     >
-      <option value="">Select...</option>
-      <option value="option1">Option 1</option>
-      <option value="option2">Option 2</option>
-      <option value="option3">Option 3</option>
+      <option value="">Select industry...</option>
+      <option value="option1">Industry Option 1</option>
+      <option value="option2">Industry Option 2</option>
+      <option value="option3">Industry Option 3</option>
       <option value="other">Other</option>
     </select>
     {selectedOption === "other" && (
@@ -59,6 +59,7 @@ const QueryForm = ({
       onChange={(e) => setAgentCount(Number(e.target.value))}
       className="dropdown"
     >
+      <option value="">Select agent count...</option>
       <option value="1">1 Agent</option>
       <option value="2">2 Agents</option>
       <option value="3">3 Agents</option>

@@ -15,7 +15,7 @@ const App = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [website, setWebsite] = useState("");
-  const [agentCount, setAgentCount] = useState(1);
+  const [agentCount, setAgentCount] = useState("");
 
   /**
    * Handles the form submission event.
@@ -105,7 +105,7 @@ const App = () => {
     setCustomInput("");
     setSelectedOption("");
     setWebsite("");
-    setAgentCount(1);
+    setAgentCount("");
   };
 
   // Title = title, error for error message,
