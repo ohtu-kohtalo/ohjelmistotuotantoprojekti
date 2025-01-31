@@ -116,9 +116,11 @@ const QueryForm = ({
         onChange={(e) =>
           setAgentCount(e.target.value ? Number(e.target.value) : "")
         }
-        className="dropdown"
+        className="dropdown placeholder-style"
       >
-        <option value="">Select agent count...</option>
+        <option value="" disabled hidden>
+          Select agent count...
+        </option>
         <option value="1">1 Agent</option>
         <option value="2">2 Agents</option>
         <option value="3">3 Agents</option>

@@ -68,11 +68,19 @@
   padding: 10px;
   width: 100%;
   font-size: 16px;
+  color: gray; /* Placeholder text color */
   border: 1px solid #ccc;
   border-radius: 5px;
+  padding: 10px;
+  padding-right: 30px; /* Make space for the arrow */
+  cursor: pointer;
   margin-bottom: 10px;
   box-sizing: border-box;
   background-color: white;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='gray'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
   appearance: none;
   -webkit-appearance: none;
 }
@@ -81,6 +89,11 @@
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Ensure that when the dropdown is opened, options are black */
+.placeholder-style option {
+  color: black;
 }
 
 .button {
