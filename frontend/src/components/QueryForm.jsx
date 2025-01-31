@@ -36,7 +36,8 @@ const QueryForm = ({
   };
 
   // Submit button disabled if selected industry or agent count is empty
-  const isSubmitDisabled = selectedOption === "" || agentCount === "";
+  // const isSubmitDisabled = selectedOption === "" || agentCount === "";
+  const isSubmitDisabled = agentCount === "";
 
   return (
     <form onSubmit={handleSubmit} className="form">
@@ -76,6 +77,14 @@ const QueryForm = ({
       <label htmlFor="dropdown" className="label">
         Industry
       </label>
+      <input
+        type="text"
+        value={customInput}
+        onChange={handleCustomInputChange}
+        placeholder="Enter a description of an industry"
+        className="input"
+        />
+{/*       
       <select
         id="dropdown"
         value={selectedOption}
@@ -97,7 +106,7 @@ const QueryForm = ({
           className="input"
         />
       )}
-
+ */}
       <label htmlFor="agentCount" className="label">
         Number of Agents
       </label>

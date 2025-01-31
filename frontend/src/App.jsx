@@ -48,8 +48,9 @@ const App = () => {
       return;
     }
 
-    const industry =
-      selectedOption === "other" ? customInput.trim() : selectedOption.trim();
+    /* const industry =
+      selectedOption === "other" ? customInput.trim() : selectedOption.trim(); */
+    const industry = customInput.trim()
 
     if (!industry) {
       showError("⚠️ Industry field cannot be empty");
