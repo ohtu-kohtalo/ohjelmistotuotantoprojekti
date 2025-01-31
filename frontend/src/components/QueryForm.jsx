@@ -83,8 +83,8 @@ const QueryForm = ({
         onChange={handleCustomInputChange}
         placeholder="Enter a description of an industry"
         className="input"
-        />
-{/*       
+      />
+      {/*       
       <select
         id="dropdown"
         value={selectedOption}
