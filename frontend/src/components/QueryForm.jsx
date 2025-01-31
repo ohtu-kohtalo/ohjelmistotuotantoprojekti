@@ -17,13 +17,25 @@ const QueryForm = ({
   const [isWebsiteValid, setIsWebsiteValid] = useState(null);
 
   // Function to validate URL format
-  // Current implementation is a (overly) simple check for URL validity
+  // Current implementation checks for URL validity
   const isValidUrl = (url) => {
+    if (!url) return null;
+
     try {
-      if (!url) return null; // If null (empty), no icon is shown
-      new URL(url);
+      let parsedUrl = new URL(url);
+
+      // Ensure protocol is HTTP or HTTPS
+      if (!/^https?:$/.test(parsedUrl.protocol)) {
+        return false;
+      }
+
+      // Check if hostname starts with 'www.'
+      if (!parsedUrl.hostname.startsWith("www.")) {
+        return false;
+      }
+
       return true;
-    } catch (_) {
+    } catch (e) {
       return false;
     }
   };
@@ -35,9 +47,8 @@ const QueryForm = ({
     setIsWebsiteValid(isValidUrl(value));
   };
 
-  // Submit button disabled if selected industry or agent count is empty
-  // const isSubmitDisabled = selectedOption === "" || agentCount === "";
-  const isSubmitDisabled = agentCount === "";
+  // Submit button disabled if no agent count is selected or website format is invalid
+  const isSubmitDisabled = agentCount === "" || isWebsiteValid === false;
 
   return (
     <form onSubmit={handleSubmit} className="form">
@@ -55,6 +66,9 @@ const QueryForm = ({
 
       <label htmlFor="website" className="label input-container">
         Company Website (Optional)
+        <p>
+          <em>https://www.example.com</em>
+        </p>
         <div className="input-wrapper">
           <input
             type="text"
