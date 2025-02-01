@@ -1,8 +1,7 @@
 import os
 import pandas as pd
 from gemini import Gemini
-
-csv_file_path = os.getenv("CSV_FILE_PATH")
+from key_config import CSV_FILE_PATH
 
 
 class Generator:
@@ -13,7 +12,7 @@ class Generator:
 
     def _sample_csv(self, number_of_agents):
         """Samples data from the CSV file."""
-        data_frame = pd.read_csv(csv_file_path, sep=";")
+        data_frame = pd.read_csv(CSV_FILE_PATH, sep=";")
         return data_frame.sample(n=number_of_agents)
 
     def _create_profile(self, sample):
