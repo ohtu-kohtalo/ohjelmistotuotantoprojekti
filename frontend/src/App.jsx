@@ -125,7 +125,7 @@ const App = () => {
   // ChatContainer for showing responses of queries
   return (
     <div className="app-container">
-      <Title text="AI Query Form" />
+      <Title text="Future Customer: A Simulator and Prediction Tool" />
       {error && <ErrorMessage message={error} />}
       <QueryForm
         query={query}
