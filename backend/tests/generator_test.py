@@ -10,9 +10,10 @@ class TestGenerator(unittest.TestCase):
         self.generator = Generator(self.mock_gemini)
 
     def test_simulate_customer(self):
-        response = self.generator.create_agents("Mokia", "IT", "3")
+        response = self.generator.create_agents("Mokia", "IT", 3)
         should_be = (
             "Simulate 3 customer profiles for a company. The name of the company "
-            "is Mokia and its industry is IT"
+            "is Mokia and its industry is IT. Here are the customer demographics:\n"
         )
-        self.assertEqual(should_be, response)
+        self.assertTrue(response.startswith(should_be))
+        self.assertIn("Here are the customer demographics:", response)

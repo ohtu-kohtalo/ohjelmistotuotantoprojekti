@@ -4,16 +4,17 @@ from gemini import Gemini
 
 csv_file_path = os.getenv("CSV_FILE_PATH")
 
+
 class Generator:
     """This class generates agents"""
 
     def __init__(self, llm=Gemini()):
         self.__llm = llm
 
-    def _sample_csv(self, sample_amount):
+    def _sample_csv(self, number_of_agents):
         """Samples data from the CSV file."""
-        data_frame = pd.read_csv(csv_file_path, sep=';')
-        return data_frame.sample(n=sample_amount)
+        data_frame = pd.read_csv(csv_file_path, sep=";")
+        return data_frame.sample(n=number_of_agents)
 
     def _create_profile(self, sample):
         """Creates a customer profile from a sample."""
@@ -25,8 +26,15 @@ class Generator:
 
         return f"{gender}, {age} vanha, kunnasta, jossa on {residents} ja joka sijaitsee maakunnassa {county}. Mykyinen tai viimeisin työnantaja: {place_of_work}."
 
-    def create_agents(self, company, industry, number_of_agents, website_data=None):
+    def create_agents(
+        self,
+        company: str,
+        industry: str,
+        number_of_agents: str,
+        website_data: str = None,
+    ) -> str:
         """Creates agents based on the given parameters."""
+
         sample = self._sample_csv(number_of_agents)
 
         agegroup_map = {
@@ -35,21 +43,17 @@ class Generator:
             3: "36-45 vuotta",
             4: "46-55 vuotta",
             5: "56-65 vuotta",
-            6: "Yli 65 vuotta"
+            6: "Yli 65 vuotta",
         }
 
-        gender_map = {
-            1: "Mies",
-            2: "Nainen",
-            3: "Muu"
-        }
+        gender_map = {1: "Mies", 2: "Nainen", 3: "Muu"}
 
         residents_map = {
             1: "alle 4000 asukasta",
             2: "4000-8000 asukasta",
             3: "8000-30 000 asukasta",
             4: "30 000-80 000 asukasta",
-            5: "Yli 80 000 asukasta"
+            5: "Yli 80 000 asukasta",
         }
 
         county_map = {
@@ -70,7 +74,7 @@ class Generator:
             15: "Keski-Pohjanmaa",
             16: "Pohjois-Pohjanmaa",
             17: "Kainuu",
-            18: "Lappi"
+            18: "Lappi",
         }
 
         work_map = {
@@ -80,7 +84,7 @@ class Generator:
             4: "Yksityinen (tai oma) yritys",
             5: "Järjestö tai yhdistys",
             6: "Jokin muu työnantaja",
-            7: "En ole ollut mukana työelämässä"
+            7: "En ole ollut mukana työelämässä",
         }
 
         sample["T1"] = sample["T1"].map(gender_map)
@@ -89,7 +93,9 @@ class Generator:
         sample["T4"] = sample["T4"].map(county_map)
         sample["T5"] = sample["T5"].map(work_map)
 
-        profiles = [self._create_profile(sample.iloc[i]) for i in range(number_of_agents)]
+        profiles = [
+            self._create_profile(sample.iloc[i]) for i in range(number_of_agents)
+        ]
 
         prompt = (
             f"Simulate {number_of_agents} customer profiles for a company. The name "
