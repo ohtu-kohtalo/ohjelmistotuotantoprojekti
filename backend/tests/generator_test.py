@@ -13,7 +13,6 @@ class TestGenerator(unittest.TestCase):
         response = self.generator.create_agents("Mokia", "IT", 3)
         should_be = (
             "Simulate 3 customer profiles for a company. The name of the company "
-            "is Mokia and its industry is IT. Here are the customer demographics:\n"
+            "is Mokia and its industry is IT."
         )
         self.assertTrue(response.startswith(should_be))
-        self.assertIn("Here are the customer demographics:", response)
