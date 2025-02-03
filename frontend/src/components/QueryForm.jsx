@@ -66,27 +66,27 @@ const QueryForm = ({
 
       <label htmlFor="website" className="label input-container">
         Company Website (Optional)
-      </label>  
-        <p>
-          <em>https://www.example.com</em>
-        </p>
-        <div className="input-wrapper">
-          <input
-            type="text"
-            id="website"
-            value={website}
-            onChange={handleWebsiteChange}
-            placeholder="Enter website URL"
-            className="input"
-          />
-          {isWebsiteValid !== null && ( // Show icon only when field is not empty
-            <span
-              className={`validation-icon ${isWebsiteValid ? "valid" : "invalid"}`}
-            >
-              {isWebsiteValid ? "✅" : "❌"}
-            </span>
-          )}
-        </div>
+      </label>
+      <p>
+        <em>https://www.example.com</em>
+      </p>
+      <div className="input-wrapper">
+        <input
+          type="text"
+          id="website"
+          value={website}
+          onChange={handleWebsiteChange}
+          placeholder="Enter website URL"
+          className="input"
+        />
+        {isWebsiteValid !== null && ( // Show icon only when field is not empty
+          <span
+            className={`validation-icon ${isWebsiteValid ? "valid" : "invalid"}`}
+          >
+            {isWebsiteValid ? "✅" : "❌"}
+          </span>
+        )}
+      </div>
 
       <label htmlFor="dropdown" className="label">
         Industry
@@ -144,7 +144,12 @@ const QueryForm = ({
         <option value="5">5 Agents</option>
       </select>
 
-      <button type="submit" className="button" disabled={isSubmitDisabled} data-testid="submit-button">
+      <button
+        type="submit"
+        className="button"
+        disabled={isSubmitDisabled}
+        data-testid="submit-button"
+      >
         Submit
       </button>
     </form>
