@@ -1,6 +1,8 @@
-# Dependency chart
+# Architecture
 
-## Frontend
+## Dependencies
+
+### Frontend
 
 > [!NOTE]
 > All frontend components import React, this is not explicitly mentioned in the graph
@@ -24,7 +26,7 @@ graph TD
 
 ```
 
-## Backend
+### Backend
 
 ```mermaid
 graph LR
@@ -53,4 +55,24 @@ graph LR
     gemini_config -->|imports| google.generativeai
     key_config -->|imports| os
     key_config -->|imports| python-dotenv
+```
+
+## User input flowchart
+
+```mermaid
+graph TD
+    subgraph Frontend
+        initial[Initial state] --> company_info[User inputs company information]
+        company_info --> agent_count[User chooses number of agents]
+        agent_count --> submit[User presses submit]
+        json[Frontend receives JSON] --> response_state[LLM response gets rendered to the user]
+    end
+
+    subgraph Backend
+        submit -->|POST| server[Flask]
+        server --> generator["Call Generator.create_agents()"]
+        generator --> create_agents[Generates agents and returns LLM answer as a string]
+        create_agents --> response[Response is returned to the frontend in JSON]
+        response --> json
+    end
 ```
