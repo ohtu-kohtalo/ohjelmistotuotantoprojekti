@@ -3,7 +3,12 @@ name = "backend"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "tuome",email = "tonni@tuta.io"}
+    {name = "Onni Tuomela", email = "tonni@tuta.io"},
+    {name = "Tarvo Lilja", email = "tarvo.lilja@hotmail.fi"},
+    {name = "Iida Häkkinen", email = "iida.hakkinen@gmail.com"},
+    {name = "Jaakko Airikkala", email = "jaakkel@gmail.com"},
+    {name = "Sampsa Ollikainen", email = "sampsa.ollikainen@gmail.com"},
+    {name = "Emmi Koponen"}
 ]
 readme = "README.md"
 requires-python = ">=3.12,<4"
@@ -24,7 +29,14 @@ build-backend = "poetry.core.masonry.api"
 name = "backend"
 version = "0.1.0"
 description = ""
-authors = ["tuome <tonni@tuta.io>"]
+authors = [
+    "Onni Tuomela <tonni@tuta.io>",
+    "Tarvo Lilja <tarvo.lilja@hotmail.fi>",
+    "Iida Häkkinen <iida.hakkinen@gmail.com>",
+    "Jaakko Airikkala <jaakkel@gmail.com>",
+    "Sampsa Ollikainen <sampsa.ollikainen@gmail.com>",
+    "Emmi Koponen"
+]
 readme = "README.md"
 packages = [{include = "backend"}]
 
