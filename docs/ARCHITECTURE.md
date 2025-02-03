@@ -25,6 +25,7 @@ graph TD
 ```
 
 ## Backend
+
 ```mermaid
 graph LR
     app[app.py] -->|imports| generator[generator.py]
