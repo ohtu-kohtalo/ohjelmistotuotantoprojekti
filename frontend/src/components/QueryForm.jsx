@@ -51,7 +51,7 @@ const QueryForm = ({
   const isSubmitDisabled = agentCount === "" || isWebsiteValid === false;
 
   return (
-    <form onSubmit={handleSubmit} className="form">
+    <form onSubmit={handleSubmit} className="form" data-testid="query-form">
       <label htmlFor="query" className="label">
         Company Name
       </label>
@@ -66,6 +66,7 @@ const QueryForm = ({
 
       <label htmlFor="website" className="label input-container">
         Company Website (Optional)
+      </label>  
         <p>
           <em>https://www.example.com</em>
         </p>
@@ -86,13 +87,13 @@ const QueryForm = ({
             </span>
           )}
         </div>
-      </label>
 
       <label htmlFor="dropdown" className="label">
         Industry
       </label>
       <input
         type="text"
+        id="dropdown"
         value={customInput}
         onChange={handleCustomInputChange}
         placeholder="Enter a description of an industry"
@@ -143,7 +144,7 @@ const QueryForm = ({
         <option value="5">5 Agents</option>
       </select>
 
-      <button type="submit" className="button" disabled={isSubmitDisabled}>
+      <button type="submit" className="button" disabled={isSubmitDisabled} data-testid="submit-button">
         Submit
       </button>
     </form>
