@@ -1,6 +1,6 @@
 import { expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "../components/ErrorMessage";
 
 test("Error message gets shown", () => {
   const errorText = "Oops! something went wrong";

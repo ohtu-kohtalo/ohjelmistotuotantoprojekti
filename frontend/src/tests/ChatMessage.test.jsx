@@ -1,7 +1,6 @@
 import { expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import ChatMessage from "./ChatMessage";
-import MarkdownRenderer from "./MarkdownRenderer";
+import ChatMessage from "../components/ChatMessage";
 
 vi.mock("./MarkdownRenderer", () => ({
   default: ({ markdownText }) => <span>{markdownText}</span>,

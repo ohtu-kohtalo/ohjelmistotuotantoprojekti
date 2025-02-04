@@ -1,6 +1,6 @@
 import { expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import ChatContainer from "./ChatContainer";
+import ChatContainer from "../components/ChatContainer";
 
 test("renders messages passed as props", () => {
   const messages = [

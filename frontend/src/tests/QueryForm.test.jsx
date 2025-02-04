@@ -1,6 +1,6 @@
 import { describe, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, rerender } from "@testing-library/react";
-import QueryForm from "./QueryForm";
+import QueryForm from "../components/QueryForm";
 import userEvent from "@testing-library/user-event";
 
 describe("QueryForm Component", () => {
@@ -29,7 +29,7 @@ describe("QueryForm Component", () => {
   test("renders the form fields correctly", async () => {
     expect(screen.getByLabelText("Company Name")).toBeInTheDocument();
     expect(
-      screen.getByLabelText("Company Website (Optional)"),
+      screen.getByLabelText("Company Website (Optional)")
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Industry")).toBeInTheDocument();
     expect(screen.getByLabelText("Number of Agents")).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("QueryForm Component", () => {
 
   test("updates the query input field correctly", async () => {
     const input = screen.getByPlaceholderText(
-      "Enter company for data retrieval...",
+      "Enter company for data retrieval..."
     );
     await userEvent.type(input, "Test Company");
 
