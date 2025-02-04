@@ -38,7 +38,7 @@ describe("QueryForm Component", () => {
 
   test("updates the query input field correctly", async () => {
     const input = screen.getByPlaceholderText(
-      "Enter company for data retrieval..."
+      "Enter company for data retrieval...",
     );
     await userEvent.type(input, "Test Company");
 
@@ -68,12 +68,12 @@ describe("QueryForm Component", () => {
     // Fill in required fields using user events
     await userEvent.type(
       screen.getByLabelText(/Company Name/i),
-      "Test Company"
+      "Test Company",
     );
     await userEvent.type(screen.getByLabelText(/Industry/i), "Technology");
     await userEvent.selectOptions(
       screen.getByLabelText(/Number of Agents/i),
-      "2"
+      "2",
     );
 
     // Re-render with updated props
