@@ -50,6 +50,7 @@ flask-cors = ">=5.0.0,<6.0.0"
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
 pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
 
 [tool.pytest.ini_options]
 pythonpath = ["backend"]
