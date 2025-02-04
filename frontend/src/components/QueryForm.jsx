@@ -61,13 +61,19 @@ const QueryForm = ({
     setIsWebsiteValid(isValidUrl(value));
   };
 
-  // Submit button disabled if no agent count is selected or website format is invalid
-  const isSubmitDisabled = agentCount === "" || isWebsiteValid === false;
+  // Submit button disabled if no agent count is selected,
+  // website format is invalid,
+  // company-field is empty, or industry-field is empty
+  const isSubmitDisabled =
+    agentCount === "" ||
+    isWebsiteValid === false ||
+    query.trim() === "" ||
+    customInput.trim() === "";
 
   return (
     <form onSubmit={handleSubmit} className="form" data-testid="query-form">
       <label htmlFor="query" className="label">
-        Company Name
+        Company Name <span className="required-icon">*</span>
       </label>
       <input
         type="text"
@@ -79,7 +85,7 @@ const QueryForm = ({
       />
 
       <label htmlFor="website" className="label input-container">
-        Company Website (Optional)
+        Company Website
       </label>
       <p>
         <em>https://www.example.com</em>
@@ -103,7 +109,7 @@ const QueryForm = ({
       </div>
 
       <label htmlFor="dropdown" className="label">
-        Industry
+        Industry <span className="required-icon">*</span>
       </label>
       <input
         type="text"
@@ -137,7 +143,7 @@ const QueryForm = ({
       )}
  */}
       <label htmlFor="agentCount" className="label">
-        Number of Agents
+        Number of Agents <span className="required-icon">*</span>
       </label>
       <select
         id="agentCount"
