@@ -23,7 +23,7 @@ class Generator:
         county = sample["T4"]
         place_of_work = sample["T5"]
 
-        return f"{gender}, {age} vanha, kunnasta, jossa on {residents} ja joka sijaitsee maakunnassa {county}. Mykyinen tai viimeisin työnantaja: {place_of_work}."
+        return f"{gender}, {age} vanha, kunnasta, jossa on {residents} ja joka sijaitsee maakunnassa {county}. Nykyinen tai viimeisin työnantaja: {place_of_work}."
 
     def create_agents(
         self,
@@ -32,7 +32,8 @@ class Generator:
         number_of_agents: str,
         website_data: str = None,
     ) -> str:
-        """Creates agents based on the given parameters."""
+        """Creates agents based on the given parameters and on the survey data given
+        to the program."""
 
         sample = self._sample_csv(number_of_agents)
 
@@ -386,7 +387,35 @@ class Generator:
         profiles = [
             self._create_profile(sample.iloc[i]) for i in range(number_of_agents)
         ]
+        prompt = self._create_prompt(
+            company, industry, number_of_agents, profiles, website_data
+        )
+        response = self.__llm.get_response(prompt)
+        return response
 
+    def _create_prompt(
+        self,
+        company: str,
+        industry: str,
+        number_of_agents: str,
+        profiles: list[str],
+        website_data: str = None,
+    ) -> str:
+        """Creates a prompt that can be given to the LLM.
+
+        Args:
+            company (str): name of the company
+            industry (str): the industry where the company operates
+            number_of_agents (str): the number of agents (customer profiles) the LLM
+            should create.
+            profiles (list): a list of short textual descriptions of the agents.
+            website_data (str, optional): Data about the company's website in textual
+            form. Defaults to None.
+
+        Returns:
+            str: a prompt that gives some key information about the company and the
+            customers.
+        """
         prompt = (
             f"Simulate {number_of_agents} customer profiles for a company. The name "
             f"of the company is {company} and its industry is {industry}. "
@@ -395,7 +424,6 @@ class Generator:
         prompt += "\n".join(profiles)
 
         if website_data:
-            prompt += f". Website data for the company: {website_data}"
+            prompt += f"\nWebsite data for the company: {website_data}"
 
-        response = self.__llm.get_response(prompt)
-        return response
+        return prompt
