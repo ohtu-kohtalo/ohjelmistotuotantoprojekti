@@ -24,13 +24,27 @@ const QueryForm = ({
     try {
       let parsedUrl = new URL(url);
 
-      // Ensure protocol is HTTP or HTTPS
-      if (!/^https?:$/.test(parsedUrl.protocol)) {
+      // Ensure the protocol is HTTPS
+      if (parsedUrl.protocol !== "https:") {
         return false;
       }
 
-      // Check if hostname starts with 'www.'
-      if (!parsedUrl.hostname.startsWith("www.")) {
+      // Ensure the hostname part is in the format "www.example.com"
+      const hostnameParts = parsedUrl.hostname.split(".");
+
+      // Three parts: "www", hostname, domain (organization address)
+      if (
+        hostnameParts.length < 3 ||
+        hostnameParts[0] !== "www" ||
+        hostnameParts[1].length === 0 ||
+        hostnameParts[2].length === 0
+      ) {
+        return false;
+      }
+
+      // Ensure the pathname is empty or root "/"
+      // In other words, only the 'main/index' page is allowed
+      if (parsedUrl.pathname !== "/" && parsedUrl.pathname !== "") {
         return false;
       }
 
