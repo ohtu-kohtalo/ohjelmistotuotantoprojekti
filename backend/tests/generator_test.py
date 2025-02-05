@@ -1,14 +1,14 @@
 import unittest
-from unittest.mock import MagicMock, patch
-import pandas as pd
+from unittest.mock import Mock, MagicMock
 from backend.generator import Generator
 
 
 class TestGenerator(unittest.TestCase):
     def setUp(self):
         self.mock_gemini = MagicMock()
+        self.mock_data_frame = Mock()
         self.mock_gemini.get_response.side_effect = lambda x: x
-        self.generator = Generator(self.mock_gemini)
+        self.generator = Generator(self.mock_gemini, self.mock_data_frame)
 
     def test_create_prompt(self):
         """Test creating a prompt without giving a website"""

@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from gemini import Gemini
 from key_config import SAV_FILE_PATH
@@ -7,9 +6,35 @@ from key_config import SAV_FILE_PATH
 class Generator:
     """This class generates agents"""
 
-    def __init__(self, llm=Gemini(), file_path=SAV_FILE_PATH):
+    def __init__(self, llm=Gemini(), data_frame=None):
+        """If no data_frame is given to the class constructor, pandas creates a
+        DataFrame object from the sav file that is specified in the .env file. When
+        tests are run, a mock data frame object should be given instead to the
+        constructor, which allows tests to be run without any data or environment
+        variables.
+
+        Args:
+            llm (LLM): an interface for using a LLM. Defaults to Gemini().
+            data_frame (DataFrame, optional): a pandas DataFrame object that contains
+            survey data. Defaults to None in which case the file specified in the .env
+            file is used.
+        """
         self.__llm = llm
-        self.__data_frame = self._read_sav(file_path)
+        self.__data_frame = self.set_data_frame(data_frame)
+
+    def set_data_frame(self, data_frame):
+        """Sets the instance variable __data_frame. If parameter data_frame is None,
+        loads the sav file specified in the .env file and creates a pandas DataFrame
+        object from it. Otherwise uses the data_frame parameter.
+
+        Args:
+            data_frame (None | any): This parameter can be None, an actual data frame
+            or a mock data frame.
+        """
+        if data_frame:
+            return data_frame
+        else:
+            return pd.read_spss(SAV_FILE_PATH)
 
     def _read_sav(self, file_path):
         """Reads an sav file and returns a pandas DataFrame object"""
