@@ -74,19 +74,30 @@ const App = () => {
 
       const data = await response.json();
       setResponse([
-        { type: "query", text: query },
+        {
+          type: "query",
+          text: query,
+          industry: industry,
+          website: website,
+          agentCount: agentCount,
+        },
         { type: "bot", text: data.message || "No response message received." },
       ]);
     } catch (error) {
       console.error("Fetch error:", error);
       showError("⚠️ Could not retrieve data from backend");
       setResponse([
-        { type: "query", text: query },
+        {
+          type: "query",
+          text: query,
+          industry: industry,
+          website: website,
+          agentCount: agentCount,
+        },
         {
           type: "bot",
-          text:
-            "An error occurred while fetching the response. \n Error code: " +
-            error.message,
+          text: "An error occurred while fetching the response:",
+          error_status: "Error code: " + error.message,
         },
       ]);
     } finally {

@@ -175,6 +175,7 @@ select option {
   gap: 4px;
   max-width: 500px;
   max-height: 20px;
+  margin-bottom: 10px;
 }
 
 .loading-indicator {
