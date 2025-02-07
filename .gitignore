@@ -288,3 +288,7 @@ dist
 
 # IDEA files
 .idea/
+
+# Survey data that must not be published
+*.csv
+*.sav

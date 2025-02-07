@@ -125,6 +125,11 @@ select option {
   opacity: 0.6;
 }
 
+.required-icon {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -170,36 +175,7 @@ select option {
   gap: 4px;
   max-width: 500px;
   max-height: 20px;
-}
-
-@keyframes smooth-flash {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.75;
-    transform: scale(1.0125);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.error-message {
-  color: #b00020;
-  font-size: 16px;
-  font-weight: 650;
-  padding: 6px 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  max-width: 500px;
-  max-height: 20px;
-
-  /* Smooth Flashing Animation */
-  animation: smooth-flash 2.5s ease-in-out infinite;
+  margin-bottom: 10px;
 }
 
 .loading-indicator {
@@ -218,6 +194,7 @@ select option {
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  margin-left: 10px;
   animation: spin 1s linear infinite;
 }
 

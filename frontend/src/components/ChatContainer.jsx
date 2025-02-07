@@ -2,7 +2,7 @@ import React from "react";
 import ChatMessage from "./ChatMessage";
 
 const ChatContainer = ({ response }) => (
-  <div className="chat-container">
+  <div className="chat-container" data-testid="chat-container">
     {response.map((message, index) => (
       <ChatMessage key={index} message={message} />
     ))}
