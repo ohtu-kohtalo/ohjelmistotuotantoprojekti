@@ -5,6 +5,7 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
+import PlotContainer from "./components/PlotContainer";
 
 const App = () => {
   // Initial states
@@ -138,6 +139,7 @@ const App = () => {
     <div className="app-container">
       <Title text="Future Customer: A Simulator and Prediction Tool" />
       {error && <ErrorMessage message={error} />}
+      <PlotContainer />
       <QueryForm
         query={query}
         setQuery={setQuery}
