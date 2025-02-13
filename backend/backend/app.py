@@ -1,10 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from key_config import CSV_FILE_PATH
 from services.create_agent_pool import create_agent_pool
+from load_dataset import load_dataset
 
 app = Flask(__name__)
 CORS(app)
-agent_pool = create_agent_pool()
+
+dataset = load_dataset(CSV_FILE_PATH)
+agent_pool = create_agent_pool(dataset)
 
 
 @app.route("/create_agent", methods=["POST"])

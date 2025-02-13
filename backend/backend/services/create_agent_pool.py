@@ -1,31 +1,20 @@
+import pandas
 from entities.agent import Agent
 from entities.agent_pool import AgentPool
 
 
-def create_agent_pool() -> AgentPool:
-    """Creates instances of agents and returns a pool of them"""
-    agent1 = Agent(
-        {
-            "age": "20",
-            "gender": "female",
-            "place_of_residence": "Uusimaa",
-            "occupation": "student",
-        }
+def create_agent_pool(dataframe: pandas.DataFrame) -> AgentPool:
+    """Creates instances of agents based on the given data and returns them in an
+    AgentPool object"""
+    # Convert integers in the dataframe to strings
+    dataframe[dataframe.select_dtypes(include=["int"]).columns] = (
+        dataframe.select_dtypes(include=["int"]).astype(str)
     )
-    agent2 = Agent(
-        {
-            "age": "40",
-            "gender": "male",
-            "place_of_residence": "Varsinais-Suomi",
-            "occupation": "software developer",
-        }
-    )
-    agent3 = Agent(
-        {
-            "age": "70",
-            "gender": "female",
-            "place_of_residence": "Pirkanmaa",
-            "occupation": "retired",
-        }
-    )
-    return AgentPool([agent1, agent2, agent3])
+
+    agent_info_list = dataframe.to_dict(orient="records")
+
+    agents = []
+    for agent in agent_info_list:
+        agents.append(Agent(agent))
+
+    return AgentPool(agents)

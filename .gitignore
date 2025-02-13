@@ -290,5 +290,5 @@ dist
 .idea/
 
 # Survey data that must not be published
-*.csv
-*.sav
+backend/data/*.csv
+backend/data/*.sav
