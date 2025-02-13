@@ -289,6 +289,6 @@ dist
 # IDEA files
 .idea/
 
-# Survey data that must not be published
-backend/data/*.csv
-backend/data/*.sav
+# All data in the backend/data/ directory is assumed confidential
+backend/data/*
+!/data/.gitkeep
