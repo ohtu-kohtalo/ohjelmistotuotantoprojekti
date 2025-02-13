@@ -1,10 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from generator import Generator
 
 app = Flask(__name__)
 CORS(app)
-generate = Generator()
 
 
 @app.route("/create_agent", methods=["POST"])
@@ -22,9 +20,13 @@ def create_agent():
     data = request.get_json()
     company = data.get("query")
     industry = data.get("industry")
-    # website = data.get("website") // Not used in the current implementation, needs to be specified what data is retrieved from the website
     agent_count = data.get("agentCount")
-    response = generate.create_agents(company, industry, agent_count)
+    response = (
+        "# Backend is being reworked"
+        f"\n\n**company:** {company}"
+        f"\n\n**industry:** {industry}"
+        f"\n\n**agent count:** {agent_count}"
+    )
     response = {"message": response}
     response = jsonify(response)
     return response
