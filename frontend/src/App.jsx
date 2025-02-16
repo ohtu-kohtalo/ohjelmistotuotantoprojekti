@@ -61,7 +61,8 @@ const App = () => {
     setIsLoading(true);
 
     try {
-      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+      const BACKEND_URL =
+        import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
       const response = await fetch(`${BACKEND_URL}/create_agent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
