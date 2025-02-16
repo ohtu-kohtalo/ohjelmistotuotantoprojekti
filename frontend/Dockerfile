@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN chown -R root:0 /app && chmod -R g+rwX /app
-
 RUN npm install
+
+RUN chown -R root:0 /app && chmod -R g+rwX /app
 
 EXPOSE 5173
 
