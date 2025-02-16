@@ -61,7 +61,7 @@ const App = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/create_agent", {
+      const response = await fetch("http://127.0.0.1:5500/create_agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, industry, website, agentCount }),
