@@ -3,7 +3,7 @@ import { useState } from "react";
 import pieChartIcon from "../assets/pie-chart.png";
 import barChartIcon from "../assets/bar-chart.png";
 import OptionContainer from "./OptionContainer";
-import Plot from "./Plot";
+import ScatterPlot from "./ScatterPlot";
 
 const PlotContainer = () => {
   const [chartType, setChartType] = useState("placeholder");
@@ -47,7 +47,7 @@ const PlotContainer = () => {
         />
         <div className="plot-area">
           {chartType == "graph" ? (
-            <Plot data={sampleData} xAxis={selectedX}/>
+            <ScatterPlot data={sampleData} xAxis={selectedX}/>
           ) : (
             <p>Select a graph type to display</p>
           )}

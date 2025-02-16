@@ -1,7 +1,7 @@
 import React, { useEffect, useRef} from "react";
 import * as d3 from "d3"; // Import D3.js for data visualization
 
-const Plot = ({ data, xAxis }) => {
+const ScatterPlot = ({ data, xAxis }) => {
   const svgRef = useRef();
 
   useEffect(() => {
@@ -77,4 +77,4 @@ const Plot = ({ data, xAxis }) => {
     return <svg ref={svgRef}></svg>; // Render an empty SVG element to be manipulated by D3
 };
 
-export default Plot; // Export the component for use in other files
+export default ScatterPlot; // Export the component for use in other files
