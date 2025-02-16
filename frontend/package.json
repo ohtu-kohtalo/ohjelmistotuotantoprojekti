@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "d3": "^7.9.0",
     "dotenv": "^16.4.7",
     "frontend": "file:",
     "react": "^18.3.1",

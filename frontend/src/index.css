@@ -155,7 +155,7 @@ select option {
   margin-bottom: 20px;
   border: 2px solid #ddd;
   width: 550px;
-  max-height: 450px;
+  max-height: 550px;
   padding: 0px 0px 10px 10px;
   background-color: #fff;
   border-radius: 10px;
@@ -193,6 +193,8 @@ select option {
 
 /* Chart area styling */
 .plot-area {
+  width: 100%;
+  height: 400px;
   background-color: #f8f9fa;
   padding: 15px;
   border-radius: 8px;
@@ -200,6 +202,8 @@ select option {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  position: relative;
 }
 
 /* Chart Button container */
