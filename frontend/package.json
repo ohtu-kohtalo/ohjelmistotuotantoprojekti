@@ -16,7 +16,8 @@
     "frontend": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-markdown": "^9.0.3"
+    "react-markdown": "^9.0.3",
+    "esbuild": ">=0.25.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -35,6 +36,7 @@
     "jsdom": "^26.0.0",
     "prettier": "3.4.2",
     "vite": "^6.0.5",
-    "vitest": "^3.0.4"
+    "vitest": "^3.0.5",
+    "esbuild": ">=0.25.0"
   }
 }
