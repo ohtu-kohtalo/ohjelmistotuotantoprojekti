@@ -155,7 +155,7 @@ select option {
   margin-bottom: 20px;
   border: 2px solid #ddd;
   width: 550px;
-  max-height: 550px;
+  max-height: 1100px;
   padding: 0px 0px 10px 10px;
   background-color: #fff;
   border-radius: 10px;
@@ -193,7 +193,7 @@ select option {
 
 /* Chart area styling */
 .plot-area {
-  width: 100%;
+  width: 92%;
   height: 400px;
   background-color: #f8f9fa;
   padding: 15px;

@@ -20,14 +20,8 @@ const Plot = ({ data, xAxis }) => {
 
     // Remove all existing elements inside the SVG to prevent duplicates
     svg.selectAll("*").remove();
-
+    width
     const isCategorical = xAxis === "gender"
-
-    // Map gender to numerical values (if gender is selected)
-    const processedData = data.map(d => ({
-      ...d,
-      gender: d.gender === "Male" ? 1 : 2 // Convert gender to numbers
-    }));
 
     const xScale = isCategorical
     ? d3.scalePoint()
@@ -35,8 +29,8 @@ const Plot = ({ data, xAxis }) => {
       .range([margin.left + 50, width - margin.right - 50])
       .padding(0,5)
     : d3.scaleLinear()
-      .domain([0, d3.max(processedData, d => d[xAxis])])
-      .range([margin.left + 20, width - margin.right - 25])
+      .domain([0, d3.max(data, d => d[xAxis])])
+      .range([margin.left, width - margin.right - 25])
 
     const yScale = d3.scaleLinear()
       .domain([1, 10])
