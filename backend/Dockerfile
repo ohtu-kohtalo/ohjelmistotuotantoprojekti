@@ -6,8 +6,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN poetry install
+RUN poetry config virtualenvs.create false && poetry install --no-dev
 
-EXPOSE 5000
+EXPOSE 5500
 
 CMD ["poetry", "run", "python", "backend/app.py"]
