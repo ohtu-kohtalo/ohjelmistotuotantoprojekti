@@ -47,11 +47,11 @@ const PlotContainer = () => {
         />
         <div className="plot-area">
           {chartType == "graph" ? (
-            <ScatterPlot data={sampleData} xAxis={selectedX}/>
+            <ScatterPlot data={sampleData} xAxis={selectedX} />
           ) : (
             <p>Select a graph type to display</p>
           )}
-{/*           <img
+          {/*           <img
             src={chartImages[chartType]}
             alt="Placeholder Graph"
             style={{ maxWidth: "100%", height: "auto" }}
