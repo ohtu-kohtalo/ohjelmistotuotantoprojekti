@@ -30,7 +30,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: user/future-customer-backend:latest
+          tags: futurecustomer/future-customer-backend:latest
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v6
@@ -38,4 +38,4 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: user/future-customer-frontend:latest
+          tags: futurecustomer/future-customer-frontend:latest
