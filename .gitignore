@@ -292,3 +292,6 @@ dist
 # All data in the backend/data/ directory is assumed confidential
 backend/data/*
 !/data/.gitkeep
+
+# Mac specific
+.DS_Store
