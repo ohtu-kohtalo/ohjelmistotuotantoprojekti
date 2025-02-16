@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN chmod -R 777 *
+RUN chown -R root:0 /app && chmod -R g+rwX /app
 
 RUN npm install
 
