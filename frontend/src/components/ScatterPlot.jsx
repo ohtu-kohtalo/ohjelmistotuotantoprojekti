@@ -7,9 +7,9 @@ const ScatterPlot = ({ data, xAxis }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    const container = d3.select(svgRef.current.parentNode)
-    const width = container.node().clientWidth || 500
-    const height = container.node().clientHeight || 400
+    const container = d3.select(svgRef.current.parentNode) // gets thed dimensions of the parent container
+    const width = container.node().clientWidth || 500 // sets the width to match parent container dynamically
+    const height = container.node().clientHeight || 400 // sets the height to match parent container dynamically
     const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 
     // Select the SVG element, set its attributes (width, height, margin)
@@ -20,30 +20,30 @@ const ScatterPlot = ({ data, xAxis }) => {
 
     // Remove all existing elements inside the SVG to prevent duplicates
     svg.selectAll("*").remove();
-    width
-    const isCategorical = xAxis === "gender"
+
+    const isCategorical = xAxis === "gender"  //checks whether the option is gender or something else, so string or numerical
 
     const xScale = isCategorical
-    ? d3.scalePoint()
+    ? d3.scalePoint() //uses scalepoint to display options as male or female
       .domain(["Male", "Female"])
       .range([margin.left + 50, width - margin.right - 50])
       .padding(0,5)
-    : d3.scaleLinear()
+    : d3.scaleLinear()  //uses scaleLinear to show values on x-axis
       .domain([0, d3.max(data, d => d[xAxis])])
       .range([margin.left, width - margin.right - 25])
 
-    const yScale = d3.scaleLinear()
+    const yScale = d3.scaleLinear() //uses scaleLinear to show 1-10 on the y-axis
       .domain([1, 10])
       .range([height - margin.bottom, margin.top])
 
     const xAxisElement = d3.axisBottom(xScale).ticks(5);
     const yAxisElement = d3.axisLeft(yScale).ticks(10);
 
-    svg.append("g")
+    svg.append("g")  //adds the x-axis to svg
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .call(xAxisElement)
 
-    svg.append("g")
+    svg.append("g") // adds the y-axis to svg
       .attr("transform", `translate(${margin.left}, 0)`)
       .call(yAxisElement);
 
@@ -61,7 +61,7 @@ const ScatterPlot = ({ data, xAxis }) => {
       .data(data) // Bind the data array to the selection
       .enter() // Create placeholders for new elements
       .append("circle") // Append a circle for each data point
-      .attr("cx", d => xScale(d[xAxis])) // Set the x-position based on index
+      .attr("cx", d => xScale(isCategorical ? d.gender : d[xAxis])) // Set the x-position based on index
       .attr("cy", d => yScale(d.response)) // Set the y-position (scaling data)
       .attr("r", 6) // Set the radius of the circle
       .attr("fill", "blue") // Set the fill color of the circles
