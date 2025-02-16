@@ -10,8 +10,6 @@ export default defineConfig({
     setupFiles: "./testSetup.js",
   },
   server: {
-    allowedHosts: [
-      'frontend-future-customer.2.rahtiapp.fi'
-    ]
-  }
+    allowedHosts: ["frontend-future-customer.2.rahtiapp.fi"],
+  },
 });
