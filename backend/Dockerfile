@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN chmod -R 777 *
+
 RUN poetry config virtualenvs.create false && poetry install --without dev
 
 EXPOSE 5500

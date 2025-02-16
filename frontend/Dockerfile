@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
+RUN chmod -R 777 *
 
-RUN chown -R node:node /app
+RUN npm install
 
 EXPOSE 5173
 
