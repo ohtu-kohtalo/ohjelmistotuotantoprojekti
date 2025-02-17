@@ -33,7 +33,7 @@ def create_agent():
         f"\n\n**company:** {company}"
         f"\n\n**industry:** {industry}"
         f"\n\n**agent count:** {agent_count}"
-       #f"\n\n## Agents {agents}"
+        # f"\n\n## Agents {agents}"
     )
     response = {"message": response}
     response = jsonify(response)
