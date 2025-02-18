@@ -162,11 +162,44 @@ select option {
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.option-container {
-  flex-grow: 1; /* Takes 25% of the space */
-  padding: 0px 15px 15px 15px;
+.plot-details {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.option-container,
+.data-container {
+  width: 50%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.data-container {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+}
+
+.data-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.data-summary {
+  list-style-type: none;
+  padding: 0;
+}
+
+.data-summary li {
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 /* Wraps plot title and plot image */
@@ -174,22 +207,26 @@ select option {
   flex-grow: 3; /* 75% space */
 }
 
-/* Header container for title and buttons */
+/* Header settings */
 .plot-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  width: 100%;
 }
 
-/* Title styling */
 .plot-title {
-  text-align: left;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  margin-left: 5px;
+  text-align: center;
+  grid-column: 2;
 }
+
+.chart-buttons {
+  display: flex;
+  gap: 10px;
+  justify-self: end;
+  margin-right: 10px;
+}
+/* Header settings end */
+
 
 /* Chart area styling */
 .plot-area {
@@ -206,11 +243,7 @@ select option {
   position: relative;
 }
 
-/* Chart Button container */
-.chart-buttons {
-  display: flex;
-  gap: 10px;
-}
+
 
 .chart-icon {
   width: 20px;

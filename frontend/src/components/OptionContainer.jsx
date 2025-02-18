@@ -1,13 +1,13 @@
 import React from "react";
 
 const OptionContainer = ({
-  firstOption = "Option 1",
-  secondOption = "Option 2",
-  thirdOption = "Option 3",
+  firstOption,
+  secondOption,
+  thirdOption,
   onSelect,
 }) => (
   <div className="option-container">
-    <h4 className="option-label">Variables</h4>
+    <h4 className="option-label">Display Variables</h4>
 
     <ul className="option-list">
       {[firstOption, secondOption, thirdOption].map((option, index) => (
