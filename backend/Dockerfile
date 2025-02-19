@@ -14,4 +14,4 @@ RUN poetry install --without dev
 
 EXPOSE 5500
 
-CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:5500", "backend.app:app"]
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:5500", "backend.wsgi:app"]
