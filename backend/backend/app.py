@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from .key_config import CSV_FILE_PATH
@@ -6,6 +7,9 @@ from .load_dataset import load_dataset
 
 app = Flask(__name__)
 CORS(app)
+
+if not CSV_FILE_PATH or not os.path.exists(CSV_FILE_PATH):
+    raise FileNotFoundError("CSV_FILE_PATH is missing or the file does not exist.")
 
 dataset = load_dataset(CSV_FILE_PATH)
 agent_pool = create_agent_pool(dataset)
