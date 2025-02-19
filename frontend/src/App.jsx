@@ -5,6 +5,7 @@ import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
+import PlotContainer from "./components/PlotContainer";
 
 const App = () => {
   // Initial states
@@ -60,7 +61,9 @@ const App = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/create_agent", {
+      const BACKEND_URL =
+        import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+      const response = await fetch(`${BACKEND_URL}/create_agent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query, industry, website, agentCount }),
@@ -138,6 +141,7 @@ const App = () => {
     <div className="app-container">
       <Title text="Future Customer: A Simulator and Prediction Tool" />
       {error && <ErrorMessage message={error} />}
+      <PlotContainer />
       <QueryForm
         query={query}
         setQuery={setQuery}

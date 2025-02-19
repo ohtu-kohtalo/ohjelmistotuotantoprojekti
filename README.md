@@ -19,6 +19,7 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 - **Poetry 2.0.0 or higher**
 - **Node.js and npm**
 - [**A Gemini API key**](https://ai.google.dev/gemini-api/docs/api-key)
+- **A CSV data file that contains information about agents**
 
 ## Installation
 
@@ -54,17 +55,22 @@ cd ../backend && poetry install
 
 ```
 
+### Data file
+
+You need to put a CSV data file in the backend/data/ directory. The application uses the data to create agents. If you do not have a data file, you can still test the program by using the test_data.csv file that can be found in the backend/tests/data/ directory. Copy and paste the test_data.csv file into backend/data/ directory.
+
 ### .env file
 
 1. Create a `.env` file in the backend directory (not in the backend/backend directory).
 
-2. Add the following line into the `.env` file:
+2. Add the following lines into the `.env` file:
 
    ```env
-   GEMINI_API_KEY=your-api-key-here
+   GEMINI_API_KEY=<your-api-key-here>
+   CSV_FILE_PATH=data/<file name here>
    ```
 
-   Just replace `your-api-key-here` with your actual API key.
+   Just replace `<your-api-key-here>` and `<file name here>` with your actual API key and file name.
 
 ## Usage
 
