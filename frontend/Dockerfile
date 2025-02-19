@@ -19,8 +19,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Set permissions for /var/cache/nginx
 RUN mkdir -p /var/cache/nginx && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chmod -R 775 /var/cache/nginx
+    chmod -R 777 /var/cache/nginx
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
