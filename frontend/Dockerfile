@@ -14,9 +14,12 @@ RUN chown -R root:0 /app/dist && chmod -R g+rwX /app/dist
 # 2: Deployment
 FROM nginx:alpine-slim
 
-# Copy build
+# Copy build files
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+# Create the client_temp directory
+RUN mkdir -p /var/cache/nginx/client_temp && \
+    chown -R nginx:nginx /var/cache/nginx
 
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
