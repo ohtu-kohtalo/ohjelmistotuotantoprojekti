@@ -24,16 +24,15 @@ def create_agent():
     """
 
     data = request.get_json()
-    company = data.get("query")
-    industry = data.get("industry")
-    agent_count = data.get("agentCount")
-    agents = agent_pool.get_agents()
+    question = data.get("query")
+    # Other user inputs are not used for anything right now.
+    # company = data.get("query")
+    # industry = data.get("industry")
+    # agent_count = data.get("agentCount")
+    age_distribution = agent_pool.get_answer_distribution(question)
     response = (
         "# Backend is being reworked"
-        f"\n\n**company:** {company}"
-        f"\n\n**industry:** {industry}"
-        f"\n\n**agent count:** {agent_count}"
-        # f"\n\n## Agents {agents}"
+        f"\n\n## Answer distribution of the agents:\n {age_distribution}"
     )
     response = {"message": response}
     response = jsonify(response)

@@ -10,20 +10,8 @@ class TestPoolCreation(unittest.TestCase):
         self.data_frame = load_dataset("tests/data/test_data.csv")
         self.agent_pool = create_agent_pool(self.data_frame)
 
-    def test_correct_number_of_agents(self):
-        """Test that the correct number of agents was created"""
-        self.assertEqual(4, len(self.agent_pool.agents))
-
     def test_first_agent_correct(self):
-        """Test that the first agent in the pool has the correct info"""
-        should_be = {
-            "age": "20",
-            "gender": "female",
-            "region": "Uusimaa",
-            "level of education": "upper secondary education",
-            "occupation": "student",
-            "political party affiliation": "The Greens",
-            "Overall, things are getting better in society": "agree",
-        }
-        first_agent = self.agent_pool.agents[0].info
-        self.assertEqual(should_be, first_agent)
+        """Test that the correct distribution of answers is returned"""
+        should_be = {"male": 2, "female": 2}
+        distribution = self.agent_pool.get_answer_distribution("gender")
+        self.assertEqual(should_be, distribution)
