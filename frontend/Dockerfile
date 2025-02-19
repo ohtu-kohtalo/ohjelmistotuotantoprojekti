@@ -5,6 +5,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN npm install
+
 RUN npm run build
 
 RUN chown -R root:0 /app/dist && chmod -R g+rwX /app/dist
