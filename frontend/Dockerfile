@@ -19,6 +19,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Create the client_temp directory
 RUN mkdir -p /var/cache/nginx/client_temp && \
+    mkdir -p /var/cache/nginx/proxy_temp && \
     chown -R nginx:nginx /var/cache/nginx
 
 EXPOSE 80
