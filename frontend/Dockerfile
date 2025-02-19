@@ -12,7 +12,7 @@ RUN npm run build
 RUN chown -R root:0 /app/dist && chmod -R g+rwX /app/dist
 
 # 2: Deployment
-FROM nginx:alpine-slim
+FROM nginxinc/nginx-unprivileged:alpine-slim
 
 # Copy build files
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -21,5 +21,5 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 RUN mkdir -p /var/cache/nginx && \
     chmod -R 777 /var/cache/nginx
 
-EXPOSE 80
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
