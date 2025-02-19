@@ -1,4 +1,4 @@
-from gemini_config import get_gemini_connection
+from ..gemini_config import get_gemini_connection
 
 
 class Gemini:
