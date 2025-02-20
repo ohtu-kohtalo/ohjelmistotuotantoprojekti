@@ -1,3 +1,3 @@
 [run]
 source = backend
-omit = tests/**,backend/app.py,backend/services/gemini.py,backend/gemini_config.py,backend/key_config.py,backend/backend/wsgi.py
+omit = tests/**,backend/app.py,backend/services/gemini.py,backend/gemini_config.py,backend/key_config.py,backend/wsgi.py
