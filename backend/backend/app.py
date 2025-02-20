@@ -15,6 +15,14 @@ dataset = load_dataset(CSV_FILE_PATH)
 agent_pool = create_agent_pool(dataset)
 
 
+@app.route("/", methods=["GET"])
+def index():
+    """Returns a JSON response containing the answer distributions of all questions."""
+    distributions = agent_pool.get_all_distributions()
+    distributions = jsonify(distributions)
+    return distributions
+
+
 @app.route("/create_agent", methods=["POST"])
 def create_agent():
     """
