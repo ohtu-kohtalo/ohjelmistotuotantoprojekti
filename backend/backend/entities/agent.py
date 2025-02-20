@@ -13,6 +13,19 @@ class Agent:
             __info (dict): information about the agent, e.g. age and gender
         """
         self.__info = info
+        self.gender = info.get("T1")
+        self.age_group = info.get("T2")
+        self.residence_size = info.get("T3")
+        self.county = info.get("T4")
+        self.employer = info.get("T5")
+        self.currently_working = info.get("T8")
+        self.education = info.get("T9")
+        self.occupational_group = info.get("T10")
+        self.industry = info.get("T11")
+        self.trade_union_membership = info.get("T12")
+        self.political_party = info.get("T13")
+        self.social_class = info.get("T14")
+        self.household_income = info.get("bv1")
 
     def get_answer(self, question: str) -> str | None:
         """Returns the answer for the given question or **None**, if the given question does
