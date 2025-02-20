@@ -38,7 +38,4 @@ class Agent:
         Returns:
             str/None: The answer given by the agent or None if the question does not exists.
         """
-        try:
-            return self.__info[question]
-        except KeyError:
-            return None
+        return self.__info.get(question, None)
