@@ -27,16 +27,10 @@ def create_agent():
         Response: A JSON response containing the generated agents.
     """
 
-    data = request.get_json()
-    question = data.get("query")
-    # Other user inputs are not used for anything right now.
-    # company = data.get("query")
-    # industry = data.get("industry")
-    # agent_count = data.get("agentCount")
-    age_distribution = agent_pool.get_answer_distribution(question)
+    distributions = agent_pool.get_all_distributions()
     response = (
         "# Backend is being reworked"
-        f"\n\n## Answer distribution of the agents:\n {age_distribution}"
+        f"\n\n## Distributions of the answers:\n {distributions}"
     )
     response = {"message": response}
     response = jsonify(response)
