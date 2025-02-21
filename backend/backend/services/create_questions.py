@@ -1,17 +1,25 @@
 import csv
+from ..entities.survey_questions import SurveyQuestions
 
 
-def create_questions(questions_file_path, answers_file_path):
+def create_questions(questions_file_path, answers_file_path) -> SurveyQuestions:
     """Saves the question ID, question text and answer choices of each question.
 
     Returns:
-        Questions: A Questions object that has all of the questions in a dictionary.
+        SurveyQuestions: An instance of SurveyQuestions, where the questions given in
+        the files have been saved.
     """
 
     questions = get_questions(questions_file_path)
     choices = get_answer_choices(answers_file_path)
 
-    return choices
+    survey = SurveyQuestions()
+    for index in questions:
+        if not index in choices:
+            continue
+        survey.add_question(index, questions[index], choices[index])
+
+    return survey
 
 
 def get_questions(questions_file_path):

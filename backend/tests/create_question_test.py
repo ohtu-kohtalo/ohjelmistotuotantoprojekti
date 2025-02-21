@@ -1,5 +1,9 @@
 import unittest
-from backend.services.create_questions import get_questions, get_answer_choices
+from backend.services.create_questions import (
+    get_questions,
+    get_answer_choices,
+    create_questions,
+)
 
 
 class TestCreateQuestions(unittest.TestCase):
@@ -30,3 +34,13 @@ class TestCreateQuestions(unittest.TestCase):
         }
         answers = get_answer_choices(self.answers_file_path)
         self.assertEqual(should_be, answers)
+
+    def test_create_questions(self):
+        """Test that the SurveyQuestion objects are created correctly."""
+        survey = create_questions(self.questions_file_path, self.answers_file_path)
+        questions = survey.questions()
+        should_be = {
+            "question": "Who are you",
+            "answer_choices": {"1": "cat", "2": "dog", "3": "you", "4": "I"},
+        }
+        self.assertEqual(should_be, questions["Q2"])
