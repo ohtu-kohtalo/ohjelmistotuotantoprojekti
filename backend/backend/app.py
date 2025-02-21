@@ -34,15 +34,16 @@ def create_agent():
     Returns:
         Response: A JSON response containing the generated agents.
     """
+    data = request.get_json()
+    company = data.get("company")
+    industry = data.get("industry")
+    agent_count = data.get("agent_count")
 
-    distributions = agent_pool.get_all_distributions()
-    response = (
-        "# Backend is being reworked"
-        f"\n\n## Distributions of the answers:\n {distributions}"
-    )
-    response = {"message": response}
-    response = jsonify(response)
-    return response
+    if not company or not industry:
+        return jsonify({"error": "Company and industry information are required."}), 400
+
+    # agents = agent_pool.create_agents(company, industry, agent_count) // Jaakko this needs to be defined!
+    return jsonify({"message": "This endpoint needs content!"})
 
 
 if __name__ == "__main__":
