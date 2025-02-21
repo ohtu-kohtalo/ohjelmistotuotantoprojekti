@@ -12,7 +12,6 @@ CORS(app)
 
 dataset = load_dataset(CSV_FILE_PATH)
 agent_pool = create_agent_pool(dataset)
-questions = create_questions(QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH)
 
 
 @app.route("/", methods=["GET"])
