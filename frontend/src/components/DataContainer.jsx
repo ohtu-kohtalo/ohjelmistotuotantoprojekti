@@ -9,7 +9,7 @@ const DataContainer = ({ data }) => {
 
   const totalEntries = data.length;
   const numericFields = Object.keys(data[0]).filter(
-    (key) => typeof data[0][key] === "number"
+    (key) => typeof data[0][key] === "number",
   );
 
   const averages = numericFields.reduce((acc, field) => {

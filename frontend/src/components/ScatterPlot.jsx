@@ -57,7 +57,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .call(
         isCategorical
           ? d3.axisBottom(xScale) // Categorical axis
-          : d3.axisBottom(xScale).ticks(6) // Numerical axis
+          : d3.axisBottom(xScale).ticks(6), // Numerical axis
       );
 
     xAxisElement
@@ -102,7 +102,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .attr("cx", (d) =>
         isCategorical
           ? xScale(d[xAxis]) + xScale.bandwidth() / 2
-          : xScale(d[xAxis])
+          : xScale(d[xAxis]),
       ) // Center dots on categorical axis
       .attr("cy", (d) => yScale(d[clusterBy])) // Y-axis is response scores
       .attr("r", 6)
@@ -112,7 +112,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.name}</strong><br>
           ${xAxis}: ${d[xAxis]}<br>
-          Response Score: ${d.response}`
+          Response Score: ${d.response}`,
         );
       })
       .on("mousemove", (event) => {
