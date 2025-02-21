@@ -4,12 +4,15 @@ from flask_cors import CORS
 from .key_config import CSV_FILE_PATH, QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH
 from .services.create_agent_pool import create_agent_pool
 from .load_dataset import load_dataset
+from .services.create_questions import create_questions
+
 
 app = Flask(__name__)
 CORS(app)
 
 dataset = load_dataset(CSV_FILE_PATH)
 agent_pool = create_agent_pool(dataset)
+questions = create_questions(QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH)
 
 
 @app.route("/", methods=["GET"])
