@@ -45,7 +45,13 @@ def get_answer_choices(answers_file_path):
         dict:
             A dictionary where the question index is the key and the value is a
             dictionary containing the answer choices. E.g.
-            **{'Q1': {'1': 'answer_choice_1, '2': 'answer_choice_2}}**"""
+            **{'Q1': {'1': 'answer_choice_1, '2': 'answer_choice_2}}**
+
+    Raises:
+        ValueError:
+            'Expected an integer'. Answer choices must be numbered and
+            the number must preced the answer choice. This error indicates that the
+            data was not in the expected format."""
     answer_choices = {}
 
     with open(answers_file_path, mode="r", encoding="utf-8") as file:
@@ -57,9 +63,7 @@ def get_answer_choices(answers_file_path):
                 try:
                     int(row[i])
                 except ValueError as exc:
-                    raise ValueError(
-                        "Expected a number in string format. Got {i}"
-                    ) from exc
+                    raise ValueError(f"Expected an integer. Got '{row[i]}'") from exc
                 choices[row[i]] = row[i + 1].replace("/v", "")
             answer_choices[row[0]] = choices
 
