@@ -9,7 +9,7 @@ const DataContainer = ({ data }) => {
 
   const totalEntries = data.length;
   const numericFields = Object.keys(data[0]).filter(
-    (key) => typeof data[0][key] === "number",
+    (key) => typeof data[0][key] === "number"
   );
 
   const averages = numericFields.reduce((acc, field) => {
@@ -21,7 +21,7 @@ const DataContainer = ({ data }) => {
   return (
     <div className="data-container">
       <h4 className="data-title">Dataset Overview</h4>
-      <p>Total Entries: {totalEntries}</p>
+      <p className="data-entries">Total Entries: {totalEntries}</p>
       <ul className="data-summary">
         {Object.entries(averages).map(([key, value]) => (
           <li key={key}>

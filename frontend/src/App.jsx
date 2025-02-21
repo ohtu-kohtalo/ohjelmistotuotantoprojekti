@@ -8,17 +8,18 @@ import LoadingIndicator from "./components/LoadingIndicator";
 import PlotContainer from "./components/PlotContainer";
 
 const App = () => {
-  // Initial states
-  const [query, setQuery] = useState("");
+  // Initial states for user input
+  const [company, setCompany] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [agentCount, setAgentCount] = useState("");
+
+  // Initial states for response and error handling
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
   const errorTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [customInput, setCustomInput] = useState("");
-  const [website, setWebsite] = useState("");
-  const [agentCount, setAgentCount] = useState("");
 
+  // Initial state for aquired distributions data
   const [distributions, setDistributions] = useState(null); // Distributions of agents
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const App = () => {
      * @function fetchDistributions
      * @throws Will throw an error if the response is not ok.
      * @returns {Dictionary} The distributions data received from the backend:
-     * QUESTION: ({ANSWER: COUNT})?
+     * QUESTION: {ANSWER: COUNT}
      * ----------------------------
      * Q17B: {null: 4},
      * Q17C: {null: 4},
@@ -63,19 +64,6 @@ const App = () => {
     fetchDistributions();
   }, []);
 
-  const handleChange = async (event) => {
-    const value = event.target.value;
-    setSelectedOption(value);
-
-    if (value !== "other") {
-      setCustomInput("");
-    }
-  };
-
-  const handleCustomInputChange = async (event) => {
-    setCustomInput(event.target.value);
-  };
-
   /**
    * Handles the form submission event.
    * Prevents the default form submission behavior, checks if the query is not empty,
@@ -88,16 +76,12 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!query.trim()) {
+    if (!company.trim()) {
       showError("⚠️ Cannot submit an empty company name");
       return;
     }
 
-    /* const industry =
-      selectedOption === "other" ? customInput.trim() : selectedOption.trim(); */
-    const industry = customInput.trim();
-
-    if (!industry) {
+    if (!industry.trim()) {
       showError("⚠️ Industry field cannot be empty");
       return;
     }
@@ -110,7 +94,11 @@ const App = () => {
       const response = await fetch(`${BACKEND_URL}/create_agent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, industry, website, agentCount }),
+        body: JSON.stringify({
+          company: company,
+          industry: industry,
+          agent_count: agentCount,
+        }),
       });
 
       if (!response.ok) {
@@ -123,9 +111,8 @@ const App = () => {
       setResponse([
         {
           type: "query",
-          text: query,
+          text: company,
           industry: industry,
-          website: website,
           agentCount: agentCount,
         },
         { type: "bot", text: data.message || "No response message received." },
@@ -136,9 +123,8 @@ const App = () => {
       setResponse([
         {
           type: "query",
-          text: query,
+          text: company,
           industry: industry,
-          website: website,
           agentCount: agentCount,
         },
         {
@@ -170,10 +156,8 @@ const App = () => {
 
   // Helper function to reset form fields
   const resetForm = () => {
-    setQuery("");
-    setCustomInput("");
-    setSelectedOption("");
-    setWebsite("");
+    setCompany("");
+    setIndustry("");
     setAgentCount("");
   };
 
@@ -187,18 +171,13 @@ const App = () => {
       {error && <ErrorMessage message={error} />}
       <PlotContainer agentData={distributions} />
       <QueryForm
-        query={query}
-        setQuery={setQuery}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        customInput={customInput}
-        website={website}
-        setWebsite={setWebsite}
+        company={company}
+        setCompany={setCompany}
+        industry={industry}
+        setIndustry={setIndustry}
         agentCount={agentCount}
         setAgentCount={setAgentCount}
         handleSubmit={handleSubmit}
-        handleChange={handleChange}
-        handleCustomInputChange={handleCustomInputChange}
       />
       {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
