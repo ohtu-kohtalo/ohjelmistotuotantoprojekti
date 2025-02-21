@@ -2,13 +2,15 @@ import React from "react";
 import { useState } from "react";
 import pieChartIcon from "../assets/pie-chart.png";
 import barChartIcon from "../assets/bar-chart.png";
+import clusterIcon from "../assets/clustering.png";
 import OptionContainer from "./OptionContainer";
 import DataContainer from "./DataContainer";
-// import ScatterPlot from "./ScatterPlot"; // REMOVED?
+import ScatterPlot from "./ScatterPlot";
 
 const PlotContainer = ({ agentData }) => {
   const [chartType, setChartType] = useState("placeholder");
   const [selectedX, setSelectedX] = useState("age"); // default x axis
+  const [isClustered, setIsClustered] = useState(false);
 
   // Sample data using liker-scale responses ranging from 1-5
   // Helper to generate graph data for display purposes
@@ -43,10 +45,15 @@ const PlotContainer = ({ agentData }) => {
             <button onClick={() => setChartType("bar")}>
               <img src={barChartIcon} alt="Bar Chart" className="chart-icon" />
             </button>
-            {/* <button onClick={() => setChartType("graph")}>📈</button> */}
+            <button onClick={() => setIsClustered(!isClustered)}>
+              <img
+                src={clusterIcon}
+                alt="Clustered Data"
+                className="chart-icon"
+              />
+            </button>
           </div>
         </div>
-
         <div className="plot-details">
           <OptionContainer
             firstOption="age"
@@ -56,14 +63,15 @@ const PlotContainer = ({ agentData }) => {
           />
           <DataContainer data={sampleData} />
         </div>
-
         <div className="plot-area">
-          {chartType === "pie" ? (
-            (() => {
-              // Displays 'raw' agentData in console
-              console.log(agentData);
-              return <p>Now displaying Pie Chart</p>;
-            })()
+          {isClustered ? (
+            <ScatterPlot
+              data={sampleData}
+              xAxis={selectedX}
+              clusterBy="response"
+            />
+          ) : chartType === "pie" ? (
+            <p>Now displaying Pie Chart</p>
           ) : chartType === "bar" ? (
             <p>Now displaying Bar Chart</p>
           ) : (

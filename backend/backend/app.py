@@ -41,6 +41,9 @@ def create_agent():
 
     if not company or not industry:
         return jsonify({"error": "Company and industry information are required."}), 400
+    
+    if agent_count is None:
+        return jsonify({"error": "Agent count is required."}), 400
 
     # agents = agent_pool.create_agents(company, industry, agent_count) // Jaakko this needs to be defined!
     return jsonify({"message": "This endpoint needs content!"})
