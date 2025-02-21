@@ -40,7 +40,7 @@ class AgentPool:
             "Q17D",
         ]
 
-    def get_answer_distribution(self, question: str) -> dict:
+    def answer_distribution(self, question: str) -> dict:
         """Get the distribution of the answers given by the agents.
 
         Args:
@@ -56,8 +56,8 @@ class AgentPool:
         distribution = dict(distribution)
         return distribution
 
-    def get_all_distributions(self) -> dict:
-        """Creates the answer distributions for all questions.
+    def all_distributions(self) -> dict:
+        """Get the distributions of the answers for all questions.
 
         Returns:
             dict: A dictionary where the keys are the question IDs and the values are the
@@ -65,6 +65,6 @@ class AgentPool:
             **{'Q1': {'Ans1': 2, 'Ans2': 3}, 'Q2': {'Ans1': 1, 'Ans2': 4}}**"""
         distributions = {}
         for question in self.__selected_questions:
-            distributions[question] = self.get_answer_distribution(question)
+            distributions[question] = self.answer_distribution(question)
 
         return distributions
