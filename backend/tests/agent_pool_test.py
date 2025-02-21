@@ -14,13 +14,13 @@ class TestAgentPool(unittest.TestCase):
 
     def test_get_answer_distribution(self):
         """Test that get_answer_distribution returns the distribution of a answer."""
-        distribution = self.agent_pool.get_answer_distribution("T2")
+        distribution = self.agent_pool.answer_distribution("T2")
         should_be = {"40": 2, "50": 1, "60": 1, "70": 1}
         self.assertEqual(should_be, distribution)
 
     def test_get_all_distributions(self):
         """Test that get_all_distributions returns the distribution of all answers."""
-        distributions = self.agent_pool.get_all_distributions()
+        distributions = self.agent_pool.all_distributions()
         should_be = {
             "T1": {"male": 2, "female": 3},
             "T2": {"40": 2, "50": 1, "60": 1, "70": 1},

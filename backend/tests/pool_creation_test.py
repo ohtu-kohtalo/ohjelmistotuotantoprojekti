@@ -13,5 +13,5 @@ class TestPoolCreation(unittest.TestCase):
     def test_first_agent_correct(self):
         """Test that the correct distribution of answers is returned"""
         should_be = {"1": 2, "2": 2}
-        distribution = self.agent_pool.get_answer_distribution("T1")
+        distribution = self.agent_pool.answer_distribution("T1")
         self.assertEqual(should_be, distribution)

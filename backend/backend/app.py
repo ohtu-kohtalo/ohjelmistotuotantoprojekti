@@ -17,7 +17,7 @@ agent_pool = create_agent_pool(dataset)
 @app.route("/", methods=["GET"])
 def index():
     """Returns a JSON response containing the answer distributions of all questions."""
-    distributions = agent_pool.get_all_distributions()
+    distributions = agent_pool.all_distributions()
     distributions = jsonify(distributions)
     return distributions
 
@@ -34,7 +34,7 @@ def create_agent():
         Response: A JSON response containing the generated agents.
     """
 
-    distributions = agent_pool.get_all_distributions()
+    distributions = agent_pool.all_distributions()
     response = (
         "# Backend is being reworked"
         f"\n\n## Distributions of the answers:\n {distributions}"
