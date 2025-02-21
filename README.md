@@ -67,10 +67,12 @@ You need to put a CSV data file in the backend/data/ directory. The application 
 
    ```env
    GEMINI_API_KEY=<your-api-key-here>
-   CSV_FILE_PATH=data/<file name here>
+   CSV_FILE_PATH=data/<file-name-here>
+   QUESTIONS_FILE_PATH=data/question_texts.csv
+   ANSWERS_FILE_PATH=data/answer_choices.csv
    ```
 
-   Just replace `<your-api-key-here>` and `<file name here>` with your actual API key and file name.
+   Just replace `<your-api-key-here>` and `<file-name-here>` with your actual API key and file name. The `QUESTIONS_FILE_PATH` and `ANSWERS_FILE_PATH` can remain as they are.
 
 ## Usage
 
