@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./backend
-          file: ./backend/Dockerfile
+          file: ./backend/production/Dockerfile
           push: true
           tags: futurecustomer/future-customer-backend:latest
 
@@ -36,6 +36,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
-          file: ./frontend/Dockerfile
+          file: ./frontend/production/Dockerfile
           push: true
           tags: futurecustomer/future-customer-frontend:latest
