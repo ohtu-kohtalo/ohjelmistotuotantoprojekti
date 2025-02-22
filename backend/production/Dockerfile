@@ -4,7 +4,7 @@ RUN pip install poetry
 
 WORKDIR /app
 
-COPY . .
+COPY ../ ./
 
 RUN chown -R root:0 /app && chmod -R g+rwX /app
 
