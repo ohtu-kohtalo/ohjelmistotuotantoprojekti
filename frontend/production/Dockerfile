@@ -9,6 +9,8 @@ RUN npm ci
 
 COPY ../ ./
 
+COPY production/.env.production .env.production
+
 RUN npm run build
 
 RUN chown -R root:0 /app/dist && chmod -R g+rwX /app/dist
