@@ -40,6 +40,8 @@ class TestGetData(unittest.TestCase):
             "Q3": {"1": "40", "2": "100", "3": "80", "4": "30"},
         }
 
+        mock_agent_pool.all_distributions.return_value = self.distribution
+
     def test_make_distributions_readable(self):
         """Test the method make_distributions_readable."""
         should_be = {
@@ -49,3 +51,13 @@ class TestGetData(unittest.TestCase):
         }
         dist = self.get_data.make_distributions_readable(self.distribution)
         self.assertEqual(should_be, dist)
+
+    def test_get_all_distributions(self):
+        """Test the method get_all_distributions."""
+        expected_output = {
+            "gender": {"female": "100", "male": "200", "other": "300"},
+            "when": {"Tieto puuttuu": "20", "now": "222"},
+            "politics": {"liberal": "40", "2": "100", "3": "80", "conservative": "30"},
+        }
+        actual_output = self.get_data.get_all_distributions()
+        self.assertEqual(actual_output, expected_output)
