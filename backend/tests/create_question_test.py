@@ -16,7 +16,7 @@ class TestCreateQuestions(unittest.TestCase):
 
     def test_get_questions(self):
         """Test that the questions are returned in a dictionary in the right form"""
-        should_be = {"Q1": "How old are you", "Q2": "Who are you", "Q3": "What are you"}
+        should_be = {"Q1": "How old are you", "Q2": "Who are you", "Q3": "What are you", "Q4": "Where do you live"}
         questions = get_questions(self.questions_file_path)
         self.assertEqual(should_be, questions)
 
@@ -46,9 +46,14 @@ class TestCreateQuestions(unittest.TestCase):
         }
         self.assertEqual(should_be, questions["Q2"])
 
+    def test_create_questions_no_choices(self):
+        """Test that questions without answer choices are skipped."""
+        survey = create_questions(self.questions_file_path, self.answers_file_path)
+        questions = survey.questions()
+        self.assertNotIn("Q4", questions)
+
     def test_get_answer_choices_invalid_format(self):
         """Test that ValueError is raised when an answer choice is incorrectly formatted."""
         with self.assertRaises(ValueError) as context:
             get_answer_choices(self.invalid_answers_file_path)
-
         self.assertIn("Expected an integer", str(context.exception))
