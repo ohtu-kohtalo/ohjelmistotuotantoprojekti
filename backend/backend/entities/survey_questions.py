@@ -36,3 +36,7 @@ class SurveyQuestions:
     def questions(self) -> dict:
         """Return the questions"""
         return self.__questions
+
+    def question(self, index):
+        """Returns a question by the given index."""
+        return self.__questions[index]

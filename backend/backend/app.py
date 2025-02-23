@@ -5,6 +5,7 @@ from .key_config import CSV_FILE_PATH, QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH
 from .services.create_agent_pool import create_agent_pool
 from .load_dataset import load_dataset
 from .services.create_questions import create_questions
+from .services.get_data import GetData
 
 
 app = Flask(__name__)
@@ -12,12 +13,14 @@ CORS(app)
 
 dataset = load_dataset(CSV_FILE_PATH)
 agent_pool = create_agent_pool(dataset)
+survey = create_questions(QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH)
+get_data = GetData(survey, agent_pool)
 
 
 @app.route("/", methods=["GET"])
 def index():
     """Returns a JSON response containing the answer distributions of all questions."""
-    distributions = agent_pool.all_distributions()
+    distributions = get_data.get_all_distributions()
     distributions = jsonify(distributions)
     return distributions
 
@@ -34,7 +37,7 @@ def create_agent():
         Response: A JSON response containing the generated agents.
     """
 
-    distributions = agent_pool.all_distributions()
+    distributions = get_data.get_all_distributions()
     response = (
         "# Backend is being reworked"
         f"\n\n## Distributions of the answers:\n {distributions}"
