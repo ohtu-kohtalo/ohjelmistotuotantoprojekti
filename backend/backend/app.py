@@ -25,6 +25,10 @@ get_data = GetData(survey, agent_pool)
 ai_model = get_gemini_connection(GEMINI_API_KEY)
 gemini = Gemini(ai_model)
 
+mock_dataset = load_dataset("./data/15_mock_agents.csv")
+mock_agent_pool = create_agent_pool(mock_dataset)
+get_mock_data = GetData(survey, mock_agent_pool)
+
 
 @app.route("/", methods=["GET"])
 def index():
@@ -46,7 +50,7 @@ def create_agent():
         Response: A JSON response containing the generated agents.
     """
 
-    distributions = get_data.get_all_distributions()
+    distributions = get_mock_data.get_all_distributions()
     data = request.get_json()
     company = data.get("company")
     answers = gemini.get_response(
@@ -55,7 +59,7 @@ def create_agent():
     response = (
         "# Backend is being reworked"
         f"\n\n## LLM response\n {answers}"
-        f"\n\n## Distributions of the answers in the dataset\n {distributions}"
+        f"\n\n## Distributions of the answers in the mock dataset\n {distributions}"
     )
     response = {"message": response}
     response = jsonify(response)

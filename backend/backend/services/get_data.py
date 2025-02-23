@@ -5,7 +5,7 @@ class GetData:
         survey (SurveyQuestions):
             A SurveyQuestions object that has the questions and answer choices.
         agent_pool (AgentPool):
-            An AgentPool object that has the agents and their data."""
+            An AgentPool object that has the agents and their answers to questions."""
 
     def __init__(self, survey, agent_pool):
         self.survey = survey
