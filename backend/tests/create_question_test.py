@@ -16,7 +16,12 @@ class TestCreateQuestions(unittest.TestCase):
 
     def test_get_questions(self):
         """Test that the questions are returned in a dictionary in the right form"""
-        should_be = {"Q1": "How old are you", "Q2": "Who are you", "Q3": "What are you", "Q4": "Where do you live"}
+        should_be = {
+            "Q1": "How old are you",
+            "Q2": "Who are you",
+            "Q3": "What are you",
+            "Q4": "Where do you live",
+        }
         questions = get_questions(self.questions_file_path)
         self.assertEqual(should_be, questions)
 
