@@ -40,6 +40,10 @@ class AgentPool:
             "Q17D",
         ]
 
+    def agents(self):
+        """Return the agents in a list."""
+        return self.__agents
+
     def answer_distribution(self, question: str) -> dict:
         """Get the distribution of the answers given by the agents.
 
