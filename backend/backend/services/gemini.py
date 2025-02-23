@@ -1,17 +1,12 @@
-from ..gemini_config import get_gemini_connection
-
-
 class Gemini:
     """
     Handles API for Gemini.
 
-    Methods
-    -------
-        get_response(prompt):
-            Returns the response to the given prompt.
+    Attributes:
+        ai_model: API for Gemini.
     """
 
-    def __init__(self, ai_model=get_gemini_connection()):
+    def __init__(self, ai_model):
         self.__ai_model = ai_model
 
     def get_response(self, prompt: str) -> str:
