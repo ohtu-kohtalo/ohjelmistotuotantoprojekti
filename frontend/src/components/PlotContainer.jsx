@@ -6,6 +6,7 @@ import clusterIcon from "../assets/clustering.png";
 import OptionContainer from "./OptionContainer";
 import DataContainer from "./DataContainer";
 import ScatterPlot from "./ScatterPlot";
+import StackedBarChart from "./StackedBarChart";
 
 const PlotContainer = ({ agentData }) => {
   const [chartType, setChartType] = useState("placeholder");
@@ -20,14 +21,14 @@ const PlotContainer = ({ agentData }) => {
     { name: "Agent C", age: 32, gender: "Male", income: 45000, response: 4 },
     { name: "Agent D", age: 29, gender: "Female", income: 35000, response: 5 },
     { name: "Agent E", age: 22, gender: "Male", income: 28000, response: 2 },
-    { name: "Agent F", age: 35, gender: "Female", income: 52000, response: 4 },
+    { name: "Agent F", age: 45, gender: "Female", income: 52000, response: 4 },
     { name: "Agent G", age: 28, gender: "Male", income: 39000, response: 3 },
     { name: "Agent H", age: 45, gender: "Female", income: 70000, response: 5 },
     { name: "Agent I", age: 31, gender: "Male", income: 48000, response: 2 },
     { name: "Agent J", age: 27, gender: "Female", income: 34000, response: 1 },
     { name: "Agent K", age: 38, gender: "Male", income: 56000, response: 4 },
-    { name: "Agent L", age: 26, gender: "Female", income: 31000, response: 3 },
-    { name: "Agent M", age: 30, gender: "Male", income: 42000, response: 5 },
+    { name: "Agent L", age: 66, gender: "Female", income: 31000, response: 3 },
+    { name: "Agent M", age: 50, gender: "Male", income: 42000, response: 5 },
   ];
 
   // TODO: Placeholder for agent data handling in the future
@@ -73,7 +74,9 @@ const PlotContainer = ({ agentData }) => {
           ) : chartType === "pie" ? (
             <p>Now displaying Pie Chart</p>
           ) : chartType === "bar" ? (
-            <p>Now displaying Bar Chart</p>
+            <StackedBarChart
+              data={sampleData}
+              xAxis={selectedX}/>
           ) : (
             <p>Select graph type to display</p>
           )}
