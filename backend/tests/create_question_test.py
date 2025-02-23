@@ -12,6 +12,7 @@ class TestCreateQuestions(unittest.TestCase):
     def setUp(self):
         self.questions_file_path = "tests/data/question_test.csv"
         self.answers_file_path = "tests/data/answer_choices_test.csv"
+        self.invalid_answers_file_path = "tests/data/invalid_answer_choices_test.csv"
 
     def test_get_questions(self):
         """Test that the questions are returned in a dictionary in the right form"""
@@ -44,3 +45,10 @@ class TestCreateQuestions(unittest.TestCase):
             "answer_choices": {"1": "cat", "2": "dog", "3": "you", "4": "I"},
         }
         self.assertEqual(should_be, questions["Q2"])
+
+    def test_get_answer_choices_invalid_format(self):
+        """Test that ValueError is raised when an answer choice is incorrectly formatted."""
+        with self.assertRaises(ValueError) as context:
+            get_answer_choices(self.invalid_answers_file_path)
+
+        self.assertIn("Expected an integer", str(context.exception))
