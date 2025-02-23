@@ -61,7 +61,7 @@ class GetData:
             prompt = self.add_texts_to_beginning_and_end(prompt, question)
             prompts.append(prompt)
 
-        return "\n\n".join(prompts)
+        return prompts
 
     def list_answer_choices(self, question_dict: dict) -> str:
         """Convert the answer choices to a numbered list."""

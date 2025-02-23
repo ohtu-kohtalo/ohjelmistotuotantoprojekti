@@ -53,12 +53,8 @@ def create_agent():
     data = request.get_json()
     company = data.get("company")
     prompts = get_mock_data.get_prompts(company)
-    # answers = gemini.get_response(
-    #     f"Create a customer profile for this company: {company}"
-    # )
-    response = (
-        "# Backend is being reworked" f"\n\n## Prompts for the mock agents\n {prompts}"
-    )
+    answers = gemini.get_parallel_responses(prompts)
+    response = f"# Answers by the mock agents\n {answers}"
     response = {"message": response}
     response = jsonify(response)
     return response
