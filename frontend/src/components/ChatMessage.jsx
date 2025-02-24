@@ -3,40 +3,30 @@ import MarkdownRenderer from "./MarkdownRenderer";
 
 const ChatMessage = ({ message }) => {
   return (
-    <div className={`chat-message ${message.type}`}>
-      <strong>{message.type === "query" ? "Query Parameters:" : ""}</strong>
-      {<hr />}
-      {/* Render Query Parameters as Bullet Points */}
+    <div className="chat-message">
       {message.type === "query" ? (
-        <ul>
-          {message.text && (
-            <li>
-              <strong>Company:</strong> {message.text}
-            </li>
-          )}
-          {message.industry && (
-            <li>
-              <strong>Industry:</strong> {message.industry}
-            </li>
-          )}
-          {message.website && (
-            <li>
-              <strong>Website:</strong> {message.website}
-            </li>
-          )}
-          {message.agentCount && (
-            <li>
-              <strong>Agent Count:</strong> {message.agentCount}
-            </li>
-          )}
-        </ul>
+        <div className="query-parameters">
+          <h2>Query Parameters</h2>
+          <ul>
+            {message.text && (
+              <li>
+                <strong>Company:</strong> {message.text}
+              </li>
+            )}
+            {message.agentCount && (
+              <li>
+                <strong>Agent Count:</strong> {message.agentCount}
+              </li>
+            )}
+          </ul>
+        </div>
       ) : (
-        <div>
-          <MarkdownRenderer markdownText={message.text} />
+        <div className="agent-responses">
+          <div className="agent-answer-container">
+            <MarkdownRenderer markdownText={message.text} />
+          </div>
           {message.error_status && (
-            <p style={{ color: "red", fontWeight: "bold", marginTop: "-10px" }}>
-              {message.error_status}
-            </p>
+            <p className="error-message">{message.error_status}</p>
           )}
         </div>
       )}
