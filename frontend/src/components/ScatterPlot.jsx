@@ -21,7 +21,8 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .attr("height", height)
       .attr("class", "scatterplot-container");
 
-    svg.append("rect")
+    svg
+      .append("rect")
       .attr("x", margin.left)
       .attr("y", margin.top)
       .attr("width", width - margin.left - margin.right)
@@ -59,15 +60,27 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .range(["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF"]);
 
     // Add grid lines
-    svg.append("g")
+    svg
+      .append("g")
       .attr("class", "grid")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(xScale).tickSize(-height + margin.top + margin.bottom).tickFormat(""));
+      .call(
+        d3
+          .axisBottom(xScale)
+          .tickSize(-height + margin.top + margin.bottom)
+          .tickFormat(""),
+      );
 
-    svg.append("g")
+    svg
+      .append("g")
       .attr("class", "grid")
       .attr("transform", `translate(${margin.left}, 0)`)
-      .call(d3.axisLeft(yScale).tickSize(-width + margin.left + margin.right).tickFormat(""));
+      .call(
+        d3
+          .axisLeft(yScale)
+          .tickSize(-width + margin.left + margin.right)
+          .tickFormat(""),
+      );
 
     // Add X axis
     const xAxisElement = svg
@@ -93,7 +106,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(yScale).ticks(5).tickFormat(d3.format("d"))) // Format as whole numbers (1-5)
       .attr("class", "axis");
-    
+
     yAxisElement
       .append("text")
       .attr("class", "y-axis-label")
@@ -103,10 +116,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .text("Response score");
 
     // Create tooltip
-    const tooltip = d3
-      .select("body")
-      .append("div")
-      .attr("class", "tooltip");
+    const tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
     // Add data points
     svg

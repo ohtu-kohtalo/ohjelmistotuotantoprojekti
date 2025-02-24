@@ -20,7 +20,8 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("width", width)
       .attr("height", height);
 
-    svg.append("rect")
+    svg
+      .append("rect")
       .attr("x", margin.left)
       .attr("y", margin.top)
       .attr("width", width - margin.left - margin.right)
@@ -48,13 +49,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         else groupedData["60+"].push(d.response);
       });
     } else if (xAxis === "income") {
-      categories = [
-        "10k-20k",
-        "20k-30k",
-        "30k-40k",
-        "50k-100k",
-        "100k+",
-      ];
+      categories = ["10k-20k", "20k-30k", "30k-40k", "50k-100k", "100k+"];
       groupedData = {
         "10k-20k": [],
         "20k-30k": [],
@@ -91,53 +86,73 @@ const StackedBarChart = ({ data, xAxis }) => {
       .range([margin.left, width - margin.right])
       .padding(0.2);
 
-    const yScale = d3.scaleLinear().domain([0, 5]).range([height - margin.bottom, margin.top]);
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, 5])
+      .range([height - margin.bottom, margin.top]);
 
-    const colorScale = d3.scaleOrdinal().domain(categories).range(d3.schemeCategory10);
+    const colorScale = d3
+      .scaleOrdinal()
+      .domain(categories)
+      .range(d3.schemeCategory10);
 
-    svg.append("g")
-        .attr("class", "grid")
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale).tickSize(-height + margin.top + margin.bottom).tickFormat(""));
+    svg
+      .append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(
+        d3
+          .axisBottom(xScale)
+          .tickSize(-height + margin.top + margin.bottom)
+          .tickFormat(""),
+      );
 
-    svg.append("g")
-        .attr("class", "grid")
-        .attr("transform", `translate(${margin.left}, 0)`)
-        .call(d3.axisLeft(yScale).tickSize(-width + margin.left + margin.right).tickFormat(""));
+    svg
+      .append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(${margin.left}, 0)`)
+      .call(
+        d3
+          .axisLeft(yScale)
+          .tickSize(-width + margin.left + margin.right)
+          .tickFormat(""),
+      );
 
     // Add X axis
-    const xAxisElement = svg.append("g")
+    const xAxisElement = svg
+      .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(xScale))
       .attr("class", "axis");
 
-    xAxisElement.append("text")
+    xAxisElement
+      .append("text")
       .attr("x", width / 2)
       .attr("y", 40)
       .attr("class", "x-axis-label")
       .text(xAxis);
 
     // Add Y axis (response scores)
-    const yAxisElement= svg.append("g")
+    const yAxisElement = svg
+      .append("g")
       .attr("transform", `translate(${margin.left}, 0)`)
       .call(d3.axisLeft(yScale))
       .attr("class", "axis");
 
-    yAxisElement.append("text")
+    yAxisElement
+      .append("text")
       .attr("x", -height / 2)
-      .attr("y", -40) 
+      .attr("y", -40)
       .attr("class", "y-axis-label")
       .attr("transform", "rotate(-90)")
-      .text("Response Score");  
+      .text("Response Score");
 
     // Create tooltip
-    const tooltip = d3
-      .select("body")
-      .append("div")
-      .attr("class", "tooltip")
+    const tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
     // Draw bars
-    svg.selectAll("rect")
+    svg
+      .selectAll("rect")
       .data(avgData)
       .enter()
       .append("rect")
@@ -149,7 +164,7 @@ const StackedBarChart = ({ data, xAxis }) => {
       .on("mouseover", (event, d) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.category}</strong><br>
-          Avg Score: ${d.avg.toFixed(2)}`
+          Avg Score: ${d.avg.toFixed(2)}`,
         );
       })
       .on("mousemove", (event) => {

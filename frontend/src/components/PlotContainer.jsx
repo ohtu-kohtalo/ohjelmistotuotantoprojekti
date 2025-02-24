@@ -73,13 +73,9 @@ const PlotContainer = ({ agentData }) => {
               clusterBy="response"
             />
           ) : chartType === "pie" ? (
-            <PieChart
-              data={sampleData}
-              category={selectedX}/>
+            <PieChart data={sampleData} category={selectedX} />
           ) : chartType === "bar" ? (
-            <StackedBarChart
-              data={sampleData}
-              xAxis={selectedX}/>
+            <StackedBarChart data={sampleData} xAxis={selectedX} />
           ) : (
             <p>Select graph type to display</p>
           )}
