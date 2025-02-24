@@ -306,6 +306,68 @@ select option {
   border-color: #007bff;
 }
 
+.scatterplot-container {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.grid line {
+  stroke: #dcdcdc;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke: none;
+}
+
+.axis path,
+.axis line {
+  stroke: #666;
+  stroke-width: 0.8px;
+}
+
+.axis text {
+  font-size: 12px;
+  fill: #333;
+}
+
+.x-axis-label {
+  font-size: 14px;
+  fill: #333;
+  font-weight: bold;
+}
+
+.y-axis-label {
+  font-size: 14px;
+  fill: #333;
+  font-weight: bold;
+}
+
+.scatter-point {
+  stroke: white;
+  stroke-width: 1px;
+  fill-opacity: 0.7;
+  transition: fill-opacity 0.3s ease, r 0,3s ease;
+}
+
+.scatter-point:hover {
+  fill-opacity: 1;
+  r: 8px;
+  stroke: black;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 12px;
+  visibility: hidden;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 /* Chat display styling */
 .chat-message {
   margin-bottom: 15px;

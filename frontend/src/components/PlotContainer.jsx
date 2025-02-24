@@ -7,6 +7,7 @@ import OptionContainer from "./OptionContainer";
 import DataContainer from "./DataContainer";
 import ScatterPlot from "./ScatterPlot";
 import StackedBarChart from "./StackedBarChart";
+import PieChart from "./PieChart";
 
 const PlotContainer = ({ agentData }) => {
   const [chartType, setChartType] = useState("placeholder");
@@ -72,7 +73,9 @@ const PlotContainer = ({ agentData }) => {
               clusterBy="response"
             />
           ) : chartType === "pie" ? (
-            <p>Now displaying Pie Chart</p>
+            <PieChart
+              data={sampleData}
+              category={selectedX}/>
           ) : chartType === "bar" ? (
             <StackedBarChart
               data={sampleData}

@@ -18,7 +18,15 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
     const svg = d3
       .select(svgRef.current)
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .attr("class", "scatterplot-container");
+
+    svg.append("rect")
+      .attr("x", margin.left)
+      .attr("y", margin.top)
+      .attr("width", width - margin.left - margin.right)
+      .attr("height", height - margin.top - margin.bottom)
+      .attr("fill", "#ECECEC"); // Light gray
 
     // Check if X-Axis is categorical (e.g., gender)
     const isCategorical = typeof data[0][xAxis] === "string";
@@ -50,6 +58,17 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .domain([...new Set(data.map((d) => d[clusterBy]))])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF"]);
 
+    // Add grid lines
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(xScale).tickSize(-height + margin.top + margin.bottom).tickFormat(""));
+
+    svg.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(${margin.left}, 0)`)
+      .call(d3.axisLeft(yScale).tickSize(-width + margin.left + margin.right).tickFormat(""));
+
     // Add X axis
     const xAxisElement = svg
       .append("g")
@@ -58,40 +77,36 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
         isCategorical
           ? d3.axisBottom(xScale) // Categorical axis
           : d3.axisBottom(xScale).ticks(6), // Numerical axis
-      );
+      )
+      .attr("class", "axis");
 
     xAxisElement
       .append("text")
       .attr("x", width / 2)
+      .attr("class", "x-axis-label")
       .attr("y", 35)
-      .attr("fill", "black")
-      .style("text-anchor", "middle")
       .text(xAxis);
 
     // Add Y axis (Response scores)
-    svg
+    const yAxisElement = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(yScale).ticks(5).tickFormat(d3.format("d"))) // Format as whole numbers (1-5)
+      .attr("class", "axis");
+    
+    yAxisElement
       .append("text")
+      .attr("class", "y-axis-label")
       .attr("x", -height / 2)
       .attr("y", -40)
-      .attr("fill", "black")
-      .style("text-anchor", "middle")
       .attr("transform", "rotate(-90)")
-      .text("Response Score");
+      .text("Response score");
 
     // Create tooltip
     const tooltip = d3
       .select("body")
       .append("div")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("padding", "5px")
-      .style("border", "1px solid black")
-      .style("border-radius", "5px")
-      .style("visibility", "hidden")
-      .style("font-size", "12px");
+      .attr("class", "tooltip");
 
     // Add data points
     svg
@@ -107,7 +122,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
       .attr("cy", (d) => yScale(d[clusterBy])) // Y-axis is response scores
       .attr("r", 6)
       .attr("fill", (d) => colorScale(d[clusterBy])) // Color based on response scores
-      .style("cursor", "pointer")
+      .attr("class", "scatter-point")
       .on("mouseover", (event, d) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.name}</strong><br>
