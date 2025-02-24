@@ -7,7 +7,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response" }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    const width = 500;
+    const width = 450;
     const height = 300;
     const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 

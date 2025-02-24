@@ -20,6 +20,13 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("width", width)
       .attr("height", height);
 
+    svg.append("rect")
+      .attr("x", margin.left)
+      .attr("y", margin.top)
+      .attr("width", width - margin.left - margin.right)
+      .attr("height", height - margin.top - margin.bottom)
+      .attr("fill", "#ECECEC"); // Light gray
+
     // Define categories and bin the data
     let categories = [];
     let groupedData = {};
@@ -88,43 +95,46 @@ const StackedBarChart = ({ data, xAxis }) => {
 
     const colorScale = d3.scaleOrdinal().domain(categories).range(d3.schemeCategory10);
 
+    svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(xScale).tickSize(-height + margin.top + margin.bottom).tickFormat(""));
+
+    svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(yScale).tickSize(-width + margin.left + margin.right).tickFormat(""));
+
     // Add X axis
     const xAxisElement = svg.append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(xScale))
+      .attr("class", "axis");
 
     xAxisElement.append("text")
       .attr("x", width / 2)
       .attr("y", 40)
-      .attr("fill", "black")
-      .style("text-anchor", "middle")
-      .style("font-size", "14px")
+      .attr("class", "x-axis-label")
       .text(xAxis);
 
     // Add Y axis (response scores)
     const yAxisElement= svg.append("g")
       .attr("transform", `translate(${margin.left}, 0)`)
-      .call(d3.axisLeft(yScale));
+      .call(d3.axisLeft(yScale))
+      .attr("class", "axis");
 
     yAxisElement.append("text")
       .attr("x", -height / 2)
       .attr("y", -40) 
-      .attr("fill", "black")
-      .style("text-anchor", "middle")
-      .style("font-size", "14px")
+      .attr("class", "y-axis-label")
       .attr("transform", "rotate(-90)")
       .text("Response Score");  
 
     // Create tooltip
-    const tooltip = d3.select("body")
+    const tooltip = d3
+      .select("body")
       .append("div")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("padding", "5px")
-      .style("border", "1px solid black")
-      .style("border-radius", "5px")
-      .style("visibility", "hidden")
-      .style("font-size", "12px");
+      .attr("class", "tooltip")
 
     // Draw bars
     svg.selectAll("rect")

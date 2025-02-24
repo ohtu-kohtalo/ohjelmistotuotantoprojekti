@@ -41,13 +41,13 @@ const PlotContainer = ({ agentData }) => {
         <div className="plot-header">
           <h3 className="plot-title">Agent Pool Visualization</h3>
           <div className="chart-buttons">
-            <button onClick={() => setChartType("pie")}>
+            <button onClick={() => setChartType("pie") & setIsClustered(false)}>
               <img src={pieChartIcon} alt="Pie Chart" className="chart-icon" />
             </button>
-            <button onClick={() => setChartType("bar")}>
+            <button onClick={() => setChartType("bar") & setIsClustered(false)}>
               <img src={barChartIcon} alt="Bar Chart" className="chart-icon" />
             </button>
-            <button onClick={() => setIsClustered(!isClustered)}>
+            <button onClick={() => setIsClustered(true)}>
               <img
                 src={clusterIcon}
                 alt="Clustered Data"
