@@ -10,7 +10,7 @@ import PlotContainer from "./components/PlotContainer";
 const App = () => {
   // Initial states for user input
   const [company, setCompany] = useState("");
-  const [industry, setIndustry] = useState("");
+  // const [industry, setIndustry] = useState("");
   const [agentCount, setAgentCount] = useState("");
 
   // Initial states for response and error handling
@@ -81,10 +81,10 @@ const App = () => {
       return;
     }
 
-    if (!industry.trim()) {
-      showError("⚠️ Industry field cannot be empty");
-      return;
-    }
+    // if (!industry.trim()) {
+    //   showError("⚠️ Industry field cannot be empty");
+    //   return;
+    // }
 
     setIsLoading(true);
 
@@ -96,7 +96,7 @@ const App = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           company: company,
-          industry: industry,
+          // industry: industry,
           agent_count: agentCount,
         }),
       });
@@ -112,7 +112,7 @@ const App = () => {
         {
           type: "query",
           text: company,
-          industry: industry,
+          // industry: industry,
           agentCount: agentCount,
         },
         { type: "bot", text: data.message || "No response message received." },
@@ -124,7 +124,7 @@ const App = () => {
         {
           type: "query",
           text: company,
-          industry: industry,
+          // industry: industry,
           agentCount: agentCount,
         },
         {
@@ -157,7 +157,7 @@ const App = () => {
   // Helper function to reset form fields
   const resetForm = () => {
     setCompany("");
-    setIndustry("");
+    // setIndustry("");
     setAgentCount("");
   };
 
@@ -173,8 +173,8 @@ const App = () => {
       <QueryForm
         company={company}
         setCompany={setCompany}
-        industry={industry}
-        setIndustry={setIndustry}
+        // industry={industry}
+        // setIndustry={setIndustry}
         agentCount={agentCount}
         setAgentCount={setAgentCount}
         handleSubmit={handleSubmit}

@@ -3,17 +3,18 @@ import React from "react";
 const QueryForm = ({
   company,
   setCompany,
-  industry,
-  setIndustry,
+  // industry,
+  // setIndustry,
   agentCount,
   setAgentCount,
   handleSubmit,
 }) => {
   // Validation checks
   const isCompanyValid = company.trim() !== "";
-  const isIndustryValid = industry.trim() !== "";
+  // const isIndustryValid = industry.trim() !== "";
   const isSubmitDisabled =
-    !isCompanyValid || !isIndustryValid || agentCount === "";
+    // !isCompanyValid || !isIndustryValid || agentCount === "";
+    !isCompanyValid || agentCount === "";
 
   return (
     <form onSubmit={handleSubmit} className="form" data-testid="query-form">
@@ -38,7 +39,7 @@ const QueryForm = ({
         </div>
       </div>
 
-      <div className="input-container">
+      {/* <div className="input-container">
         <label htmlFor="industry" className="label">
           Industry <span className="required-icon">*</span>
         </label>
@@ -57,7 +58,7 @@ const QueryForm = ({
             {isIndustryValid ? "✅" : "❌"}
           </span>
         </div>
-      </div>
+      </div> */}
 
       <label htmlFor="agentCount" className="label">
         Number of Agents <span className="required-icon">*</span>
@@ -74,11 +75,12 @@ const QueryForm = ({
         <option value="" disabled hidden>
           Select agent count...
         </option>
-        <option value="1">1 Agent</option>
+        {/* <option value="1">1 Agent</option>
         <option value="2">2 Agents</option>
         <option value="3">3 Agents</option>
         <option value="4">4 Agents</option>
-        <option value="5">5 Agents</option>
+        <option value="5">5 Agents</option> */}
+        <option value="15">15 Agents</option>
       </select>
 
       <button
