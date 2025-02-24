@@ -33,7 +33,7 @@ class TestGetData(unittest.TestCase):
 
         mock_agent1 = Mock()
         mock_agent1.get_all_answers.return_value = {"Q1": "1", "Q2": "1"}
-        
+
         mock_agent2 = Mock()
         mock_agent2.get_all_answers.return_value = {"Q1": "2", "Q3": "4"}
 
