@@ -1,3 +1,6 @@
+import asyncio
+
+
 class Gemini:
     """
     Handles API for Gemini.
@@ -17,3 +20,40 @@ class Gemini:
         """
         response = self.__ai_model.generate_content(prompt)
         return response.text
+
+    def get_parallel_responses(self, prompts: list[str]) -> list[str]:
+        """Send multiple prompts to Gemini in parallel.
+
+        Args:
+            list: A list of prompts.
+
+        Returns:
+            list: A list of responses by Gemini."""
+        try:
+            response = asyncio.run(self._create_responses(prompts))
+            response = self._format_response(response)
+        except Exception as e:
+            return f"**##Error**\n\nError message: {e}\n\nYou probably exceeded the 15 requests per minute quota for the API-key"
+
+        return response
+
+    async def _create_responses(self, prompts):
+        """Create the asyncio tasks and run them concurrently."""
+        tasks = [self._generate_answer(prompt) for prompt in prompts]
+        results = await asyncio.gather(*tasks)
+
+        return results
+
+    async def _generate_answer(self, prompt):
+        """Send a single text prompt to the API and return the response."""
+        response = await self.__ai_model.generate_content_async(prompt)
+        return response.text
+
+    def _format_response(self, responses: list[str]) -> str:
+        """Turns the response to markdown text and returns it."""
+        text = ""
+        for response in responses:
+            text += "## Answer\n\n"
+            text += response
+
+        return text

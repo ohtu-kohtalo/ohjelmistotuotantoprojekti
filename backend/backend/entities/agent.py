@@ -39,3 +39,7 @@ class Agent:
             str/None: The answer given by the agent or None if the question does not exists.
         """
         return self.__info.get(question, None)
+
+    def get_all_answers(self) -> dict:
+        """Returns all of the questions and answers."""
+        return self.__info

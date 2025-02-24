@@ -11,6 +11,11 @@ class TestAgentPool(unittest.TestCase):
         a4 = Agent({"T2": "70", "T1": "female"})
         a5 = Agent({"T2": "40", "T1": "female"})
         self.agent_pool = AgentPool([a1, a2, a3, a4, a5])
+        self.agents = [a1, a2, a3, a4, a5]
+
+    def test_get_agents(self):
+        """Test that agents method returns the correct list of agents."""
+        self.assertEqual(self.agent_pool.agents(), self.agents)
 
     def test_get_answer_distribution(self):
         """Test that get_answer_distribution returns the distribution of a answer."""

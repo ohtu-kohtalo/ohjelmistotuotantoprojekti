@@ -34,3 +34,21 @@ class TestSurveyQuestions(unittest.TestCase):
 
         with self.assertRaises(RuntimeError):
             self.survey.add_question("Q1", "How are you", {"1": "good"})
+
+    def test_question(self):
+        """Test that the question can be retrieved by index."""
+        choices = {
+            "1": "less than 18 years old",
+            "2": "18 - 64 years old",
+            "3": "65 or more years old",
+        }
+        self.survey.add_question("Q1", "How old are you", choices)
+        expected = {
+            "question": "How old are you",
+            "answer_choices": {
+                "1": "less than 18 years old",
+                "2": "18 - 64 years old",
+                "3": "65 or more years old",
+            },
+        }
+        self.assertEqual(expected, self.survey.question("Q1"))

@@ -43,3 +43,61 @@ class GetData:
             new_dist[question_text] = new_answers
 
         return new_dist
+
+    def get_prompts(self, question: str) -> list[str]:
+        """Creates one prompt for each agent. The prompt asks the LLM to answer the
+        question based on the information given about the agent.
+
+        Returns:
+            list: The prompts in text form in a list."""
+
+        prompts = []
+        for agent in self.agent_pool.agents():
+            prompt = ""
+            answers = agent.get_all_answers()
+            for question_id, answer in answers.items():
+                prompt += self.add_question_and_answer_to_prompt(question_id, answer)
+
+            prompt = self.add_texts_to_beginning_and_end(prompt, question)
+            prompts.append(prompt)
+
+        return prompts
+
+    def list_answer_choices(self, question_dict: dict) -> str:
+        """Convert the answer choices to a numbered list."""
+        choice_list = ""
+        for number, choice in question_dict["answer_choices"].items():
+            choice_list += f"\n{number} {choice}"
+
+        return choice_list
+
+    def answer_to_text(self, answer: str, question_dict: dict) -> str:
+        """Convert the answer from a number to text."""
+        return question_dict["answer_choices"][answer]
+
+    def add_question_and_answer_to_prompt(self, question_id: str, answer: str):
+        """Lists the question, answer_choices and the agent's answer and returns them in
+        a string."""
+        prompt = ""
+        question_dict = self.survey.question(question_id)
+        answer_choices = self.list_answer_choices(question_dict)
+        answer_in_text = self.answer_to_text(answer, question_dict)
+
+        prompt += f"\nKysymys: {question_dict["question"]}"
+        prompt += f"\nVastausvaihtoehdot: {answer_choices}"
+        prompt += f"\nVastaus: {answer_in_text}"
+        return prompt
+
+    def add_texts_to_beginning_and_end(self, prompt: str, question: str) -> str:
+        """Add texts that describe what the LLM should do with the agent."""
+        beginning = (
+            "Minulla on kyselytietoja henkilöistä. Näytän sinulle nyt yhden "
+            "henkilön tiedot. Olen listannut alle kysymykset, "
+            "vastausvaihtoehdot ja henkilön antaman vastauksen.\n"
+        )
+        end = (
+            "\n\nEsitän sinulle nyt kysymyksen ja haluan että vastaat "
+            "kysymykseen, niin kuin olettaisit kuvaillun henkilön vastaavan. Anna vain "
+            f"vastaus kysymykseen äläkä mitään muuta. Kysymys on: {question}"
+        )
+        return beginning + prompt + end

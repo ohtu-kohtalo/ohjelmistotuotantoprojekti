@@ -50,17 +50,11 @@ def create_agent():
         Response: A JSON response containing the generated agents.
     """
 
-    distributions = get_mock_data.get_all_distributions()
     data = request.get_json()
     company = data.get("company")
-    answers = gemini.get_response(
-        f"Create a customer profile for this company: {company}"
-    )
-    response = (
-        "# Backend is being reworked"
-        f"\n\n## LLM response\n {answers}"
-        f"\n\n## Distributions of the answers in the mock dataset\n {distributions}"
-    )
+    prompts = get_mock_data.get_prompts(company)
+    answers = gemini.get_parallel_responses(prompts)
+    response = f"# Answers by the mock agents\n {answers}"
     response = {"message": response}
     response = jsonify(response)
     return response
