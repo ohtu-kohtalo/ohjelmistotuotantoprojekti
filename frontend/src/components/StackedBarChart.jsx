@@ -20,7 +20,7 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("width", width)
       .attr("height", height);
 
-/*     svg
+    /*     svg
       .append("rect")
       .attr("x", margin.left)
       .attr("y", margin.top)
@@ -185,10 +185,10 @@ const StackedBarChart = ({ data, xAxis }) => {
 
   return (
     <div className="piechart-container">
-        <h3 className="chart-title">{`Average response score categorized by ${xAxis}`}</h3>
-        <svg ref={svgRef} />
+      <h3 className="chart-title">{`Average response score categorized by ${xAxis}`}</h3>
+      <svg ref={svgRef} />
     </div>
-    );
+  );
 };
 
 export default StackedBarChart;

@@ -118,17 +118,17 @@ const PieChart = ({ data, category }) => {
       .enter()
       .append("text")
       .attr("transform", (d) => {
-        const pos = textArc.centroid(d) 
+        const pos = textArc.centroid(d);
         pos[0] *= 0.9;
         pos[1] *= 0.9;
-        return `translate(${pos})`
+        return `translate(${pos})`;
       })
       .attr("text-anchor", "middle")
       .style("font-size", "12px")
       .style("fill", "black")
       .text((d) => {
         const percentage = ((d.data.value / totalResponses) * 100).toFixed(1);
-        return `${d.data.key} (${percentage}%)`
+        return `${d.data.key} (${percentage}%)`;
       });
 
     return () => {
