@@ -7,8 +7,8 @@ const PieChart = ({ data, category }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    const width = 400;
-    const height = 400;
+    const width = 300;
+    const height = 300;
     const radius = Math.min(width, height) / 2;
 
     d3.select(svgRef.current).selectAll("*").remove(); // Clear previous chart
@@ -24,13 +24,7 @@ const PieChart = ({ data, category }) => {
     const tooltip = d3
       .select("body")
       .append("div")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("padding", "8px")
-      .style("border", "1px solid black")
-      .style("border-radius", "5px")
-      .style("visibility", "hidden")
-      .style("font-size", "12px");
+      .attr("class", "tooltip")
 
     // Define the color scale
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -66,36 +60,50 @@ const PieChart = ({ data, category }) => {
     }));
 
     const pie = d3.pie().value((d) => d.value);
-    const arc = d3.arc().innerRadius(0).outerRadius(radius);
+    const arc = d3.arc().innerRadius(0).outerRadius(radius-10);
 
     // Draw pie slices
-    svg
-      .selectAll("path")
-      .data(pie(pieData))
-      .enter()
-      .append("path")
-      .attr("d", arc)
-      .attr("fill", (d) => color(d.data.key))
-      .attr("stroke", "white")
-      .style("stroke-width", "2px")
-      .style("cursor", "pointer")
-      .on("mouseover", (event, d) => {
+    const slices = svg
+        .selectAll("path")
+        .data(pie(pieData))
+        .enter()
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", (d) => color(d.data.key))
+        .attr("stroke", "white")
+        .style("stroke-width", "2px")
+        .style("cursor", "pointer")
+        .attr("opacity", 0.9);
+
+  // Hover effects
+    slices
+        .on("mouseover", function (event, d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("transform", "scale(1.06)")
+
         tooltip
-          .style("visibility", "visible")
-          .html(
+            .style("visibility", "visible")
+            .html(
             `<strong>${d.data.key}</strong><br>
             Answers: ${d.data.value}<br>
             Avg Score: ${d.data.avgScore}`
-          );
-      })
-      .on("mousemove", (event) => {
-        tooltip
-          .style("top", `${event.pageY - 10}px`)
-          .style("left", `${event.pageX + 10}px`);
-      })
-      .on("mouseout", () => {
+            );
+        })
+        .on("mousemove", function (event) {
+          tooltip
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mouseout", function () {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("transform", "scale(1)")
+
         tooltip.style("visibility", "hidden");
-      });
+    });
 
     // Add labels
     const textArc = d3.arc().innerRadius(radius / 2).outerRadius(radius);
@@ -117,8 +125,8 @@ const PieChart = ({ data, category }) => {
   }, [data, category]);
 
   return (
-    <div style={{ textAlign: "center", marginBottom: "10px" }}>
-      <h3>{`Distribution of answers by ${category.charAt(0).toUpperCase() + category.slice(1)}`}</h3>
+    <div className="piechart-container">
+      <h3 className="chart-title">{`Distribution of answers by ${category.charAt(0).toUpperCase() + category.slice(1)}`}</h3>
       <svg ref={svgRef} />
     </div>
   );

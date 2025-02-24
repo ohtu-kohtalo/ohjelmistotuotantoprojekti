@@ -357,6 +357,17 @@ select option {
   stroke: black;
 }
 
+.piechart-container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .tooltip {
   position: absolute;
   background: white;
