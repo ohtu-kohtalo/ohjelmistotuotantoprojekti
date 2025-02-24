@@ -154,7 +154,7 @@ select option {
   justify-content: space-between;
   margin-bottom: 20px;
   border: 2px solid #ddd;
-  width: 550px;
+  width: 600px;
   max-height: 1100px;
   padding: 0px 0px 10px 10px;
   background-color: #fff;
@@ -235,7 +235,7 @@ select option {
 /* Chart area styling */
 .plot-area {
   width: 92%;
-  height: 400px;
+  min-height: 450px;
   background-color: #f8f9fa;
   padding: 15px;
   border-radius: 8px;
@@ -243,7 +243,7 @@ select option {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
@@ -360,6 +360,8 @@ select option {
 .piechart-container {
   text-align: center;
   font-family: Arial, sans-serif;
+  position: relative;
+  overflow: visible;
 }
 
 .chart-title {

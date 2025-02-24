@@ -20,13 +20,13 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("width", width)
       .attr("height", height);
 
-    svg
+/*     svg
       .append("rect")
       .attr("x", margin.left)
       .attr("y", margin.top)
       .attr("width", width - margin.left - margin.right)
       .attr("height", height - margin.top - margin.bottom)
-      .attr("fill", "#ECECEC"); // Light gray
+      .attr("fill", "#ECECEC"); */
 
     // Define categories and bin the data
     let categories = [];
@@ -76,7 +76,7 @@ const StackedBarChart = ({ data, xAxis }) => {
     const avgData = categories.map((category) => {
       const responses = groupedData[category];
       const avg = responses.length ? d3.mean(responses) : 0;
-      return { category, avg };
+      return { category, avg, count: responses.length };
     });
 
     // Define scales
@@ -164,7 +164,8 @@ const StackedBarChart = ({ data, xAxis }) => {
       .on("mouseover", (event, d) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.category}</strong><br>
-          Avg Score: ${d.avg.toFixed(2)}`,
+          Avg Score: ${d.avg.toFixed(2)}<br>
+          Responses: ${d.count}`,
         );
       })
       .on("mousemove", (event) => {
@@ -182,7 +183,12 @@ const StackedBarChart = ({ data, xAxis }) => {
     };
   }, [data, xAxis]);
 
-  return <svg ref={svgRef} />;
+  return (
+    <div className="piechart-container">
+        <h3 className="chart-title">{`Average response score categorized by ${xAxis}`}</h3>
+        <svg ref={svgRef} />
+    </div>
+    );
 };
 
 export default StackedBarChart;

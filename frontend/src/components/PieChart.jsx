@@ -7,8 +7,8 @@ const PieChart = ({ data, category }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    const width = 300;
-    const height = 300;
+    const width = 350;
+    const height = 350;
     const radius = Math.min(width, height) / 2;
 
     d3.select(svgRef.current).selectAll("*").remove(); // Clear previous chart
@@ -106,6 +106,7 @@ const PieChart = ({ data, category }) => {
       });
 
     // Add labels
+    const totalResponses = d3.sum(pieData, (d) => d.value);
     const textArc = d3
       .arc()
       .innerRadius(radius / 2)
@@ -116,11 +117,19 @@ const PieChart = ({ data, category }) => {
       .data(pie(pieData))
       .enter()
       .append("text")
-      .attr("transform", (d) => `translate(${textArc.centroid(d)})`)
+      .attr("transform", (d) => {
+        const pos = textArc.centroid(d) 
+        pos[0] *= 0.9;
+        pos[1] *= 0.9;
+        return `translate(${pos})`
+      })
       .attr("text-anchor", "middle")
       .style("font-size", "12px")
-      .style("fill", "white")
-      .text((d) => d.data.key);
+      .style("fill", "black")
+      .text((d) => {
+        const percentage = ((d.data.value / totalResponses) * 100).toFixed(1);
+        return `${d.data.key} (${percentage}%)`
+      });
 
     return () => {
       tooltip.remove(); // Cleanup on unmount
@@ -129,7 +138,7 @@ const PieChart = ({ data, category }) => {
 
   return (
     <div className="piechart-container">
-      <h3 className="chart-title">{`Distribution of answers by ${category.charAt(0).toUpperCase() + category.slice(1)}`}</h3>
+      <h3 className="chart-title">{`Distribution of total amount of answerers based on ${category}`}</h3>
       <svg ref={svgRef} />
     </div>
   );

@@ -30,6 +30,7 @@ const PlotContainer = ({ agentData }) => {
     { name: "Agent K", age: 38, gender: "Male", income: 56000, response: 4 },
     { name: "Agent L", age: 66, gender: "Female", income: 31000, response: 3 },
     { name: "Agent M", age: 50, gender: "Male", income: 42000, response: 5 },
+    { name: "Agent N", age: 55, gender: "Male", income: 150000, response: 5 },
   ];
 
   // TODO: Placeholder for agent data handling in the future
