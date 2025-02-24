@@ -31,8 +31,14 @@ class TestGetData(unittest.TestCase):
         mock_survey = Mock()
         mock_survey.question.side_effect = side_effect_questions
 
-        mock_agent_pool = Mock()
+        mock_agent1 = Mock()
+        mock_agent1.get_all_answers.return_value = {"Q1": "1", "Q2": "1"}
+        
+        mock_agent2 = Mock()
+        mock_agent2.get_all_answers.return_value = {"Q1": "2", "Q3": "4"}
 
+        mock_agent_pool = Mock()
+        mock_agent_pool.agents = Mock(return_value=[mock_agent1, mock_agent2])
         self.get_data = GetData(mock_survey, mock_agent_pool)
 
         self.distribution = {
@@ -92,3 +98,9 @@ class TestGetData(unittest.TestCase):
             "MIDDLE PART\n", "QUESTION"
         )
         self.assertEqual(excepted, actual)
+
+    def test_get_prompts(self):
+        """Test the method get_prompts."""
+        question = "Mitä mieltä olet politiikasta?"
+        prompts = self.get_data.get_prompts(question)
+        self.assertEqual(len(prompts), 2)
