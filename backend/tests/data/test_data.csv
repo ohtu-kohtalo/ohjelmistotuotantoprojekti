@@ -1,5 +1,5 @@
-age;gender;region;level of education;occupation;political party affiliation;Overall, things are getting better in society
-20;female;Uusimaa;upper secondary education;student;The Greens;agree
-40;male;Southwest Finland;master's or equivalent level;software developer;National Coalition Party;disagree
-60;female;Pirkanmaa;bachelor's or equivalent level;accountant;Social Democratic Party;strongly agree
-80;male;North Ostrobothnia;basic education;retired;Centre Party;strongly disagree
+T1;T2;T3;T4;T5;T5B;T8;T9;T10;T11;T12;T13;T14;bv1
+1;1;5;1;4;2;3;6;7;3;1;5;4;2
+2;3;3;2;2;1;3;6;2;1;1;3;3;8
+1;5;4;5;4;1;3;6;2;3;1;1;5;10
+2;6;1;18;4;2;2;3;8;1;2;4;1;2

@@ -1,147 +1,65 @@
-import React, { useState } from "react";
+import React from "react";
 
 const QueryForm = ({
-  query,
-  setQuery,
-  selectedOption,
-  setSelectedOption,
-  customInput,
-  handleSubmit,
-  handleChange,
-  handleCustomInputChange,
-  website,
-  setWebsite,
+  company,
+  setCompany,
+  // industry,
+  // setIndustry,
   agentCount,
   setAgentCount,
+  handleSubmit,
 }) => {
-  const [isWebsiteValid, setIsWebsiteValid] = useState(null);
-
-  // Function to validate URL format
-  // Current implementation checks for URL validity
-  const isValidUrl = (url) => {
-    if (!url) return null;
-
-    try {
-      let parsedUrl = new URL(url);
-
-      // Ensure the protocol is HTTPS
-      if (parsedUrl.protocol !== "https:") {
-        return false;
-      }
-
-      // Ensure the hostname part is in the format "www.example.com"
-      const hostnameParts = parsedUrl.hostname.split(".");
-
-      // Three parts: "www", hostname, domain (organization address)
-      if (
-        hostnameParts.length < 3 ||
-        hostnameParts[0] !== "www" ||
-        hostnameParts[1].length === 0 ||
-        hostnameParts[2].length === 0
-      ) {
-        return false;
-      }
-
-      // Ensure the pathname is empty or root "/"
-      // In other words, only the 'main/index' page is allowed
-      if (parsedUrl.pathname !== "/" && parsedUrl.pathname !== "") {
-        return false;
-      }
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  // Handle website input change and validation
-  const handleWebsiteChange = (e) => {
-    const value = e.target.value;
-    setWebsite(value);
-    setIsWebsiteValid(isValidUrl(value));
-  };
-
-  // Submit button disabled if no agent count is selected,
-  // website format is invalid,
-  // company-field is empty, or industry-field is empty
+  // Validation checks
+  const isCompanyValid = company.trim() !== "";
+  // const isIndustryValid = industry.trim() !== "";
   const isSubmitDisabled =
-    agentCount === "" ||
-    isWebsiteValid === false ||
-    query.trim() === "" ||
-    customInput.trim() === "";
+    // !isCompanyValid || !isIndustryValid || agentCount === "";
+    !isCompanyValid || agentCount === "";
 
   return (
     <form onSubmit={handleSubmit} className="form" data-testid="query-form">
-      <label htmlFor="query" className="label">
-        Company Name <span className="required-icon">*</span>
-      </label>
-      <input
-        type="text"
-        id="query"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Enter company for data retrieval..."
-        className="input"
-      />
-
-      <label htmlFor="website" className="label input-container">
-        Company Website
-      </label>
-      <p>
-        <em>https://www.example.com</em>
-      </p>
-      <div className="input-wrapper">
-        <input
-          type="text"
-          id="website"
-          value={website}
-          onChange={handleWebsiteChange}
-          placeholder="Enter website URL"
-          className="input"
-        />
-        {isWebsiteValid !== null && ( // Show icon only when field is not empty
+      <div className="input-container">
+        <label htmlFor="query" className="label">
+          Company Name <span className="required-icon">*</span>
+        </label>
+        <div className="input-wrapper">
+          <input
+            type="text"
+            id="query"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="Enter company for context"
+            className="input"
+          />
           <span
-            className={`validation-icon ${isWebsiteValid ? "valid" : "invalid"}`}
+            className={`validation-icon ${isCompanyValid ? "valid" : "invalid"}`}
           >
-            {isWebsiteValid ? "✅" : "❌"}
+            {isCompanyValid ? "✅" : "❌"}
           </span>
-        )}
+        </div>
       </div>
 
-      <label htmlFor="dropdown" className="label">
-        Industry <span className="required-icon">*</span>
-      </label>
-      <input
-        type="text"
-        id="dropdown"
-        value={customInput}
-        onChange={handleCustomInputChange}
-        placeholder="Enter a description of an industry"
-        className="input"
-      />
-      {/*       
-      <select
-        id="dropdown"
-        value={selectedOption}
-        onChange={handleChange}
-        className="dropdown"
-      >
-        <option value="">Select industry...</option>
-        <option value="option1">Industry Option 1</option>
-        <option value="option2">Industry Option 2</option>
-        <option value="option3">Industry Option 3</option>
-        <option value="other">Other</option>
-      </select>
-      {selectedOption === "other" && (
-        <input
-          type="text"
-          value={customInput}
-          onChange={handleCustomInputChange}
-          placeholder="Enter industry"
-          className="input"
-        />
-      )}
- */}
+      {/* <div className="input-container">
+        <label htmlFor="industry" className="label">
+          Industry <span className="required-icon">*</span>
+        </label>
+        <div className="input-wrapper">
+          <input
+            type="text"
+            id="industry"
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            placeholder="Enter a description of an industry"
+            className="input"
+          />
+          <span
+            className={`validation-icon ${isIndustryValid ? "valid" : "invalid"}`}
+          >
+            {isIndustryValid ? "✅" : "❌"}
+          </span>
+        </div>
+      </div> */}
+
       <label htmlFor="agentCount" className="label">
         Number of Agents <span className="required-icon">*</span>
       </label>
@@ -157,11 +75,12 @@ const QueryForm = ({
         <option value="" disabled hidden>
           Select agent count...
         </option>
-        <option value="1">1 Agent</option>
+        {/* <option value="1">1 Agent</option>
         <option value="2">2 Agents</option>
         <option value="3">3 Agents</option>
         <option value="4">4 Agents</option>
-        <option value="5">5 Agents</option>
+        <option value="5">5 Agents</option> */}
+        <option value="15">15 Agents</option>
       </select>
 
       <button
@@ -170,7 +89,7 @@ const QueryForm = ({
         disabled={isSubmitDisabled}
         data-testid="submit-button"
       >
-        Submit
+        {isSubmitDisabled ? "🔒 Submit" : "🔓 Submit"}
       </button>
     </form>
   );

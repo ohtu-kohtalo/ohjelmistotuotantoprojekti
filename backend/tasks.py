@@ -3,7 +3,7 @@ from invoke import task
 
 @task
 def start(ctx):
-    ctx.run("poetry run python3 backend/app.py")
+    ctx.run("poetry run python3 -m backend.app")
 
 
 @task

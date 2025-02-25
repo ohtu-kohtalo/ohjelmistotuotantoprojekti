@@ -1,0 +1,11 @@
+coverage:
+  status:
+    project:
+      default:
+        # Overall test coverage for the project must be 70%.
+        target: 70%
+    patch:
+      default:
+        # Set a constant diff hit target of 70%. 
+        # This is the test coverage that new code in each commit must achieve.
+        target: 70%

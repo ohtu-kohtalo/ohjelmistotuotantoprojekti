@@ -4,7 +4,7 @@ RUN pip install poetry
 
 WORKDIR /app
 
-COPY . .
+COPY ../ ./
 
 RUN chown -R root:0 /app && chmod -R g+rwX /app
 
@@ -14,4 +14,4 @@ RUN poetry install --without dev
 
 EXPOSE 5500
 
-CMD ["poetry", "run", "python", "backend/app.py"]
+CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:5500", "backend.wsgi:app"]

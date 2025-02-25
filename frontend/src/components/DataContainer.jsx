@@ -21,7 +21,7 @@ const DataContainer = ({ data }) => {
   return (
     <div className="data-container">
       <h4 className="data-title">Dataset Overview</h4>
-      <p>Total Entries: {totalEntries}</p>
+      <p className="data-entries">Total Entries: {totalEntries}</p>
       <ul className="data-summary">
         {Object.entries(averages).map(([key, value]) => (
           <li key={key}>

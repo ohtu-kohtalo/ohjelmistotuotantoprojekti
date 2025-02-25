@@ -1,6 +1,6 @@
 import pandas
-from entities.agent import Agent
-from entities.agent_pool import AgentPool
+from ..entities.agent import Agent
+from ..entities.agent_pool import AgentPool
 
 
 def create_agent_pool(dataframe: pandas.DataFrame) -> AgentPool:

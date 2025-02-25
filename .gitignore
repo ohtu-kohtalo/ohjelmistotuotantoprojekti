@@ -291,7 +291,9 @@ dist
 
 # All data in the backend/data/ directory is assumed confidential
 backend/data/*
-!/data/.gitkeep
+!backend/data/answer_choices.csv
+!backend/data/question_texts.csv
+!backend/data/15_mock_agents.csv
 
 # Mac specific
 .DS_Store

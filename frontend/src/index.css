@@ -49,7 +49,7 @@
   width: 100%;
 }
 
-/* Icon styling for website */
+/* Icon styling for context-field */
 .validation-icon {
   position: absolute;
   right: 10px;
@@ -154,7 +154,7 @@ select option {
   justify-content: space-between;
   margin-bottom: 20px;
   border: 2px solid #ddd;
-  width: 550px;
+  width: 600px;
   max-height: 1100px;
   padding: 0px 0px 10px 10px;
   background-color: #fff;
@@ -190,11 +190,17 @@ select option {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 10px;
+  align-self: center;
+}
+
+.data-entries {
+  align-self: center;
 }
 
 .data-summary {
-  list-style-type: none;
+  list-style-type: disclosure-closed;
   padding: 0;
+  align-self: anchor-center;
 }
 
 .data-summary li {
@@ -209,8 +215,6 @@ select option {
 
 /* Header settings */
 .plot-header {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
   align-items: center;
 }
 
@@ -222,16 +226,16 @@ select option {
 .chart-buttons {
   display: flex;
   gap: 10px;
-  justify-self: end;
+  justify-self: center;
   margin-right: 10px;
+  margin-bottom: 10px;
 }
 /* Header settings end */
-
 
 /* Chart area styling */
 .plot-area {
   width: 92%;
-  height: 400px;
+  min-height: 450px;
   background-color: #f8f9fa;
   padding: 15px;
   border-radius: 8px;
@@ -239,11 +243,9 @@ select option {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
-
-
 
 .chart-icon {
   width: 20px;
@@ -304,9 +306,85 @@ select option {
   border-color: #007bff;
 }
 
+.scatterplot-container {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.grid line {
+  stroke: #dcdcdc;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke: none;
+}
+
+.axis path,
+.axis line {
+  stroke: #666;
+  stroke-width: 0.8px;
+}
+
+.axis text {
+  font-size: 12px;
+  fill: #333;
+}
+
+.x-axis-label {
+  font-size: 14px;
+  fill: #333;
+  font-weight: bold;
+}
+
+.y-axis-label {
+  font-size: 14px;
+  fill: #333;
+  font-weight: bold;
+}
+
+.scatter-point {
+  stroke: white;
+  stroke-width: 1px;
+  fill-opacity: 0.7;
+  transition: fill-opacity 0.3s ease, r 0,3s ease;
+}
+
+.scatter-point:hover {
+  fill-opacity: 1;
+  r: 8px;
+  stroke: black;
+}
+
+.piechart-container {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  position: relative;
+  overflow: visible;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 12px;
+  visibility: hidden;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 /* Chat display styling */
 .chat-message {
   margin-bottom: 15px;
+  align-self: anchor-center;
 }
 
 .chat-message p {
@@ -369,3 +447,81 @@ select option {
     transform: rotate(360deg);
   }
 }
+
+/* Agent response and Query parameters CSS */
+
+/* General container for query parameters */
+.query-parameters {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.query-parameters h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.query-parameters ul {
+  list-style: inside;
+  padding: 0;
+}
+
+.query-parameters li {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Container for agent responses */
+.agent-responses {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.agent-responses h2 {
+  font-size: 22px;
+  color: #222;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+/* Container for answers */
+.agent-answer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Each agent answer box */
+.agent-answer-container p {
+  background: #f1f1f1;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  color: #444;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease-in-out;
+}
+
+.agent-answer-container p:hover {
+  transform: scale(1.02);
+  background: #e9ecef;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
+
+/* Agent response and Query parameters CSS */

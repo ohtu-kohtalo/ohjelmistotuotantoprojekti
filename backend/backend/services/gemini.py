@@ -1,18 +1,25 @@
-from gemini_config import get_gemini_connection
+import asyncio
+import threading
 
 
 class Gemini:
     """
     Handles API for Gemini.
 
-    Methods
-    -------
-        get_response(prompt):
-            Returns the response to the given prompt.
+    Attributes:
+        ai_model: API for Gemini.
     """
 
-    def __init__(self, ai_model=get_gemini_connection()):
+    def __init__(self, ai_model):
         self.__ai_model = ai_model
+        self.loop = asyncio.new_event_loop()  # Create a persistent event loop
+        self.thread = threading.Thread(target=self._start_event_loop, daemon=True)
+        self.thread.start()  # Start the loop in a separate thread
+
+    def _start_event_loop(self):
+        """Runs the event loop in a separate thread."""
+        asyncio.set_event_loop(self.loop)
+        self.loop.run_forever()  # Keep the loop running
 
     def get_response(self, prompt: str) -> str:
         """
@@ -22,3 +29,47 @@ class Gemini:
         """
         response = self.__ai_model.generate_content(prompt)
         return response.text
+
+    def get_parallel_responses(self, prompts: list[str]) -> str:
+        """Send multiple prompts to Gemini in parallel.
+
+        Args:
+            list: A list of prompts.
+
+        Returns:
+            list: A list of responses by Gemini or if an error occurs, returns the error
+            message."""
+
+        try:
+            future = asyncio.run_coroutine_threadsafe(
+                self._create_responses(prompts), self.loop
+            )
+            response = future.result()  # Wait for the result
+            response = self._format_response(response)
+        except Exception as e:
+            if str(e).startswith("429 Resource has been exhausted"):
+                return f"## Error\n\nError message: {e}\n\nYou probably exceeded the 15 requests per minute limit for the API-key"
+            return f"## Error\n\nError message: {e}"
+
+        return response
+
+    async def _create_responses(self, prompts):
+        """Create the asyncio tasks and run them concurrently."""
+        tasks = [self._generate_answer(prompt) for prompt in prompts]
+        results = await asyncio.gather(*tasks)
+
+        return results
+
+    async def _generate_answer(self, prompt):
+        """Send a single text prompt to the API and return the response."""
+        response = await self.__ai_model.generate_content_async(prompt)
+        return response.text
+
+    def _format_response(self, responses: list[str]) -> str:
+        """Turns the response to markdown text and returns it."""
+        text = ""
+        for response in responses:
+            text += "## Answer\n\n"
+            text += response
+
+        return text
