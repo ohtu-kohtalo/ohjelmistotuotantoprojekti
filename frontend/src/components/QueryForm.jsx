@@ -20,7 +20,7 @@ const QueryForm = ({
     <form onSubmit={handleSubmit} className="form" data-testid="query-form">
       <div className="input-container">
         <label htmlFor="query" className="label">
-          Company Name <span className="required-icon">*</span>
+          Question <span className="required-icon">*</span>
         </label>
         <div className="input-wrapper">
           <input
@@ -28,7 +28,7 @@ const QueryForm = ({
             id="query"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            placeholder="Enter company for context"
+            placeholder="Enter a question here"
             className="input"
           />
           <span
