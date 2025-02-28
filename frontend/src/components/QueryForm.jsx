@@ -7,7 +7,6 @@ const QueryForm = ({
   setAgentCount,
   handleSubmit,
 }) => {
-
   // Validation checks
   const isQuestionValid = question.trim() !== "";
   const isSubmitDisabled = !isQuestionValid || agentCount === "";
