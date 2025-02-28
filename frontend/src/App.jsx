@@ -9,8 +9,7 @@ import PlotContainer from "./components/PlotContainer";
 
 const App = () => {
   // Initial states for user input
-  const [company, setCompany] = useState("");
-  // const [industry, setIndustry] = useState("");
+  const [question, setQuestion] = useState("");
   const [agentCount, setAgentCount] = useState("");
 
   // Initial states for response and error handling
@@ -76,15 +75,10 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!company.trim()) {
-      showError("⚠️ Cannot submit an empty company name");
+    if (!question.trim()) {
+      showError("⚠️ Cannot submit an empty question");
       return;
     }
-
-    // if (!industry.trim()) {
-    //   showError("⚠️ Industry field cannot be empty");
-    //   return;
-    // }
 
     setIsLoading(true);
 
@@ -95,8 +89,7 @@ const App = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          company: company,
-          // industry: industry,
+          question: question,
           agent_count: agentCount,
         }),
       });
@@ -111,8 +104,7 @@ const App = () => {
       setResponse([
         {
           type: "query",
-          text: company,
-          // industry: industry,
+          text: question,
           agentCount: agentCount,
         },
         { type: "bot", text: data.message || "No response message received." },
@@ -123,8 +115,7 @@ const App = () => {
       setResponse([
         {
           type: "query",
-          text: company,
-          // industry: industry,
+          text: question,
           agentCount: agentCount,
         },
         {
@@ -156,8 +147,7 @@ const App = () => {
 
   // Helper function to reset form fields
   const resetForm = () => {
-    setCompany("");
-    // setIndustry("");
+    setQuestion("");
     setAgentCount("");
   };
 
@@ -171,10 +161,8 @@ const App = () => {
       {error && <ErrorMessage message={error} />}
       <PlotContainer agentData={distributions} />
       <QueryForm
-        company={company}
-        setCompany={setCompany}
-        // industry={industry}
-        // setIndustry={setIndustry}
+        question={question}
+        setQuestion={setQuestion}
         agentCount={agentCount}
         setAgentCount={setAgentCount}
         handleSubmit={handleSubmit}

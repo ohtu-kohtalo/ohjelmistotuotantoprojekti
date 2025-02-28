@@ -37,22 +37,27 @@ def index():
     distributions = jsonify(distributions)
     return distributions
 
-
+# Should be rerouted to /create_agent_response
+# @app.route("/create_agent_response", methods=["POST"])
 @app.route("/create_agent", methods=["POST"])
 def create_agent():
     """
-    Create an agent based on the provided company and industry information.
-    This function retrieves JSON data from the request, extracts the company and industry
-    information, and uses these to generate agents. The generated agents are then returned
-    in a JSON response.
+    Current solution creates 15 agent responses based on pre-determined answer data and a user inputted question.
+
+    This function:
+    Retrieves JSON data from the request (user question),
+    Extracts question information,
+    Uses question information and pre-determined agents to generate a response via LLM,
+
+    Generated agent response is then returned as a JSON response.
 
     Returns:
-        Response: A JSON response containing the generated agents.
+        Response: A JSON response containing the generated answers
     """
 
     data = request.get_json()
-    company = data.get("company")
-    prompts = get_mock_data.get_prompts(company)
+    question = data.get("question")
+    prompts = get_mock_data.get_prompts(question)
     answers = gemini.get_parallel_responses(prompts)
     response = f"# Answers by the mock agents\n {answers}"
     response = {"message": response}
