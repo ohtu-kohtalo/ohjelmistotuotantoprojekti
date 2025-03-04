@@ -423,6 +423,19 @@ select option {
   margin-bottom: 10px;
 }
 
+.success-message {
+  color: #2baf51;
+  font-size: 16px;
+  font-weight: 650;
+  padding: 6px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 500px;
+  max-height: 20px;
+  margin-bottom: 10px;
+}
+
 .loading-indicator {
   display: flex;
   justify-content: center;
