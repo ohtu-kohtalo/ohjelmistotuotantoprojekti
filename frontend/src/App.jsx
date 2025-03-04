@@ -160,7 +160,7 @@ const App = () => {
     <div className="app-container">
       <Title text="Future Customer: A Simulator and Prediction Tool" />
       {error && <ErrorMessage message={error} />}
-      <CsvUpload />
+      <CsvUpload onCsvError={showError} />
       <PlotContainer agentData={distributions} />
       <QueryForm
         question={question}
