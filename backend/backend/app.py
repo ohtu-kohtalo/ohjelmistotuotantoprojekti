@@ -37,6 +37,7 @@ def index():
     distributions = jsonify(distributions)
     return distributions
 
+
 # Should be rerouted to /create_agent_response
 # @app.route("/create_agent_response", methods=["POST"])
 @app.route("/create_agent", methods=["POST"])
