@@ -281,7 +281,6 @@ select option {
   list-style: none;
   padding: 0;
   margin: 0;
-  
 }
 
 .option-item {
@@ -297,7 +296,9 @@ select option {
   border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .option-button:hover {
@@ -348,7 +349,10 @@ select option {
   stroke: white;
   stroke-width: 1px;
   fill-opacity: 0.7;
-  transition: fill-opacity 0.3s ease, r 0,3s ease;
+  transition:
+    fill-opacity 0.3s ease,
+    r 0,
+    3s ease;
 }
 
 .scatter-point:hover {
@@ -522,6 +526,5 @@ select option {
   margin-top: 10px;
   text-align: center;
 }
-
 
 /* Agent response and Query parameters CSS */
