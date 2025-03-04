@@ -65,6 +65,61 @@ def create_agent():
     response = jsonify(response)
     return response
 
+# IMPORTANT!: Not fully finished until the agent response format is finalized
+@app.route("/download_agent_response_csv", methods=["POST"])
+def download_agent_response_csv():
+    """
+    Endpoint to generate and download a CSV file from frontend-provided questions data.
+    Expects a JSON payload with a "questions" object containing question-answer pairs.
+
+    Example:
+    {
+        "questions": {
+            "kysymys1": lickert_vastaus,
+            "kysymys2": lickert_vastaus,
+            "kysymys3": lickert_vastaus
+        }
+    }
+
+    Returns:
+        Failure: Error-messages if the payload is missing or empty, or if the "questions" key is missing.
+        Success: A CSV file download if the payload is valid.
+    """
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    if len(data) == 0:
+        return jsonify({"error": "Empty agent data"}), 400
+
+    # Check if the 'questions' key is present in the payload.
+    if "questions" not in data:
+        return jsonify({"error": "Missing 'questions' field in payload"}), 400
+
+    questions = data["questions"]
+
+    # Validate that questions is a dictionary.
+    if not isinstance(questions, dict):
+        return jsonify({"error": "'questions' must be an object (dictionary)"}), 400
+
+    # Create an in-memory CSV file using StringIO.
+    # Requires modules that need to be added
+
+    # si = io.StringIO()
+    # # Use the keys of the questions dictionary as the CSV header.
+    # fieldnames = list(questions.keys())
+    # writer = csv.DictWriter(si, fieldnames=fieldnames)
+    # writer.writeheader()
+    # # Write a single row with the answers.
+    # writer.writerow(questions)
+
+    # # Prepare the CSV file for download.
+    # output = make_response(si.getvalue())
+    # output.headers["Content-Disposition"] = "attachment; filename=questions_data.csv"
+    # output.headers["Content-Type"] = "text/csv"
+    # return output
+
 
 @app.route("/health", methods=["GET"])
 def health_check():
