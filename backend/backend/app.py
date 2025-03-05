@@ -8,11 +8,11 @@ from .key_config import (
     GEMINI_API_KEY,
 )
 from .load_dataset import load_dataset
-from .gemini_config import get_gemini_connection
+from .llm_config import get_llm_connection
 from .services.create_agent_pool import create_agent_pool
 from .services.create_questions import create_questions
 from .services.get_data import GetData
-from .services.gemini import Gemini
+from .services.gemini_service import Gemini
 
 
 app = Flask(__name__)
@@ -22,7 +22,7 @@ dataset = load_dataset(CSV_FILE_PATH)
 agent_pool = create_agent_pool(dataset)
 survey = create_questions(QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH)
 get_data = GetData(survey, agent_pool)
-ai_model = get_gemini_connection(GEMINI_API_KEY)
+ai_model = get_llm_connection()
 gemini = Gemini(ai_model)
 
 mock_dataset = load_dataset("./data/15_mock_agents.csv")
@@ -59,7 +59,7 @@ def create_agent():
     data = request.get_json()
     question = data.get("question")
     prompts = get_mock_data.get_prompts(question)
-    answers = gemini.get_parallel_responses(prompts)
+    answers = ai_model.get_parallel_responses(prompts)
     response = f"# Answers by the mock agents\n {answers}"
     response = {"message": response}
     response = jsonify(response)
