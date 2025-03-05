@@ -4,19 +4,20 @@ import Title from "./components/Title";
 import QueryForm from "./components/QueryForm";
 import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
+import SuccessMessage from "./components/SuccessMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
 import PlotContainer from "./components/PlotContainer";
+import CsvUpload from "./components/CsvUpload";
 
 const App = () => {
   // Initial states for user input
-  const [company, setCompany] = useState("");
-  // const [industry, setIndustry] = useState("");
+  const [question, setQuestion] = useState("");
   const [agentCount, setAgentCount] = useState("");
 
   // Initial states for response and error handling
   const [response, setResponse] = useState([]);
-  const [error, setError] = useState("");
-  const errorTimeoutRef = useRef(null);
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const messageTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Initial state for aquired distributions data
@@ -57,7 +58,7 @@ const App = () => {
         setDistributions(data);
       } catch (error) {
         console.error("Error fetching distributions:", error);
-        showError("⚠️ Could not retrieve data from backend");
+        showMessage("error", "⚠️ Could not retrieve data from backend");
       }
     };
 
@@ -76,15 +77,10 @@ const App = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!company.trim()) {
-      showError("⚠️ Cannot submit an empty company name");
+    if (!question.trim()) {
+      showMessage("error", "⚠️ Cannot submit an empty question");
       return;
     }
-
-    // if (!industry.trim()) {
-    //   showError("⚠️ Industry field cannot be empty");
-    //   return;
-    // }
 
     setIsLoading(true);
 
@@ -95,15 +91,14 @@ const App = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          company: company,
-          // industry: industry,
+          question: question,
           agent_count: agentCount,
         }),
       });
 
       if (!response.ok) {
         const errorMessage = `⚠️ Error: ${response.status} - ${response.statusText}`;
-        showError(errorMessage);
+        showMessage("error", errorMessage);
         throw new Error(errorMessage);
       }
 
@@ -111,20 +106,18 @@ const App = () => {
       setResponse([
         {
           type: "query",
-          text: company,
-          // industry: industry,
+          text: question,
           agentCount: agentCount,
         },
         { type: "bot", text: data.message || "No response message received." },
       ]);
     } catch (error) {
       console.error("Fetch error:", error);
-      showError("⚠️ Could not retrieve data from backend");
+      showMessage("error", "⚠️ Could not retrieve data from backend");
       setResponse([
         {
           type: "query",
-          text: company,
-          // industry: industry,
+          text: question,
           agentCount: agentCount,
         },
         {
@@ -140,24 +133,23 @@ const App = () => {
   };
 
   // Helper function to display error messages
-  const showError = (message) => {
-    setError(message);
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
 
     // Clear any existing timeout before setting a new one
-    if (errorTimeoutRef.current) {
-      clearTimeout(errorTimeoutRef.current);
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current);
     }
 
-    errorTimeoutRef.current = setTimeout(() => {
-      setError("");
-      errorTimeoutRef.current = null; // Reset ref after clearing error
+    messageTimeoutRef.current = setTimeout(() => {
+      setMessage({ type: "", text: "" });
+      messageTimeoutRef.current = null; // Reset ref after clearing error
     }, 5000);
   };
 
   // Helper function to reset form fields
   const resetForm = () => {
-    setCompany("");
-    // setIndustry("");
+    setQuestion("");
     setAgentCount("");
   };
 
@@ -168,13 +160,22 @@ const App = () => {
   return (
     <div className="app-container">
       <Title text="Future Customer: A Simulator and Prediction Tool" />
-      {error && <ErrorMessage message={error} />}
+      {message &&
+        (message.type === "error" ? (
+          <ErrorMessage message={message.text} />
+        ) : (
+          <SuccessMessage message={message.text} />
+        ))}
+      <CsvUpload
+        onCsvError={(errorMessage) => showMessage("error", errorMessage)}
+        onCsvSuccess={(successMessage) =>
+          showMessage("success", successMessage)
+        }
+      />
       <PlotContainer agentData={distributions} />
       <QueryForm
-        company={company}
-        setCompany={setCompany}
-        // industry={industry}
-        // setIndustry={setIndustry}
+        question={question}
+        setQuestion={setQuestion}
         agentCount={agentCount}
         setAgentCount={setAgentCount}
         handleSubmit={handleSubmit}

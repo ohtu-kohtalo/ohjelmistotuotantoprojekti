@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 CSV_FILE_PATH = os.getenv("CSV_FILE_PATH")
 QUESTIONS_FILE_PATH = os.getenv("QUESTIONS_FILE_PATH")
 ANSWERS_FILE_PATH = os.getenv("ANSWERS_FILE_PATH")
