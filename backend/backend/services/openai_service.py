@@ -1,4 +1,3 @@
-
 import asyncio
 import threading
 
@@ -14,7 +13,7 @@ class OpenAI:
     def __init__(self, openai_api_key=None, model="gpt-4o"):
         self.openai_api_key = openai_api_key or OPENAI_API_KEY
         self.model = model
-        
+
         self.loop = asyncio.new_event_loop()
         self.thread = threading.Thread(target=self._start_event_loop, daemon=True)
         self.thread.start()
@@ -25,13 +24,14 @@ class OpenAI:
 
     def get_response(self, prompt):
         try:
-            completion = client.chat.completions.create(model = self.model,
-            message=[{"role": "user", "content": prompt}])
+            completion = client.chat.completions.create(
+                model=self.model, message=[{"role": "user", "content": prompt}]
+            )
             return completion.choices[0].message.content
         except Exception as e:
             return f"OpenAI Error: {e}"
 
-    def get_parallel_responses(self,  prompts):
+    def get_parallel_responses(self, prompts):
         try:
             future = asyncio.run_coroutine_threadsafe(
                 self._create_responses(prompts), self.loop
@@ -49,8 +49,9 @@ class OpenAI:
         return results
 
     async def _generate_answer(self, prompt):
-        completion = await aclient.chat.completions.create(model=self.model,
-        messages=[{"role": "user", "content": prompt}])
+        completion = await aclient.chat.completions.create(
+            model=self.model, messages=[{"role": "user", "content": prompt}]
+        )
         return completion.choices[0].message.content
 
     def _format_response(self, responses):

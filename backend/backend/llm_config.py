@@ -17,12 +17,12 @@ def get_llm_connection():
         model = genai.GenerativeModel("gemini-1.5-flash")
 
         return Gemini(model)
-    
+
     elif llm_provider == "openai":
         openai_api_key = os.getenv("OPENAI_API_KEY")
         if not openai_api_key:
             raise ValueError("No OPENAI_API_KEY found in environment")
         return OpenAI(openai_api_key)
-    
+
     else:
         raise ValueError("Invalid LLM_PROVIDER. Must be 'openai' or 'gemini'")
