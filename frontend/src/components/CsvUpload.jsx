@@ -21,7 +21,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess }) => {
     // Only accept CSV files with no header, one question per row
     Papa.parse(file, {
       header: false,
-      skipEmptyLines: true,
+      skipEmptyLines: false,
       complete: (results) => {
         const { data } = results;
 
