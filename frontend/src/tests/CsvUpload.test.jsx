@@ -30,7 +30,9 @@ describe("CsvUpload Component", () => {
 
     await waitFor(() => {
       expect(onCsvError).not.toHaveBeenCalled();
-      expect(onCsvSuccess).toHaveBeenCalledWith('Successfully uploaded "valid.csv".');
+      expect(onCsvSuccess).toHaveBeenCalledWith(
+        'Successfully uploaded "valid.csv".',
+      );
     });
   });
 
@@ -52,7 +54,7 @@ describe("CsvUpload Component", () => {
 
     await waitFor(() => {
       expect(onCsvError).toHaveBeenCalledWith(
-        "Row 1 can only contain one column. Found 2."
+        "Row 1 can only contain one column. Found 2.",
       );
       expect(onCsvSuccess).not.toHaveBeenCalled();
     });
