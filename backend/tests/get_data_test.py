@@ -74,3 +74,27 @@ class TestGetData(unittest.TestCase):
 
         self.assertEqual(rescaled_data["Age"], "25")
         self.assertEqual(rescaled_data["Gender"], "Male")
+
+    def test_rescale_to_likert_with_identical_values(self):
+        """Test rescaling when all latent variables have the same value (zero spread)."""
+        agent_data = {
+            "Age": "32",
+            "Gender": "Female",
+            "Variable1": 0.5,
+            "Variable2": 0.5,
+            "Variable3": 0.5,
+        }
+        latent_variables = ["Variable1", "Variable2", "Variable3"]
+
+        rescaled_data = GetData.rescale_to_likert(agent_data, latent_variables)
+
+        # All should map to the midpoint of the scale (in a 1-5 Likert, midpoint is 3)
+        for var in latent_variables:
+            self.assertEqual(
+                rescaled_data[var], 3,
+                f"{var} should map to the middle of the Likert scale (3) when all values are identical."
+            )
+
+        # Non-latent fields should still be preserved
+        self.assertEqual(rescaled_data["Age"], "32")
+        self.assertEqual(rescaled_data["Gender"], "Female")
