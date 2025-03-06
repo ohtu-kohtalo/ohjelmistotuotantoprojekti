@@ -30,66 +30,75 @@ def create_agents():
       - The agent’s info contains the "Age" and "Gender" fields.
       - The rest of the columns (latent variables) are stored in new_questions.
 
-    Returns a JSON response:
-      {
-          "status": "success",
-          "created_agents": <number>,
-          "agents": [
-              {
-                  "info": {"Age": "24", "Gender": "Male"},
-                  "new_questions": {
-                    "Q1": ANSWER,
-                    "Q2": ANSWER,
-                  }
-              },
-              ...
-          ]
-      }
+    Returns:
+        JSON response:
+        {
+            "agents": [
+                {
+                    "info": {
+                        "Age": "24",
+                        "Gender": "Male"
+                    },
+                    "new_questions": {
+                        "Q1": answer,
+                        "Q2": answer,
+                        ...
+                    }
+                },
+                ...
+            ],
+            "created_agents": <number>
+            "status": "success",
+        }
+
+        Example in frontend:
+        {agents: Array(15), created_agents: 15, status: 'success'}
     """
 
     try:
         df = pd.read_csv(csv_file)
-    except Exception as e:
-        return (
-            jsonify(
-                {"status": "error", "message": f"Error reading CSV file: {str(e)}"}
-            ),
-            500,
+
+
+        # Limit to the first 15 rows
+        df = df.head(15)
+
+        # Convert integer columns to strings
+        int_cols = df.select_dtypes(include=["int"]).columns
+        df[int_cols] = df[int_cols].astype(str)
+
+        # Identify the latent variables in the dataset to be scaled into Likert-scale
+        latent_variables = [col for col in df.columns if col not in ["Age", "Gender"]]
+
+        agents = []
+
+        # Create Agent objects: info only includes Age and Gender, rest goes to new_questions.
+        for record in df.to_dict(orient="records"):
+
+            # Rescale the latent variables to Likert-scale for each agent
+            GetData.rescale_to_likert(record, latent_variables)
+
+            info = {"Age": record.get("Age"), "Gender": record.get("Gender")}
+
+            new_questions = {
+                question_text: answer_value
+                for question_text, answer_value in record.items()
+                if question_text not in ["Age", "Gender"]
+            }
+
+            agent = Agent(info)
+            agent.new_questions = new_questions
+            agents.append(agent)
+
+        # Build the output using the private attribute via name mangling.
+        agents_output = [
+            {"info": agent._Agent__info, "new_questions": agent.new_questions}
+            for agent in agents
+        ]
+        return jsonify(
+            {"status": "success", "created_agents": len(agents), "agents": agents_output}
         )
-
-    # Limit to the first 15 rows
-    df = df.head(15)
-
-    # Convert integer columns to strings
-    int_cols = df.select_dtypes(include=["int"]).columns
-    df[int_cols] = df[int_cols].astype(str)
-
-    # Identify the latent variables in the dataset to be scaled into Likert-scale
-    latent_variables = [col for col in df.columns if col not in ["Age", "Gender"]]
-
-    # Create Agent objects: info only includes Age and Gender, rest goes to new_questions.
-    agents = []
-
-    for record in df.to_dict(orient="records"):
-
-        # Rescale the latent variables to Likert-scale for each agent
-        rescaled_record = GetData.rescale_to_likert(record, latent_variables)
-
-        info = {"Age": record.get("Age"), "Gender": record.get("Gender")}
-
-        new_questions = {k: v for k, v in record.items() if k not in ["Age", "Gender"]}
-        agent = Agent(info)
-        agent.new_questions = new_questions
-        agents.append(agent)
-
-    # Build the output using the private attribute via name mangling.
-    agents_output = [
-        {"info": agent._Agent__info, "new_questions": agent.new_questions}
-        for agent in agents
-    ]
-    return jsonify(
-        {"status": "success", "created_agents": len(agents), "agents": agents_output}
-    )
+    except Exception as error:
+        return jsonify({"status": "Error during intial agent-creation from CSV-file", "message: ": str(error)}), 500
 
 
 # IMPORTANT!: Not fully finished
