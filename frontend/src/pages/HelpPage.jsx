@@ -12,7 +12,7 @@ const HelpPage = () => {
         <br/>
         A quick overview of each selectable 'view':
       </p>
-      <ul class="help-list">
+      <ul className="help-list">
         <li><strong>Initial Distribution:</strong> See initial agent pool distribution.</li>
         <li><strong>Add Query:</strong> Ask agents questions and collect their responses.</li>
         <li><strong>Future Distribution:</strong> Model future scenarios and compare them.</li>
