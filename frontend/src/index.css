@@ -1,165 +1,140 @@
-/* General styling */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: #111;
+  color: #e0e0e0;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  padding: 20px;
+  width: 100%;
   min-height: 100vh;
+  background-color: #111;
 }
 
 .title {
+  text-align: center;
   font-size: 24px;
-  color: #333;
+  margin: 20px 0;
+  font-weight: bold;
 }
 
-.form {
-  width: 100%;
-  max-width: 500px;
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 20px;
 }
 
-.label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #555;
-}
-
-.input {
-  padding: 10px;
-  width: 100%;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-}
-
-.input-container {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-/* Icon styling for context-field */
-.validation-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-70%);
-  font-size: 18px;
-}
-
-.valid {
-  color: green;
-}
-
-.invalid {
+.header-container .error-message p {
   color: red;
-}
-
-/* Selection menu styling */
-.dropdown {
-  padding: 10px;
-  width: 100%;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  padding-right: 30px; /* Make space for the arrow */
-  cursor: pointer;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-  background-color: white;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='gray'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-/* Apply gray color to the placeholder option */
-select:invalid {
-  color: gray;
-}
-
-/* Ensure selected options appear black */
-select option {
-  color: black;
-}
-
-.dropdown:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Button styling */
-.button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  display: block;
-  margin: 0 auto;
-}
-
-.button:hover {
-  background-color: #0056b3;
-}
-
-/* Disabled button styling */
-.button:disabled {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.required-icon {
   font-weight: bold;
-  font-size: 18px;
+  text-align: center;
+  margin-top: 10px;
 }
 
-/* Container styling */
-.chat-container {
+.header-container .success-message p {
+  color: green;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.main-layout {
+  display: flex;
+  width: 100%;
+  flex: 1;
+  min-height: calc(100vh - 100px);
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #111;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 500px;
-  background-color: #fff;
+  gap: 15px;
+  border-right: 1px solid #333;
+}
+
+.sidebar a,
+.sidebar button {
+  background-color: #222;
+  color: #e0e0e0;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+  transition: background-color 0.2s;
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
+  background-color: #333;
+}
+
+.content {
+  flex: 1;
+  background-color: #1e1e1e;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
 }
 
 .plot-container {
   position: relative;
   display: flex;
-  align-items: flex-start; /* Aligns title and options properly */
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 20px;
-  border: 2px solid #ddd;
+  border: 2px solid #444;
   width: 600px;
   max-height: 1100px;
-  padding: 0px 0px 10px 10px;
-  background-color: #fff;
+  padding: 0 0 10px 10px;
+  background-color: #1e1e1e;
   border-radius: 10px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.plot-content {
+  width: 100%;
+}
+
+.plot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.plot-title {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.chart-buttons {
+  display: flex;
+  gap: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.chart-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .plot-details {
@@ -173,102 +148,13 @@ select option {
 .data-container {
   width: 50%;
   padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #444;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #1e1e1e;
   margin-bottom: 10px;
   margin-right: 10px;
 }
 
-.data-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.data-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  align-self: center;
-}
-
-.data-entries {
-  align-self: center;
-}
-
-.data-summary {
-  list-style-type: disclosure-closed;
-  padding: 0;
-  align-self: anchor-center;
-}
-
-.data-summary li {
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
-/* Wraps plot title and plot image */
-.plot-content {
-  flex-grow: 3; /* 75% space */
-}
-
-/* Header settings */
-.plot-header {
-  align-items: center;
-}
-
-.plot-title {
-  text-align: center;
-  grid-column: 2;
-}
-
-.chart-buttons {
-  display: flex;
-  gap: 10px;
-  justify-self: center;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
-/* Header settings end */
-
-/* Chart area styling */
-.plot-area {
-  width: 92%;
-  min-height: 450px;
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  border: 2px solid #ddd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: visible;
-  position: relative;
-}
-
-.chart-icon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Chart Button styling */
-.chart-buttons button {
-  padding: 5px 10px;
-  border: none;
-  background-color: #ffffff;
-  color: white;
-  border-radius: 25px;
-  border: 2px solid #a5b3c3;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.chart-buttons button:hover {
-  background-color: #0056b3;
-}
-
-/* Option Label */
 .option-label {
   font-size: 14px;
   font-weight: bold;
@@ -276,7 +162,6 @@ select option {
   text-align: center;
 }
 
-/* Option Button Styles */
 .option-list {
   list-style: none;
   padding: 0;
@@ -292,13 +177,12 @@ select option {
   padding: 10px;
   font-size: 14px;
   font-weight: bold;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: #1e1e1e;
+  border: 1px solid #444;
   border-radius: 5px;
   cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  color: #e0e0e0;
 }
 
 .option-button:hover {
@@ -307,133 +191,61 @@ select option {
   border-color: #007bff;
 }
 
-.scatterplot-container {
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.grid line {
-  stroke: #dcdcdc;
-  stroke-width: 1px;
-  shape-rendering: crispEdges;
-}
-
-.grid path {
-  stroke: none;
-}
-
-.axis path,
-.axis line {
-  stroke: #666;
-  stroke-width: 0.8px;
-}
-
-.axis text {
-  font-size: 12px;
-  fill: #333;
-}
-
-.x-axis-label {
-  font-size: 14px;
-  fill: #333;
-  font-weight: bold;
-}
-
-.y-axis-label {
-  font-size: 14px;
-  fill: #333;
-  font-weight: bold;
-}
-
-.scatter-point {
-  stroke: white;
-  stroke-width: 1px;
-  fill-opacity: 0.7;
-  transition:
-    fill-opacity 0.3s ease,
-    r 0,
-    3s ease;
-}
-
-.scatter-point:hover {
-  fill-opacity: 1;
-  r: 8px;
-  stroke: black;
-}
-
-.piechart-container {
-  text-align: center;
-  font-family: Arial, sans-serif;
-  position: relative;
+.plot-area {
+  width: 92%;
+  min-height: 450px;
+  background-color: #1e1e1e;
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid #444;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: visible;
+  position: relative;
 }
 
-.chart-title {
+.data-title {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 10px;
+  text-align: center;
 }
 
-.tooltip {
-  position: absolute;
-  background: white;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 12px;
-  visibility: hidden;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+.data-entries {
+  text-align: center;
 }
 
-/* Chat display styling */
+.data-summary {
+  list-style-type: disclosure-closed;
+  padding: 0;
+}
+
+.data-summary li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
 .chat-message {
   margin-bottom: 15px;
-  align-self: anchor-center;
 }
 
 .chat-message p {
-  margin: 5px 0 0;
   padding: 10px;
   border-radius: 10px;
-  max-width: 100%;
-}
-
-.chat-message.query p {
-  background-color: #e7f3ff;
-  text-align: left;
-  color: #0056b3;
-}
-
-.chat-message.bot p {
-  background-color: #f8f9fa;
-  text-align: left;
-  color: #333;
-}
-
-.error-message {
-  color: #b00020;
-  font-size: 16px;
-  font-weight: 650;
-  padding: 6px 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  max-width: 500px;
-  max-height: 20px;
-  margin-bottom: 10px;
-}
-
-.success-message {
-  color: #2baf51;
-  font-size: 16px;
-  font-weight: 650;
-  padding: 6px 6px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  max-width: 500px;
-  max-height: 20px;
-  margin-bottom: 10px;
+  background-color: #333;
 }
 
 .loading-indicator {
@@ -457,87 +269,66 @@ select option {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* Agent response and Query parameters CSS */
-
-/* General container for query parameters */
-.query-parameters {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+.scatter-point {
+  stroke: #000;
+  stroke-width: 2px;
+  fill-opacity: 0.7;
+  transition: fill-opacity 0.3s ease, r 0.3s ease;
 }
 
-.query-parameters h2 {
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 8px;
+.scatter-point:hover {
+  fill-opacity: 1;
+  r: 8px;
+  stroke: #000;
 }
 
-.query-parameters ul {
-  list-style: inside;
-  padding: 0;
+.grid line {
+  stroke: #555;
+  stroke-width: 1px;
 }
 
-.query-parameters li {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 5px;
+.axis path,
+.axis line {
+  stroke: #444;
+  stroke-width: 0.8px;
 }
 
-/* Container for agent responses */
-.agent-responses {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.axis text {
+  font-size: 12px;
+  fill: #e0e0e0;
 }
 
-.agent-responses h2 {
-  font-size: 22px;
-  color: #222;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 5px;
-}
-
-/* Container for answers */
-.agent-answer-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* Each agent answer box */
-.agent-answer-container p {
-  background: #f1f1f1;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
-  color: #444;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease-in-out;
-}
-
-.agent-answer-container p:hover {
-  transform: scale(1.02);
-  background: #e9ecef;
-}
-
-/* Error message styling */
-.error-message {
-  color: red;
+.x-axis-label,
+.y-axis-label {
+  font-size: 14px;
+  fill: #e0e0e0;
   font-weight: bold;
-  margin-top: 10px;
-  text-align: center;
 }
 
-/* Agent response and Query parameters CSS */
+.piechart-container {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: visible;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 12px;
+  visibility: hidden;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
