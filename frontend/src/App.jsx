@@ -8,6 +8,10 @@ import SuccessMessage from "./components/SuccessMessage";
 import LoadingIndicator from "./components/LoadingIndicator";
 import PlotContainer from "./components/PlotContainer";
 import CsvUpload from "./components/CsvUpload";
+import HelpPage from "./pages/HelpPage";
+import InitialDistribution from "./pages/InitialDistribution";
+import AddQuery from "./pages/AddQuery";
+import FutureDistribution from "./pages/FutureDistribution";
 
 const App = () => {
   // Initial states for user input
@@ -213,6 +217,26 @@ const App = () => {
       {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
     </div>
+
+    // NEW PAGE LAYOUT (in progress)
+
+    // <div>
+    //   {message &&
+    //       (message.type === "error" ? (
+    //         <ErrorMessage message={message.text} />
+    //       ) : (
+    //         <SuccessMessage message={message.text} />
+    //   ))}
+    //   <HelpPage />
+    //   <InitialDistribution distributions={distributions} />
+    //   <AddQuery
+    //     handleCsvSubmit={handleCsvSubmit}
+    //     isLoading={isLoading}
+    //     response={response}
+    //     showMessage={showMessage}
+    //   />
+    //   <FutureDistribution />
+    // </div>
   );
 };
 
