@@ -26,12 +26,13 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: npm install
 
       - name: Run tests with Vitest
-        run: npx vitest run --coverage --coverageReporters=lcov
+        run: npx vitest run --coverage --coverage.reporter=lcov
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
