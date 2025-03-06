@@ -4,10 +4,6 @@ import Title from "../components/Title";
 const HelpPage = () => {
   return (
     <div className="card">
-      <Title
-        className="card-header"
-        text={"Future Customer: A Simulator and Prediction Tool"}
-      />
       <p>
         Something to tell user what the application is and how to use the
         application
