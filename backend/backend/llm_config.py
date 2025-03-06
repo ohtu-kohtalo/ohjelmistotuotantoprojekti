@@ -1,7 +1,5 @@
 import os
-
 import google.generativeai as genai
-
 from .services.gemini_service import Gemini
 from .services.openai_service import OpenAI
 
