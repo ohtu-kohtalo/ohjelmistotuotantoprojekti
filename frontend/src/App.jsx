@@ -1,13 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router";
 import "./index.css";
-import Title from "./components/Title";
-import QueryForm from "./components/QueryForm";
-import ChatContainer from "./components/ChatContainer";
+import Title from "./components/Title"; // To be removed
+import QueryForm from "./components/QueryForm"; // To be removed
+import ChatContainer from "./components/ChatContainer"; // To be removed
 import ErrorMessage from "./components/ErrorMessage";
 import SuccessMessage from "./components/SuccessMessage";
-import LoadingIndicator from "./components/LoadingIndicator";
-import PlotContainer from "./components/PlotContainer";
-import CsvUpload from "./components/CsvUpload";
+import LoadingIndicator from "./components/LoadingIndicator"; // To be removed
+import PlotContainer from "./components/PlotContainer"; // To be removed
+import CsvUpload from "./components/CsvUpload"; // To be removed
 import HelpPage from "./pages/HelpPage";
 import InitialDistribution from "./pages/InitialDistribution";
 import AddQuery from "./pages/AddQuery";
@@ -191,32 +192,32 @@ const App = () => {
   // QueryForm for handling query submits,
   // ChatContainer for showing responses of queries
   return (
-    <div className="app-container">
-      <Title text="Future Customer: A Simulator and Prediction Tool" />
-      {message &&
-        (message.type === "error" ? (
-          <ErrorMessage message={message.text} />
-        ) : (
-          <SuccessMessage message={message.text} />
-        ))}
-      <CsvUpload
-        onCsvError={(errorMessage) => showMessage("error", errorMessage)}
-        onCsvSuccess={(successMessage) =>
-          showMessage("success", successMessage)
-        }
-        handleCsvSubmit={handleCsvSubmit}
-      />
-      <PlotContainer agentData={distributions} />
-      {/* <QueryForm
-        question={question}
-        setQuestion={setQuestion}
-        agentCount={agentCount}
-        setAgentCount={setAgentCount}
-        handleSubmit={handleSubmit}
-      /> */}
-      {isLoading && <LoadingIndicator />}
-      <ChatContainer response={response} />
-    </div>
+    // <div className="app-container">
+    //   <Title text="Future Customer: A Simulator and Prediction Tool" />
+    //   {message &&
+    //     (message.type === "error" ? (
+    //       <ErrorMessage message={message.text} />
+    //     ) : (
+    //       <SuccessMessage message={message.text} />
+    //     ))}
+    //   <CsvUpload
+    //     onCsvError={(errorMessage) => showMessage("error", errorMessage)}
+    //     onCsvSuccess={(successMessage) =>
+    //       showMessage("success", successMessage)
+    //     }
+    //     handleCsvSubmit={handleCsvSubmit}
+    //   />
+    //   <PlotContainer agentData={distributions} />
+    //   {/* <QueryForm
+    //     question={question}
+    //     setQuestion={setQuestion}
+    //     agentCount={agentCount}
+    //     setAgentCount={setAgentCount}
+    //     handleSubmit={handleSubmit}
+    //   /> */}
+    //   {isLoading && <LoadingIndicator />}
+    //   <ChatContainer response={response} />
+    // </div>
 
     // NEW PAGE LAYOUT (in progress)
 
@@ -237,6 +238,63 @@ const App = () => {
     //   />
     //   <FutureDistribution />
     // </div>
+
+    <BrowserRouter>
+      <div className="app-container">
+        <Title text="Future Customer: A Simulator and Prediction Tool" />
+        {message &&
+          (message.type === "error" ? (
+            <ErrorMessage message={message.text} />
+          ) : (
+            <SuccessMessage message={message.text} />
+          ))}
+        <div className="main-layout">
+          <div className="sidebar">
+            <Link to="/" className="sidebar-link">
+              Help Page
+            </Link>
+            <Link to="/initialDistribution" className="sidebar-link">
+              Initial Distribution
+            </Link>
+            <Link to="/addQuery" className="sidebar-link">
+              Add Query
+            </Link>
+            <Link to="/futureDistribution" className="sidebar-link">
+              Future Distribution
+            </Link>
+          </div>
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<HelpPage />} />
+              <Route
+                path="/initialDistribution"
+                element={<InitialDistribution distributions={distributions} />}
+              />
+              <Route
+                path="/addQuery"
+                element={
+                  <AddQuery
+                    question={question}
+                    setQuestion={setQuestion}
+                    agentCount={agentCount}
+                    setAgentCount={setAgentCount}
+                    handleSubmit={handleSubmit}
+                    handleCsvSubmit={handleCsvSubmit}
+                    isLoading={isLoading}
+                    response={response}
+                    showMessage={showMessage}
+                  />
+                }
+              />
+              <Route
+                path="/futureDistribution"
+                element={<FutureDistribution />}
+              />
+            </Routes>
+          </div>
+        </div>
+      </div>
+    </BrowserRouter>
   );
 };
 
