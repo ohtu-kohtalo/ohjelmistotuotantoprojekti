@@ -38,10 +38,8 @@ def index():
     return distributions
 
 
-# Should be rerouted to /create_agent_response
-# @app.route("/create_agent_response", methods=["POST"])
-@app.route("/create_agent", methods=["POST"])
-def create_agent():
+@app.route("/create_agent_response", methods=["POST"])
+def create_agent_response():
     """
     Current solution creates 15 agent responses based on pre-determined answer data and a user inputted question.
 
