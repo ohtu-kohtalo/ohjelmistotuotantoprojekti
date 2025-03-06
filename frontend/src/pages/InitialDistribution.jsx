@@ -4,7 +4,7 @@ import PlotContainer from "../components/PlotContainer";
 
 const InitialDistribution = ({ distributions }) => (
   <div className="card">
-    <Title className="card-header"text={"Agent Pool Distribution Graphs"} />
+    <Title className="card-header" text={"Agent Pool Distribution Graphs"} />
     <div className="graph-placeholder">
       <PlotContainer agentData={distributions} />
     </div>
