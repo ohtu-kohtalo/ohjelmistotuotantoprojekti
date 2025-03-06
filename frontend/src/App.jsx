@@ -143,17 +143,16 @@ const App = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          questions: csvQuestions
+          questions: csvQuestions,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       showMessage("success", "CSV submitted successfully");
-
     } catch (error) {
       console.error("CSV submission error:", error);
       showMessage("error", "⚠️ Could not submit CSV data");
