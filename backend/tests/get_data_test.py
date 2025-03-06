@@ -1,6 +1,7 @@
 import unittest
 from backend.services.get_data import GetData
 
+
 class TestGetData(unittest.TestCase):
     """Tests for the class GetData and its rescale_to_likert method."""
 
@@ -11,13 +12,15 @@ class TestGetData(unittest.TestCase):
             "Gender": "Male",
             "Variable1": -2.0,
             "Variable2": 0.0,
-            "Variable3": 2.0
+            "Variable3": 2.0,
         }
         self.latent_variables = ["Variable1", "Variable2", "Variable3"]
 
     def test_rescale_to_likert_with_valid_data(self):
         """Test rescaling works correctly on valid input."""
-        rescaled_data = GetData.rescale_to_likert(self.agent_data, self.latent_variables)
+        rescaled_data = GetData.rescale_to_likert(
+            self.agent_data, self.latent_variables
+        )
 
         # Age and Gender should remain untouched
         self.assertEqual(rescaled_data["Age"], "25")
@@ -34,7 +37,7 @@ class TestGetData(unittest.TestCase):
             "Gender": "Female",
             "Variable1": -2.0,
             "Variable2": 0.0,
-            "Variable3": 2.0
+            "Variable3": 2.0,
         }
         latent_variables = ["Variable1", "Variable2", "Variable3"]
 
@@ -43,7 +46,9 @@ class TestGetData(unittest.TestCase):
         # Check the rescaled values match expectations
         self.assertEqual(rescaled_data["Variable1"], 1)  # Lowest value maps to 1
         self.assertEqual(rescaled_data["Variable3"], 5)  # Highest value maps to 5
-        self.assertEqual(rescaled_data["Variable2"], 3)  # Mid value maps to middle of scale
+        self.assertEqual(
+            rescaled_data["Variable2"], 3
+        )  # Mid value maps to middle of scale
 
     def test_rescale_to_likert_with_negative_values(self):
         """Test rescaling works when values are negative."""
@@ -52,7 +57,7 @@ class TestGetData(unittest.TestCase):
             "Gender": "Male",
             "Variable1": -5.0,
             "Variable2": -3.0,
-            "Variable3": -1.0
+            "Variable3": -1.0,
         }
         latent_variables = ["Variable1", "Variable2", "Variable3"]
 
@@ -63,7 +68,9 @@ class TestGetData(unittest.TestCase):
 
     def test_rescale_to_likert_preserves_non_latent_fields(self):
         """Ensure non-latent fields like Age and Gender are not accidentally modified."""
-        rescaled_data = GetData.rescale_to_likert(self.agent_data, self.latent_variables)
+        rescaled_data = GetData.rescale_to_likert(
+            self.agent_data, self.latent_variables
+        )
 
         self.assertEqual(rescaled_data["Age"], "25")
         self.assertEqual(rescaled_data["Gender"], "Male")

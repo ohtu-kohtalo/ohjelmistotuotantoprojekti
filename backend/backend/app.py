@@ -25,11 +25,11 @@ csv_file = CSV_FILE_PATH
 def create_agents():
     """
     Creates 15 agents based on the CSV data.
-    
+
     For each row in the CSV (limited to 15 rows):
       - The agent’s info contains the "Age" and "Gender" fields.
       - The rest of the columns (latent variables) are stored in new_questions.
-    
+
     Returns a JSON response:
       {
           "status": "success",
@@ -37,7 +37,7 @@ def create_agents():
           "agents": [
               {
                   "info": {"Age": "24", "Gender": "Male"},
-                  "new_questions": { 
+                  "new_questions": {
                     "Q1": ANSWER,
                     "Q2": ANSWER,
                   }
@@ -46,15 +46,20 @@ def create_agents():
           ]
       }
     """
-    
+
     try:
         df = pd.read_csv(csv_file)
     except Exception as e:
-        return jsonify({"status": "error", "message": f"Error reading CSV file: {str(e)}"}), 500
+        return (
+            jsonify(
+                {"status": "error", "message": f"Error reading CSV file: {str(e)}"}
+            ),
+            500,
+        )
 
     # Limit to the first 15 rows
     df = df.head(15)
-    
+
     # Convert integer columns to strings
     int_cols = df.select_dtypes(include=["int"]).columns
     df[int_cols] = df[int_cols].astype(str)
@@ -64,26 +69,28 @@ def create_agents():
 
     # Create Agent objects: info only includes Age and Gender, rest goes to new_questions.
     agents = []
-    
+
     for record in df.to_dict(orient="records"):
-        
+
         # Rescale the latent variables to Likert-scale for each agent
         rescaled_record = GetData.rescale_to_likert(record, latent_variables)
-        
+
         info = {"Age": record.get("Age"), "Gender": record.get("Gender")}
-        
+
         new_questions = {k: v for k, v in record.items() if k not in ["Age", "Gender"]}
         agent = Agent(info)
         agent.new_questions = new_questions
         agents.append(agent)
 
     # Build the output using the private attribute via name mangling.
-    agents_output = [{"info": agent._Agent__info, "new_questions": agent.new_questions} for agent in agents]
-    return jsonify({
-        "status": "success",
-        "created_agents": len(agents),
-        "agents": agents_output
-    })
+    agents_output = [
+        {"info": agent._Agent__info, "new_questions": agent.new_questions}
+        for agent in agents
+    ]
+    return jsonify(
+        {"status": "success", "created_agents": len(agents), "agents": agents_output}
+    )
+
 
 # IMPORTANT!: Not fully finished
 @app.route("/download_agent_response_csv", methods=["POST"])

@@ -1,17 +1,19 @@
 class GetData:
     """
     GetData class provides methods to manipulate and rescale data.
-    
+
     Methods:
-    
+
         rescale_to_likert(agent_data, latent_variable_columns, min_likert=1, max_likert=5):
         Returns:
             dict: Updated agent_data with rescaled latent variables.
-            
-        
+
+
     """
-    
-    def rescale_to_likert(agent_data, latent_variable_columns, min_likert=1, max_likert=5):
+
+    def rescale_to_likert(
+        agent_data, latent_variable_columns, min_likert=1, max_likert=5
+    ):
         """
         Rescale the latent variables of an agent to a 1-5 Likert scale.
 
@@ -31,7 +33,11 @@ class GetData:
         # Rescale each latent variable
         for col in latent_variable_columns:
             original_value = float(agent_data[col])
-            rescaled_value = min_likert + (original_value - global_min) * (max_likert - min_likert) / (global_max - global_min)
-            agent_data[col] = round(rescaled_value)  # Round to nearest integer in Likert scale
+            rescaled_value = min_likert + (original_value - global_min) * (
+                max_likert - min_likert
+            ) / (global_max - global_min)
+            agent_data[col] = round(
+                rescaled_value
+            )  # Round to nearest integer in Likert scale
 
         return agent_data
