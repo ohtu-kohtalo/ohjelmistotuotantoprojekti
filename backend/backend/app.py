@@ -1,36 +1,28 @@
 import os
+import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 from .key_config import (
     CSV_FILE_PATH,
-    QUESTIONS_FILE_PATH,
-    ANSWERS_FILE_PATH,
     GEMINI_API_KEY,
+    OPENAI_API_KEY,
 )
-from .load_dataset import load_dataset
+
 from .llm_config import get_llm_connection
-from .services.create_agent_pool import create_agent_pool
-from .services.create_questions import create_questions
+from .entities.agent import Agent
 from .services.get_data import GetData
 from .services.gemini_service import Gemini
 
-
 app = Flask(__name__)
 CORS(app)
-
-dataset = load_dataset(CSV_FILE_PATH)
-agent_pool = create_agent_pool(dataset)
-survey = create_questions(QUESTIONS_FILE_PATH, ANSWERS_FILE_PATH)
-get_data = GetData(survey, agent_pool)
 ai_model = get_llm_connection()
 gemini = Gemini(ai_model)
-
-mock_dataset = load_dataset("./data/15_mock_agents.csv")
-mock_agent_pool = create_agent_pool(mock_dataset)
-get_mock_data = GetData(survey, mock_agent_pool)
+csv_file = CSV_FILE_PATH
 
 
 @app.route("/", methods=["GET"])
+<<<<<<< HEAD
 def index():
     """Returns a JSON response containing the answer distributions of all questions."""
     distributions = get_data.get_all_distributions()
@@ -40,33 +32,72 @@ def index():
 
 @app.route("/create_agent_response", methods=["POST"])
 def create_agent_response():
+=======
+def create_agents():
+>>>>>>> ed58b86 (Rework Backend to accept handle new CSV-data)
     """
-    Current solution creates 15 agent responses based on pre-determined answer data and a user inputted question.
-
-    This function:
-    Retrieves JSON data from the request (user question),
-    Extracts question information,
-    Uses question information and pre-determined agents to generate a response via LLM,
-
-    Generated agent response is then returned as a JSON response.
-
-    Returns:
-        Response: A JSON response containing the generated answers
+    Creates 15 agents based on the CSV data.
+    
+    For each row in the CSV (limited to 15 rows):
+      - The agent’s info contains the "Age" and "Gender" fields.
+      - The rest of the columns (latent variables) are stored in new_questions.
+    
+    Returns a JSON response:
+      {
+          "status": "success",
+          "created_agents": <number>,
+          "agents": [
+              {
+                  "info": {"Age": "24", "Gender": "Male"},
+                  "new_questions": { 
+                    "Q1": ANSWER,
+                    "Q2": ANSWER,
+                  }
+              },
+              ...
+          ]
+      }
     """
+    
+    try:
+        df = pd.read_csv(csv_file)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Error reading CSV file: {str(e)}"}), 500
 
-    data = request.get_json()
-    print("Received data:", data, flush=True)
+    # Limit to the first 15 rows
+    df = df.head(15)
+    
+    # Convert integer columns to strings
+    int_cols = df.select_dtypes(include=["int"]).columns
+    df[int_cols] = df[int_cols].astype(str)
 
-    questions = data.get("questions")
-    prompts = get_mock_data.get_prompts(questions)
-    answers = ai_model.get_parallel_responses(prompts)
-    response = f"# Answers by the mock agents\n {answers}"
-    response = {"message": response}
-    response = jsonify(response)
-    return response
+    # Identify the latent variables in the dataset to be scaled into Likert-scale
+    latent_variables = [col for col in df.columns if col not in ["Age", "Gender"]]
 
+    # Create Agent objects: info only includes Age and Gender, rest goes to new_questions.
+    agents = []
+    
+    for record in df.to_dict(orient="records"):
+        
+        # Rescale the latent variables to Likert-scale for each agent
+        rescaled_record = GetData.rescale_to_likert(record, latent_variables)
+        
+        info = {"Age": record.get("Age"), "Gender": record.get("Gender")}
+        
+        new_questions = {k: v for k, v in record.items() if k not in ["Age", "Gender"]}
+        agent = Agent(info)
+        agent.new_questions = new_questions
+        agents.append(agent)
 
-# IMPORTANT!: Not fully finished until the agent response format is finalized
+    # Build the output using the private attribute via name mangling.
+    agents_output = [{"info": agent._Agent__info, "new_questions": agent.new_questions} for agent in agents]
+    return jsonify({
+        "status": "success",
+        "created_agents": len(agents),
+        "agents": agents_output
+    })
+
+# IMPORTANT!: Not fully finished
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
     """
