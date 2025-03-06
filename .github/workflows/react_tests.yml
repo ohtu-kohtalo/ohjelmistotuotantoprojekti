@@ -5,6 +5,10 @@ on:
     branches:
       - dev
 
+defaults:
+  run:
+    working-directory: frontend
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,11 +25,9 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        working-directory: frontend
         run: npm install
 
       - name: Run tests with Vitest
-        working-directory: frontend
         run: npx vitest run --coverage --coverageReporters=lcov
 
       - name: Upload coverage to Codecov
