@@ -22,19 +22,7 @@ csv_file = CSV_FILE_PATH
 
 
 @app.route("/", methods=["GET"])
-<<<<<<< HEAD
-def index():
-    """Returns a JSON response containing the answer distributions of all questions."""
-    distributions = get_data.get_all_distributions()
-    distributions = jsonify(distributions)
-    return distributions
-
-
-@app.route("/create_agent_response", methods=["POST"])
-def create_agent_response():
-=======
 def create_agents():
->>>>>>> ed58b86 (Rework Backend to accept handle new CSV-data)
     """
     Creates 15 agents based on the CSV data.
     
