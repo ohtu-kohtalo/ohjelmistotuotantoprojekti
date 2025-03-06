@@ -3,7 +3,7 @@ import Papa from "papaparse";
 
 import ErrorMessage from "./ErrorMessage";
 
-const CsvUpload = ({ onCsvError, onCsvSuccess }) => {
+const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
   const [fileName, setFileName] = useState("");
   const [questions, setQuestions] = useState([]);
   const fileInputRef = useRef(null);
@@ -60,8 +60,11 @@ const CsvUpload = ({ onCsvError, onCsvSuccess }) => {
 
         setFileName(file.name);
         setQuestions(questions);
+        event.target.value = null;
 
         onCsvSuccess?.(`Successfully uploaded "${file.name}".`);
+
+        handleCsvSubmit(questions);
       },
       error: (error) => {
         // General purpose error

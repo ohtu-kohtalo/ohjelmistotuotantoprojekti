@@ -55,8 +55,10 @@ def create_agent_response():
     """
 
     data = request.get_json()
-    question = data.get("question")
-    prompts = get_mock_data.get_prompts(question)
+    print("Received data:", data, flush=True)
+
+    questions = data.get("questions")
+    prompts = get_mock_data.get_prompts(questions)
     answers = ai_model.get_parallel_responses(prompts)
     response = f"# Answers by the mock agents\n {answers}"
     response = {"message": response}

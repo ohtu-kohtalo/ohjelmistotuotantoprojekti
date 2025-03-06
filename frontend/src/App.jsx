@@ -74,6 +74,8 @@ const App = () => {
    * @param {Event} event - The form submission event.
    * @returns {void}
    */
+
+  // NOT CURRENTLY IN USE
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -132,6 +134,34 @@ const App = () => {
     }
   };
 
+  const handleCsvSubmit = async (csvQuestions) => {
+    setIsLoading(true);
+    try {
+      const BACKEND_URL =
+        import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+      const response = await fetch(`${BACKEND_URL}/create_agent_response`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questions: csvQuestions
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+  
+      const data = await response.json();
+      showMessage("success", "CSV submitted successfully");
+
+    } catch (error) {
+      console.error("CSV submission error:", error);
+      showMessage("error", "⚠️ Could not submit CSV data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Helper function to display error messages
   const showMessage = (type, text) => {
     setMessage({ type, text });
@@ -171,15 +201,16 @@ const App = () => {
         onCsvSuccess={(successMessage) =>
           showMessage("success", successMessage)
         }
+        handleCsvSubmit={handleCsvSubmit}
       />
       <PlotContainer agentData={distributions} />
-      <QueryForm
+      {/* <QueryForm
         question={question}
         setQuestion={setQuestion}
         agentCount={agentCount}
         setAgentCount={setAgentCount}
         handleSubmit={handleSubmit}
-      />
+      /> */}
       {isLoading && <LoadingIndicator />}
       <ChatContainer response={response} />
     </div>
