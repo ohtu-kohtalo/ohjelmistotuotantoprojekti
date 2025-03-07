@@ -70,81 +70,12 @@ const App = () => {
     fetchDistributions();
   }, []);
 
-  /**
-   * Handles the form submission event.
-   * Prevents the default form submission behavior, checks if the query is not empty,
-   * and sets the messages state with the user's query and a mock bot response.
-   * If an error occurs, sets the messages state with an error message.
-   *
-   * @param {Event} event - The form submission event.
-   * @returns {void}
-   */
-
-  // NOT CURRENTLY IN USE
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!question.trim()) {
-      showMessage("error", "⚠️ Cannot submit an empty question");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const BACKEND_URL =
-        import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
-      const response = await fetch(`${BACKEND_URL}/create_agent_response`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: question,
-          agent_count: agentCount,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorMessage = `⚠️ Error: ${response.status} - ${response.statusText}`;
-        showMessage("error", errorMessage);
-        throw new Error(errorMessage);
-      }
-
-      const data = await response.json();
-      setResponse([
-        {
-          type: "query",
-          text: question,
-          agentCount: agentCount,
-        },
-        { type: "bot", text: data.message || "No response message received." },
-      ]);
-    } catch (error) {
-      console.error("Fetch error:", error);
-      showMessage("error", "⚠️ Could not retrieve data from backend");
-      setResponse([
-        {
-          type: "query",
-          text: question,
-          agentCount: agentCount,
-        },
-        {
-          type: "bot",
-          text: "An error occurred while fetching the response:",
-          error_status: "Error code: " + error.message,
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-      resetForm();
-    }
-  };
-
   const handleCsvSubmit = async (csvQuestions) => {
     setIsLoading(true);
     try {
       const BACKEND_URL =
         import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
-      const response = await fetch(`${BACKEND_URL}/create_agent_response`, {
+        const response = await fetch(`${BACKEND_URL}/create_agent_response`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -280,7 +211,6 @@ const App = () => {
                     setQuestion={setQuestion}
                     agentCount={agentCount}
                     setAgentCount={setAgentCount}
-                    handleSubmit={handleSubmit}
                     handleCsvSubmit={handleCsvSubmit}
                     isLoading={isLoading}
                     response={response}
