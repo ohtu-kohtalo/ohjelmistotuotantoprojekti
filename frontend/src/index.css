@@ -297,3 +297,40 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.chart-container {
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.axis-label {
+  font-size: 14px;
+  fill: #e0e0e0;
+}
+
+.bar {
+  rx: 5;
+  cursor: default;
+  transition: fill 0.3s ease;
+}
+
+.axis-text {
+  transform: rotate(-15deg);
+  text-anchor: end;
+  font-size: 14px;
+}
+
+.y-axis-label {
+  font-size: 14px;
+}

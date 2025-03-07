@@ -26,13 +26,7 @@ const LikertBar = ({ data, question }) => {
 
     const colorScale = d3
       .scaleOrdinal()
-      .domain([
-        "Strongly Disagree",
-        "Disagree",
-        "Neutral",
-        "Agree",
-        "Strongly Agree",
-      ])
+      .domain(["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
 
     const svgContainer = svg.attr("width", width).attr("height", height);
@@ -41,16 +35,15 @@ const LikertBar = ({ data, question }) => {
       .append("g")
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .call(d3.axisBottom(xScale))
+      .attr("class", "axis")
       .selectAll("text")
-      .attr("transform", "rotate(-15)")
-      .style("text-anchor", "end")
-      .style("font-size", "14px");
+      .attr("class", "axis-text");
 
     svgContainer
       .append("g")
       .attr("transform", `translate(${margin.left}, 0)`)
       .call(d3.axisLeft(yScale).ticks(6))
-      .style("font-size", "14px");
+      .attr("class", "axis y-axis-label");
 
     svgContainer
       .selectAll(".bar")
@@ -62,8 +55,7 @@ const LikertBar = ({ data, question }) => {
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => height - margin.bottom - yScale(d.value))
       .attr("fill", (d) => colorScale(d.label))
-      .attr("rx", 5)
-
+      .attr("class", "bar")
       .on("mouseover", function (event, d) {
         d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
       })
@@ -73,17 +65,17 @@ const LikertBar = ({ data, question }) => {
 
     svgContainer
       .append("text")
+      .attr("class", "chart-title")
       .attr("x", width / 2)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
-      .style("font-size", "18px")
-      .style("font-weight", "bold")
-      .style("fill", "white")
+      .attr("fill", "white")
       .text(question);
+
   }, [data]);
 
   return (
-    <div className="p-4">
+    <div className="chart-container p-4">
       <svg ref={chartRef}></svg>
     </div>
   );
