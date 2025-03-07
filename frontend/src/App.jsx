@@ -118,58 +118,7 @@ const App = () => {
     setAgentCount("");
   };
 
-  // Title = title, error for error message,
-  // isLoading for showing a loading state,
-  // QueryForm for handling query submits,
-  // ChatContainer for showing responses of queries
   return (
-    // <div className="app-container">
-    //   <Title text="Future Customer: A Simulator and Prediction Tool" />
-    //   {message &&
-    //     (message.type === "error" ? (
-    //       <ErrorMessage message={message.text} />
-    //     ) : (
-    //       <SuccessMessage message={message.text} />
-    //     ))}
-    //   <CsvUpload
-    //     onCsvError={(errorMessage) => showMessage("error", errorMessage)}
-    //     onCsvSuccess={(successMessage) =>
-    //       showMessage("success", successMessage)
-    //     }
-    //     handleCsvSubmit={handleCsvSubmit}
-    //   />
-    //   <PlotContainer agentData={distributions} />
-    //   {/* <QueryForm
-    //     question={question}
-    //     setQuestion={setQuestion}
-    //     agentCount={agentCount}
-    //     setAgentCount={setAgentCount}
-    //     handleSubmit={handleSubmit}
-    //   /> */}
-    //   {isLoading && <LoadingIndicator />}
-    //   <ChatContainer response={response} />
-    // </div>
-
-    // NEW PAGE LAYOUT (in progress)
-
-    // <div>
-    //   {message &&
-    //       (message.type === "error" ? (
-    //         <ErrorMessage message={message.text} />
-    //       ) : (
-    //         <SuccessMessage message={message.text} />
-    //   ))}
-    //   <HelpPage />
-    //   <InitialDistribution distributions={distributions} />
-    //   <AddQuery
-    //     handleCsvSubmit={handleCsvSubmit}
-    //     isLoading={isLoading}
-    //     response={response}
-    //     showMessage={showMessage}
-    //   />
-    //   <FutureDistribution />
-    // </div>
-
     <BrowserRouter>
       <div className="app-container">
         <div className="header-container">
