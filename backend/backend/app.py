@@ -56,7 +56,6 @@ def create_agents():
     try:
         df = pd.read_csv(csv_file)
 
-
         # Limit to the first 15 rows
         df = df.head(15)
 
@@ -69,7 +68,7 @@ def create_agents():
 
         agents = []
 
-            # Create Agent objects: info includes Age, Gender, and Answers.
+        # Create Agent objects: info includes Age, Gender, and Answers.
         for record in df.to_dict(orient="records"):
 
             # Rescale the latent variables to Likert-scale for each agent
@@ -77,32 +76,41 @@ def create_agents():
 
             # Create agents
             info = {
-            "Age": record.get("Age"),
-            "Gender": record.get("Gender"),
-            "Answers": {
-                question_text: answer_value
-                for question_text, answer_value in record.items()
-                if question_text not in ["Age", "Gender"]
-            }
+                "Age": record.get("Age"),
+                "Gender": record.get("Gender"),
+                "Answers": {
+                    question_text: answer_value
+                    for question_text, answer_value in record.items()
+                    if question_text not in ["Age", "Gender"]
+                },
             }
 
             agent = Agent(info)
             agents.append(agent)
             # Example Agent-object now: Agent(Age=24, Answers={'Q1': 1, 'Q2': 3}, Gender=Male)
 
-
             # Build the output using the private attribute via name mangling.
-            agents_output = [
-                {"info": agent._Agent__info}
-                for agent in agents
-            ]
+            agents_output = [{"info": agent._Agent__info} for agent in agents]
 
         # Return JSON-output to frontend
         return jsonify(
-            {"status": "success", "created_agents": len(agents), "agents": agents_output}
+            {
+                "status": "success",
+                "created_agents": len(agents),
+                "agents": agents_output,
+            }
         )
     except Exception as error:
-        return jsonify({"status": "Error during initial agent-creation from CSV-file", "message": str(error)}), 500
+        return (
+            jsonify(
+                {
+                    "status": "Error during initial agent-creation from CSV-file",
+                    "message": str(error),
+                }
+            ),
+            500,
+        )
+
 
 @app.route("/receive_user_csv", methods=["POST"])
 def receive_user_csv():
@@ -126,9 +134,10 @@ def receive_user_csv():
     if not isinstance(questions, list):
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
-    
+
     # Temporary success message
     return jsonify({"status": "success", "message": "CSV received successfully"})
+
 
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])

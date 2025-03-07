@@ -91,8 +91,9 @@ class TestGetData(unittest.TestCase):
         # All should map to the midpoint of the scale (in a 1-5 Likert, midpoint is 3)
         for var in latent_variables:
             self.assertEqual(
-                rescaled_data[var], 3,
-                f"{var} should map to the middle of the Likert scale (3) when all values are identical."
+                rescaled_data[var],
+                3,
+                f"{var} should map to the middle of the Likert scale (3) when all values are identical.",
             )
 
         # Non-latent fields should still be preserved
