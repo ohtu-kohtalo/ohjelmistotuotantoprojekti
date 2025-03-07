@@ -10,13 +10,15 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
     );
   };
 
   return (
     <div className="card p-4">
-      <h2 className="text-lg font-bold mb-2 text-center">Likert Scale Charts</h2>
+      <h2 className="text-lg font-bold mb-2 text-center">
+        Likert Scale Charts
+      </h2>
       <LikertBar
         data={chartsData[currentIndex].data}
         question={chartsData[currentIndex].question}
@@ -29,7 +31,9 @@ const LikertChartContainer = ({ chartsData }) => {
           Next ➡
         </button>
       </div>
-      <p className="text-center mt-2">Chart {currentIndex + 1} / {chartsData.length}</p>
+      <p className="text-center mt-2">
+        Chart {currentIndex + 1} / {chartsData.length}
+      </p>
     </div>
   );
 };
