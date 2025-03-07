@@ -12,7 +12,7 @@ class Agent:
         """Creates an agent.
 
         Args:
-            __info (dict): information about the agent, e.g. age and gender
+            __info (dict): information about the agent, e.g. age and gender, answers to questions
         """
         self.__info = info
         self.new_questions = {}

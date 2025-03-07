@@ -35,20 +35,18 @@ def create_agents():
         {
             "agents": [
                 {
-                    "info": {
-                        "Age": "24",
-                        "Gender": "Male"
-                    },
-                    "new_questions": {
-                        "Q1": answer,
-                        "Q2": answer,
-                        ...
-                    }
+                "info": {
+                  "Age": "24",
+                  "Answers": {
+                    "Q1": Answer,
+                    "Q2": Answer,
+                  },
+                  "Gender": "Male"
                 },
                 ...
             ],
-            "created_agents": <number>
-            "status": "success",
+            "created_agents": <number>,
+            "status": "success"
         }
 
         Example in frontend:
@@ -71,37 +69,43 @@ def create_agents():
 
         agents = []
 
-        # Create Agent objects: info only includes Age and Gender, rest goes to new_questions.
+            # Create Agent objects: info includes Age, Gender, and Answers.
         for record in df.to_dict(orient="records"):
 
             # Rescale the latent variables to Likert-scale for each agent
             GetData.rescale_to_likert(record, latent_variables)
 
-            info = {"Age": record.get("Age"), "Gender": record.get("Gender")}
-
-            new_questions = {
+            # Create agents
+            info = {
+            "Age": record.get("Age"),
+            "Gender": record.get("Gender"),
+            "Answers": {
                 question_text: answer_value
                 for question_text, answer_value in record.items()
                 if question_text not in ["Age", "Gender"]
             }
+            }
 
             agent = Agent(info)
-            agent.new_questions = new_questions
             agents.append(agent)
+            # Example Agent-object now: Agent(Age=24, Answers={'Q1': 1, 'Q2': 3}, Gender=Male)
 
-        # Build the output using the private attribute via name mangling.
-        agents_output = [
-            {"info": agent._Agent__info, "new_questions": agent.new_questions}
-            for agent in agents
-        ]
+
+            # Build the output using the private attribute via name mangling.
+            agents_output = [
+                {"info": agent._Agent__info}
+                for agent in agents
+            ]
+
+        # Return JSON-output to frontend
         return jsonify(
             {"status": "success", "created_agents": len(agents), "agents": agents_output}
         )
     except Exception as error:
-        return jsonify({"status": "Error during intial agent-creation from CSV-file", "message: ": str(error)}), 500
+        return jsonify({"status": "Error during initial agent-creation from CSV-file", "message": str(error)}), 500
 
 
-# IMPORTANT!: Not fully finished
+# IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
     """
