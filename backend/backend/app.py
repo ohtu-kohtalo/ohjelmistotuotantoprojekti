@@ -104,6 +104,31 @@ def create_agents():
     except Exception as error:
         return jsonify({"status": "Error during initial agent-creation from CSV-file", "message": str(error)}), 500
 
+@app.route("/receive_user_csv", methods=["POST"])
+def receive_user_csv():
+    data = request.get_json()
+    print(data, flush=True)
+
+    if not data:
+        print("No data provided")
+        return jsonify({"error": "No data provided"}), 400
+
+    if len(data) == 0:
+        print("Empty agent data")
+        return jsonify({"error": "Empty agent data"}), 400
+
+    if "questions" not in data:
+        print("Missing 'questions' field in payload")
+        return jsonify({"error": "Missing 'questions' field in payload"}), 400
+
+    questions = data["questions"]
+
+    if not isinstance(questions, list):
+        print("'questions' must be an object (list)")
+        return jsonify({"error": "'questions' must be an object (list)"}), 400
+    
+    # Temporary success message
+    return jsonify({"status": "success", "message": "CSV received successfully"})
 
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])

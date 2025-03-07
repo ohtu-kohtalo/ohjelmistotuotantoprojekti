@@ -76,7 +76,7 @@ const App = () => {
       const BACKEND_URL =
         import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
       const response = await fetch(
-        `${BACKEND_URL}/download_agent_response_csv`,
+        `${BACKEND_URL}/receive_user_csv`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
