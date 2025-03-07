@@ -75,13 +75,16 @@ const App = () => {
     try {
       const BACKEND_URL =
         import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
-        const response = await fetch(`${BACKEND_URL}/download_agent_response_csv`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          questions: csvQuestions,
-        }),
-      });
+      const response = await fetch(
+        `${BACKEND_URL}/download_agent_response_csv`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            questions: csvQuestions,
+          }),
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
