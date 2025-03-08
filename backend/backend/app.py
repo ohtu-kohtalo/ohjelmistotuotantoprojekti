@@ -20,6 +20,9 @@ ai_model = get_llm_connection()
 gemini = Gemini(ai_model)
 csv_file = CSV_FILE_PATH
 
+# Set a default value for the global variable agents
+agents = []
+
 
 @app.route("/", methods=["GET"])
 def create_agents():
@@ -54,6 +57,9 @@ def create_agents():
     """
 
     try:
+        # Declare the list of agents to be a global variable, so that other functions can access it
+        global agents
+
         df = pd.read_csv(csv_file)
 
         # Limit to the first 15 rows
