@@ -69,7 +69,6 @@ class LlmHandler:
                 print("[ERROR] LLM returned an empty response!", flush=True)
                 return None
 
-            # Parse response and store in JSON format
             agent_responses = {}
             lines = response.strip().split("\n")
             print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
@@ -78,6 +77,20 @@ class LlmHandler:
                 if line.startswith(f"Agent {i+1}:"):
                     answers = [int(x.strip()) for x in line.split(":")[1].split(",") if x.strip().isdigit()]
                     agent_responses[agents[i]] = dict(zip(questions, answers))
+            
+            print("\n[DEBUG] Storing responses in agent objects...")
+
+            for i, (agent, responses) in enumerate(agent_responses.items()):
+                print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
+
+                for question, answer in responses.items():
+                    if question not in agent.new_questions:
+                        agent.new_questions[question] = answer  # Add only new question-response pairs
+                    else:
+                        print(f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.")
+
+                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
+
 
             return agent_responses
 
