@@ -7,31 +7,43 @@ class LlmHandler:
         """Initializes the LLM connection using `llm_config.py`."""
         self.llm = get_llm_connection()
 
-    def create_prompt(self, agent, question):
+    def create_prompt(self, agents, questions):
         """
-        Creates a detailed prompt for a single agent and a single question.
+        Creates a prompt for all agents and all questions.
 
         Args:
-            agent (Agent): The agent receiving the question.
+            agent (Agent): List of Agenr objects.
             question (str): The user's question.
 
         Returns:
             str: The generated prompt.
         """
-        agent_info = agent.get_agent_info()
+        prompt = (
+            "You are simulating multiple consumer agents based on latent factor analysis.\n"
+            "Each agent represents a unique consumer with different demographic and psychological traits.\n"
+            "They will answer the following questions on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree).\n\n"
+        )
 
-        prompt = f"""
-        You are simulating a consumer agent based on latent factor analysis.
-        The agent has the following attributes:
+        #Lisää agenttien tiedot
+        for i, agent in enumerate(agents):
+            agent_info = agent.get_agent_info()
+            prompt += f"Agent {i+1}:\n{agent_info}\n\n"
 
-        {agent_info}
+        # Lisää kysymykset
+        prompt += "Each agent should answer the following questions:\n"
+        for question in questions:
+            prompt += f"- {question}\n"
 
-        Answer the following question on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree):
+        # Selkeä vastausohje
+        prompt += (
+            "\nPlease respond in the exact format:\n"
+            "Agent 1: 3, 2\n"
+            "Agent 2: 4, 5\n"
+            "Agent 3: 2, 1\n"
+            "...\n"
+            "and nothing else."
+        )
 
-        **Question:** "{question}"
-
-        Respond with only a single number (1, 2, 3, 4, or 5) and nothing else.
-        """
         return prompt
 
     def get_agent_response(self, agent, question):
