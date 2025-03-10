@@ -24,17 +24,14 @@ class LlmHandler:
             "They will answer the following questions on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree).\n\n"
         )
 
-        #Lisää agenttien tiedot
         for i, agent in enumerate(agents):
             agent_info = agent.get_agent_info()
             prompt += f"Agent {i+1}:\n{agent_info}\n\n"
 
-        # Lisää kysymykset
         prompt += "Each agent should answer the following questions:\n"
         for question in questions:
             prompt += f"- {question}\n"
 
-        # Selkeä vastausohje
         prompt += (
             "\nPlease respond in the exact format:\n"
             "Agent 1: 3, 2\n"
@@ -45,35 +42,44 @@ class LlmHandler:
         )
 
         return prompt
-
-    def get_agent_response(self, agent, question):
+    
+    def get_agents_responses(self, agents, questions):
         """
-        Sends a single question to an agent and stores the response on a Likert scale.
+        Sends a single request to the LLM with all agents and all questions,
+        and then stores the responses in each agent's `new_questions` dictionary.
 
         Args:
-            agent (Agent): The agent answering the question.
-            question (str): The question being asked.
+            agents (list): List of Agent objects.
+            questions (list): List of questions.
 
         Returns:
-            int: The LLM-generated response on a Likert scale (1-5).
+            dict: Each agent's responses.
         """
-        print("[DEBUG] Generating prompts for agents...")
+        print("[DEBUG] Generating a single prompt for all agents...")
 
-        prompt = self.create_prompt(agent, question)
+        prompt = self.create_prompt(agents, questions)
+
+        print("[DEBUG] Full prompt to LLM:\n", prompt, flush=True)
 
         try:
-            print("[DEBUG] Sending prompt to LLM...", flush=True)
-            response = self.llm.get_response(prompt)  # LLM response
+            response = self.llm.get_response(prompt)
             print("[DEBUG] LLM response received:", response, flush=True)
 
             if not response:
                 print("[ERROR] LLM returned an empty response!", flush=True)
                 return None
 
-            # Store the question and response
-            agent.new_questions[question] = response
+            # Parse response and store in JSON format
+            agent_responses = {}
+            lines = response.strip().split("\n")
+            print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
 
-            return response
+            for i, line in enumerate(lines):
+                if line.startswith(f"Agent {i+1}:"):
+                    answers = [int(x.strip()) for x in line.split(":")[1].split(",") if x.strip().isdigit()]
+                    agent_responses[agents[i]] = dict(zip(questions, answers))
+
+            return agent_responses
 
         except Exception as e:
             print(f"[ERROR] LLM call failed: {e}", flush=True)
