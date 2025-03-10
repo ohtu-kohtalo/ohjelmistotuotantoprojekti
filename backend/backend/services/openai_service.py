@@ -25,7 +25,7 @@ class OpenAI:
     def get_response(self, prompt):
         try:
             completion = client.chat.completions.create(
-                model=self.model, message=[{"role": "user", "content": prompt}]
+                model=self.model, messages=[{"role": "user", "content": prompt}]
             )
             return completion.choices[0].message.content
         except Exception as e:

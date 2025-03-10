@@ -13,12 +13,15 @@ from .llm_config import get_llm_connection
 from .entities.agent import Agent
 from .services.get_data import GetData
 from .services.gemini_service import Gemini
+from .services.Llm_handler import LlmHandler
+from .services.csv_service import extract_questions_from_csv
 
 app = Flask(__name__)
 CORS(app)
 ai_model = get_llm_connection()
 gemini = Gemini(ai_model)
 csv_file = CSV_FILE_PATH
+llm_handler = LlmHandler()
 
 # Set a default value for the global variable agents
 agents = []
@@ -120,6 +123,9 @@ def create_agents():
 
 @app.route("/receive_user_csv", methods=["POST"])
 def receive_user_csv():
+
+    global agents
+
     data = request.get_json()
     print(data, flush=True)
 
@@ -135,14 +141,45 @@ def receive_user_csv():
         print("Missing 'questions' field in payload")
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
-    questions = data["questions"]
+    questions = extract_questions_from_csv(data)
 
     if not isinstance(questions, list):
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
 
-    # Temporary success message
-    return jsonify({"status": "success", "message": "CSV received successfully"})
+    all_responses = {}
+
+    for agent in agents:
+        agent_responses = {}
+        for question in questions:
+            try:
+                response = llm_handler.get_agent_response(agent, question)
+                agent.new_questions[question] = (
+                    response  # Store the response in the agent
+                )
+                agent_responses[question] = response  # Store in response JSON
+
+                print(
+                    f"[DEBUG] Updated agent ({agent}): {agent.new_questions}",
+                    flush=True,
+                )
+
+            except Exception as error:
+                print(f"\n⚠️ [ERROR] LLM request failed: {error}", flush=True)
+                return (
+                    jsonify(
+                        {"status": "error", "message": f"LLM request failed: {error}"}
+                    ),
+                    500,
+                )
+
+        all_responses[str(agent)] = agent_responses  # Store all agent responses
+
+    print("[DEBUG] All agents and their stored responses:", flush=True)
+    for i, agent in enumerate(agents):
+        print(f"   Stored responses: {agent.new_questions}", flush=True)
+
+    return jsonify({"status": "success", "responses": all_responses})
 
 
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
@@ -178,6 +215,9 @@ def download_agent_response_csv():
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
     questions = data["questions"]
+    agent = agents[0]
+    question = questions[0]
+    response = llm_handler.get_agent_response(agent, question)
 
     # Validate that questions is a dictionary.
     if not isinstance(questions, dict):

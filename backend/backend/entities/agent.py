@@ -17,6 +17,10 @@ class Agent:
         self.__info = info
         self.new_questions = {}
 
+    def get_agent_info(self) -> dict:
+        """Returns only the agent's basic information (age, gender, and latent variables)."""
+        return self.__info
+
     # NO FUNCTIONALITY YET!
     def get_answer(self, question: str) -> str | None:
         """Returns the answer for the given question or **None**, if the given question does
