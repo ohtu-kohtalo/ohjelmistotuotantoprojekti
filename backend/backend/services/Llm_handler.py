@@ -75,9 +75,22 @@ class LlmHandler:
 
             for i, line in enumerate(lines):
                 if line.startswith(f"Agent {i+1}:"):
-                    answers = [int(x.strip()) for x in line.split(":")[1].split(",") if x.strip().isdigit()]
-                    agent_responses[agents[i]] = dict(zip(questions, answers))
-            
+                    parts = line.split(":")
+                    if len(parts) < 2:
+                        print(f"[ERROR] Invalid response format at line {i+1}: {line}", flush=True)
+                        continue 
+
+                    try:
+                        answers = [int(x.strip()) for x in parts[1].split(",") if x.strip().isdigit()]
+                        if len(answers) != len(questions):
+                            print(f"[ERROR] Mismatch in responses for Agent {i+1}: Expected {len(questions)}, got {len(answers)}.", flush=True)
+                            continue 
+
+                        agent_responses[agents[i]] = dict(zip(questions, answers))
+
+                    except ValueError:
+                        print(f"[ERROR] Failed to convert responses to integers at line {i+1}: {line}", flush=True)
+                        continue
             print("\n[DEBUG] Storing responses in agent objects...")
 
             for i, (agent, responses) in enumerate(agent_responses.items()):
@@ -85,7 +98,7 @@ class LlmHandler:
 
                 for question, answer in responses.items():
                     if question not in agent.new_questions:
-                        agent.new_questions[question] = answer  # Add only new question-response pairs
+                        agent.new_questions[question] = answer 
                     else:
                         print(f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.")
 
