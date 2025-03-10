@@ -147,42 +147,17 @@ def receive_user_csv():
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
 
-    all_responses = {}
-
-    for agent in agents:
-        agent_responses = {}
-        for question in questions:
-            try:
-                response = llm_handler.get_agent_response(agent, question)
-                agent.new_questions[question] = (
-                    response  # Store the response in the agent
-                )
-                agent_responses[question] = response  # Store in response JSON
-
-                print(
-                    f"[DEBUG] Updated agent ({agent}): {agent.new_questions}",
-                    flush=True,
-                )
-
-            except Exception as error:
-                print(f"\n⚠️ [ERROR] LLM request failed: {error}", flush=True)
-                return (
-                    jsonify(
-                        {"status": "error", "message": f"LLM request failed: {error}"}
-                    ),
-                    500,
-                )
-
-        all_responses[str(agent)] = agent_responses  # Store all agent responses
-
-    print("[DEBUG] All agents and their stored responses:", flush=True)
-    for i, agent in enumerate(agents):
-        print(f"   Stored responses: {agent.new_questions}", flush=True)
+    responses = llm_handler.get_agents_responses(agents, questions)
 
     distributions = GetData().get_answer_distributions(agents)
 
-    return jsonify({"status": "success", "responses": distributions})
-
+    return jsonify({
+        "status": "success",
+        "data": {
+            "responses": responses,
+            "distributions": distributions  
+        }
+    })
 
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])
