@@ -179,7 +179,9 @@ def receive_user_csv():
     for i, agent in enumerate(agents):
         print(f"   Stored responses: {agent.new_questions}", flush=True)
 
-    return jsonify({"status": "success", "responses": all_responses})
+    distributions = GetData().get_answer_distributions(agents)
+
+    return jsonify({"status": "success", "responses": distributions})
 
 
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
