@@ -73,6 +73,9 @@ class LlmHandler:
             lines = response.strip().split("\n")
             print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
 
+            if len(lines) < len(agents):
+                print(f"[ERROR] Expected {len(agents)} agents in response, but got {len(lines)}.", flush=True)
+
             for i, line in enumerate(lines):
                 if line.startswith(f"Agent {i+1}:"):
                     parts = line.split(":")
@@ -93,17 +96,20 @@ class LlmHandler:
                         continue
             print("\n[DEBUG] Storing responses in agent objects...")
 
+            agent_responses = {}
+
             for i, (agent, responses) in enumerate(agent_responses.items()):
                 print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
-
                 for question, answer in responses.items():
                     if question not in agent.new_questions:
                         agent.new_questions[question] = answer 
                     else:
                         print(f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.")
 
-                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
+                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")  
+                agent_responses[f"Agent_{i+1}"] = responses 
 
+            print("\n[DEBUG] Final agent responses", agent_responses, flush=True) 
 
             return agent_responses
 
