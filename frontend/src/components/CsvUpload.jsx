@@ -77,14 +77,18 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
   return (
     <div>
-      <button onClick={handleButtonClick}>Upload CSV File</button>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".csv"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
+      <div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv"
+          id="csvFileInput"
+          onChange={handleFileChange}
+        />
+      </div>
+      <div>
+        <button className="submit-button" onClick={handleButtonClick}>Upload</button>
+      </div>
     </div>
   );
 };

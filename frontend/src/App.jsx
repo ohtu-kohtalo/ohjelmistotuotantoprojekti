@@ -121,16 +121,12 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="app-container">
-        <div className="header-container">
-          <Title text="Future Customer: A Simulator and Prediction Tool" />
           {message &&
             (message.type === "error" ? (
               <ErrorMessage message={message.text} />
             ) : (
               <SuccessMessage message={message.text} />
             ))}
-        </div>
-        <div className="main-layout">
           <div className="sidebar">
             <Link to="/" className="sidebar-link">
               Help Page
@@ -173,7 +169,6 @@ const App = () => {
               />
             </Routes>
           </div>
-        </div>
       </div>
     </BrowserRouter>
   );
