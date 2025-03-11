@@ -47,15 +47,15 @@ class GetData:
                 # Add an agent's answer to the distributions
                 for q in distributions:
                     if q["question"] == question:
-                        if answer == "1":
+                        if str(answer) == "1":
                             q["answers"]["Strongly disagree"] += 1
-                        if answer == "2":
+                        if str(answer) == "2":
                             q["answers"]["Disagree"] += 1
-                        if answer == "3":
+                        if str(answer) == "3":
                             q["answers"]["Neutral"] += 1
-                        if answer == "4":
+                        if str(answer) == "4":
                             q["answers"]["Agree"] += 1
-                        if answer == "5":
+                        if str(answer) == "5":
                             q["answers"]["Strongly agree"] += 1
 
         return distributions
