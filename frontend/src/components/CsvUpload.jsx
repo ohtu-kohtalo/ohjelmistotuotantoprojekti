@@ -21,7 +21,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
     // Only accept CSV files with no header, one question per row
     Papa.parse(file, {
       header: false,
-      skipEmptyLines: false,
+      skipEmptyLines: true,
       complete: (results) => {
         const { data } = results;
 
@@ -40,7 +40,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
           if (row.length !== 1) {
             onCsvError?.(
-              `Row ${i + 1} can only contain one column. Found ${row.length}.`,
+              `Row ${i + 1} can only contain one column. Found ${row.length}.`
             );
             setFileName("");
             event.target.value = null;
