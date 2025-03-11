@@ -135,54 +135,54 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="app-container">
-          {message &&
-            (message.type === "error" ? (
-              <ErrorMessage message={message.text} />
-            ) : (
-              <SuccessMessage message={message.text} />
-            ))}
-          <div className="sidebar">
-            <Link to="/" className="sidebar-link">
-              Help Page
-            </Link>
-            <Link to="/initialDistribution" className="sidebar-link">
-              Initial Distribution
-            </Link>
-            <Link to="/addQuery" className="sidebar-link">
-              Add Query
-            </Link>
-            <Link to="/futureDistribution" className="sidebar-link">
-              Future Distribution
-            </Link>
-          </div>
-          <div className="content">
-            <Routes>
-              <Route path="/" element={<HelpPage />} />
-              <Route
-                path="/initialDistribution"
-                element={<InitialDistribution distributions={distributions} />}
-              />
-              <Route
-                path="/addQuery"
-                element={
-                  <AddQuery
-                    question={question}
-                    setQuestion={setQuestion}
-                    agentCount={agentCount}
-                    setAgentCount={setAgentCount}
-                    handleCsvSubmit={handleCsvSubmit}
-                    isLoading={isLoading}
-                    response={response}
-                    showMessage={showMessage}
-                  />
-                }
-              />
-              <Route
-                path="/futureDistribution"
-                element={<FutureDistribution />}
-              />
-            </Routes>
-          </div>
+        {message &&
+          (message.type === "error" ? (
+            <ErrorMessage message={message.text} />
+          ) : (
+            <SuccessMessage message={message.text} />
+          ))}
+        <div className="sidebar">
+          <Link to="/" className="sidebar-link">
+            Help Page
+          </Link>
+          <Link to="/initialDistribution" className="sidebar-link">
+            Initial Distribution
+          </Link>
+          <Link to="/addQuery" className="sidebar-link">
+            Add Query
+          </Link>
+          <Link to="/futureDistribution" className="sidebar-link">
+            Future Distribution
+          </Link>
+        </div>
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<HelpPage />} />
+            <Route
+              path="/initialDistribution"
+              element={<InitialDistribution distributions={distributions} />}
+            />
+            <Route
+              path="/addQuery"
+              element={
+                <AddQuery
+                  question={question}
+                  setQuestion={setQuestion}
+                  agentCount={agentCount}
+                  setAgentCount={setAgentCount}
+                  handleCsvSubmit={handleCsvSubmit}
+                  isLoading={isLoading}
+                  response={response}
+                  showMessage={showMessage}
+                />
+              }
+            />
+            <Route
+              path="/futureDistribution"
+              element={<FutureDistribution />}
+            />
+          </Routes>
+        </div>
       </div>
     </BrowserRouter>
   );

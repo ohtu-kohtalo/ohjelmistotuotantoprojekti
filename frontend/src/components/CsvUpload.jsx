@@ -87,7 +87,9 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
         />
       </div>
       <div>
-        <button className="submit-button" onClick={handleButtonClick}>Upload</button>
+        <button className="submit-button" onClick={handleButtonClick}>
+          Upload
+        </button>
       </div>
     </div>
   );
