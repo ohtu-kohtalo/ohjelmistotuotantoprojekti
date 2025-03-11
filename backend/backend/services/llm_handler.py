@@ -75,8 +75,13 @@ class LlmHandler:
 
             if len(lines) < len(agents):
                 print(f"[ERROR] Expected {len(agents)} agents in response, but got {len(lines)}.", flush=True)
+                return None
 
             for i, line in enumerate(lines):
+                if i >= len(agents):  
+                    print(f"[ERROR] Skipping response line {i+1} because there are only {len(agents)} agents.", flush=True)
+                    continue
+                
                 if line.startswith(f"Agent {i+1}:"):
                     parts = line.split(":")
                     if len(parts) < 2:
@@ -96,7 +101,7 @@ class LlmHandler:
                         continue
             print("\n[DEBUG] Storing responses in agent objects...")
 
-            agent_responses = {}
+            new_agent_responses = {}
 
             for i, (agent, responses) in enumerate(agent_responses.items()):
                 print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
@@ -107,11 +112,11 @@ class LlmHandler:
                         print(f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.")
 
                 print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")  
-                agent_responses[f"Agent_{i+1}"] = responses 
+                new_agent_responses[f"Agent_{i+1}"] = responses  
 
-            print("\n[DEBUG] Final agent responses", agent_responses, flush=True) 
+                print("\n[DEBUG] Final agent responses", new_agent_responses, flush=True) 
 
-            return agent_responses
+            return new_agent_responses 
 
         except Exception as e:
             print(f"[ERROR] LLM call failed: {e}", flush=True)
