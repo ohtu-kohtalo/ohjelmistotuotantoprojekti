@@ -12,7 +12,7 @@ class LlmHandler:
         Creates a prompt for all agents and all questions.
 
         Args:
-            agent (Agent): List of Agenr objects.
+            agent (Agent): List of Agent objects.
             question (str): The user's question.
 
         Returns:

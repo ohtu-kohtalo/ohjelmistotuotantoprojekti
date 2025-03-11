@@ -13,7 +13,7 @@ from .llm_config import get_llm_connection
 from .entities.agent import Agent
 from .services.get_data import GetData
 from .services.gemini_service import Gemini
-from .services.Llm_handler import LlmHandler
+from .services.llm_handler import LlmHandler
 from .services.csv_service import extract_questions_from_csv
 
 app = Flask(__name__)
@@ -30,33 +30,17 @@ agents = []
 @app.route("/", methods=["GET"])
 def create_agents():
     """
-    Creates 15 agents based on the CSV data.
+    Creates 15 agents based on the CSV-data in backend.
 
-    For each row in the CSV (limited to 15 rows):
-      - The agent’s info contains the "Age" and "Gender" fields.
-      - The rest of the columns (latent variables) are stored in new_questions.
+    For each row in the backend-CSV (limited to 15 rows):
+      - The agent’s info contains the "Age", "Gender" and "Answers" fields. Answers is a dictionary with backend CSV-file question-text as key and the answer-value as value.
+      - The new_questions-dictionary will be filled with agents' answers based on user-inputted question(s).
+
+    Sets up the initial agents based on the CSV-file in the backend to be used later in the application.
+    Backend CSV-file can be thought of as sort of a training data for the agents and is used to provide LLM with the necessary data to generate responses.
 
     Returns:
-        JSON response:
-        {
-            "agents": [
-                {
-                "info": {
-                  "Age": "24",
-                  "Answers": {
-                    "Q1": Answer,
-                    "Q2": Answer,
-                  },
-                  "Gender": "Male"
-                },
-                ...
-            ],
-            "created_agents": <number>,
-            "status": "success"
-        }
-
-        Example in frontend:
-        {agents: Array(15), created_agents: 15, status: 'success'}
+        JSON response indicating whether initial agent creation from backend CSV-file was successful.
     """
 
     try:
@@ -72,16 +56,10 @@ def create_agents():
         int_cols = df.select_dtypes(include=["int"]).columns
         df[int_cols] = df[int_cols].astype(str)
 
-        # Identify the latent variables in the dataset to be scaled into Likert-scale
-        latent_variables = [col for col in df.columns if col not in ["Age", "Gender"]]
-
         agents = []
 
         # Create Agent objects: info includes Age, Gender, and Answers.
         for record in df.to_dict(orient="records"):
-
-            # Rescale the latent variables to Likert-scale for each agent
-            GetData.rescale_to_likert(record, latent_variables)
 
             # Create agents
             info = {
@@ -98,17 +76,9 @@ def create_agents():
             agents.append(agent)
             # Example Agent-object now: Agent(Age=24, Answers={'Q1': 1, 'Q2': 3}, Gender=Male)
 
-            # Build the output using the private attribute via name mangling.
-            agents_output = [{"info": agent._Agent__info} for agent in agents]
+        # Return JSON-output to frontend. For debugging purposes mostly.
+        return jsonify({"status": "Initial agent-creation from backend CSV-file was successful"}), 200
 
-        # Return JSON-output to frontend
-        return jsonify(
-            {
-                "status": "success",
-                "created_agents": len(agents),
-                "agents": agents_output,
-            }
-        )
     except Exception as error:
         return (
             jsonify(
