@@ -41,7 +41,7 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
   };
 
   return (
-    <div className="card">
+    <div className="card active">
       <Title className="card-header" text={"Upload CSV File"} />
       {csvLoaded ? (
         <LikertChartContainer chartsData={response} />
