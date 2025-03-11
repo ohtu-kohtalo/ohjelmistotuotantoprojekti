@@ -20,6 +20,17 @@ class LlmHandler:
         """
         prompt = (
             "You are simulating multiple consumer agents based on latent factor analysis.\n"
+            "Latent variables take values in the range of approximately -2.4 to +2.4.\n"
+            "These values represent underlying factors that influence consumer behavior, \n"
+            "and the agents' responses will be generated accordingly. \n"
+            "The model should take this range into account when providing Likert-scale responses to statements,\n"
+            "as these values reflect attitudes and preferences that are influenced by these latent factors.\n"
+            "Negative values indicate weaker or less favorable attitudes toward the associated concept, \n"
+            "while positive values indicate stronger or more favorable attitudes.\n"
+            "The magnitude of the value represents the strength of the attitude or belief.\n"
+            "For example a value closer to +2.4 indicates a stronger agreement with a positive statement,\n"
+            "while a value closer to -2.4 indicates a stronger disagreement.\n"
+            "A value of 0 represents a neutral stance, indicating no strong opinion either way.\n"
             "Each agent represents a unique consumer with different demographic and consumer behaviour.\n"
             "They will answer the following questions on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree).\n\n"
         )
@@ -28,7 +39,7 @@ class LlmHandler:
             agent_info = agent.get_agent_info()
             prompt += f"Agent {i+1}:\n{agent_info}\n\n"
 
-        prompt += "Each agent should answer the following questions:\n"
+        prompt += "Each agent should answer the following questions on a Likert scale:\n"
         for question in questions:
             prompt += f"- {question}\n"
 
@@ -36,12 +47,14 @@ class LlmHandler:
             "\n IMPORTANT: Each agent must provide exactly one numerical response per question.\n"
             "The number of responses must match the number of questions given above.\n"
             "Responses should be given in a single line per agent, separated by commas.\n"
+            "Do not provide any additional explanation or text.\n"
+            "The output must only include the agents' responses and nothing else.\n"
             "For example:\n"
             "Agent 1: 3, 2, 5, 4\n"
             "Agent 2: 4, 1, 3, 2\n"
             "Agent 3: 2, 5, 4, 3\n"
             "...\n"
-            "and nothing else."
+            "Nothing else should be included in the response, such as explanations or extra details."
         )
 
         return prompt
