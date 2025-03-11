@@ -20,7 +20,7 @@ class LlmHandler:
         """
         prompt = (
             "You are simulating multiple consumer agents based on latent factor analysis.\n"
-            "Each agent represents a unique consumer with different demographic and psychological traits.\n"
+            "Each agent represents a unique consumer with different demographic and consumer behaviour.\n"
             "They will answer the following questions on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree).\n\n"
         )
 
@@ -33,10 +33,13 @@ class LlmHandler:
             prompt += f"- {question}\n"
 
         prompt += (
-            "\nPlease respond in the exact format:\n"
-            "Agent 1: 3, 2\n"
-            "Agent 2: 4, 5\n"
-            "Agent 3: 2, 1\n"
+            "\n IMPORTANT: Each agent must provide exactly one numerical response per question.\n"
+            "The number of responses must match the number of questions given above.\n"
+            "Responses should be given in a single line per agent, separated by commas.\n"
+            "For example:\n"
+            "Agent 1: 3, 2, 5, 4\n"
+            "Agent 2: 4, 1, 3, 2\n"
+            "Agent 3: 2, 5, 4, 3\n"
             "...\n"
             "and nothing else."
         )
