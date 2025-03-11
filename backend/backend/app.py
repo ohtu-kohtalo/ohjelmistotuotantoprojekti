@@ -77,7 +77,14 @@ def create_agents():
             # Example Agent-object now: Agent(Age=24, Answers={'Q1': 1, 'Q2': 3}, Gender=Male)
 
         # Return JSON-output to frontend. For debugging purposes mostly.
-        return jsonify({"status": "Initial agent-creation from backend CSV-file was successful"}), 200
+        return (
+            jsonify(
+                {
+                    "status": "Initial agent-creation from backend CSV-file was successful"
+                }
+            ),
+            200,
+        )
 
     except Exception as error:
         return (
@@ -121,13 +128,13 @@ def receive_user_csv():
 
     distributions = GetData().get_answer_distributions(agents)
 
-    return jsonify({
-        "status": "success",
-        "data": {
-            "responses": responses,
-            "distributions": distributions  
+    return jsonify(
+        {
+            "status": "success",
+            "data": {"responses": responses, "distributions": distributions},
         }
-    })
+    )
+
 
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])

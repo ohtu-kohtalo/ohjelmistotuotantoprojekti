@@ -39,7 +39,9 @@ class LlmHandler:
             agent_info = agent.get_agent_info()
             prompt += f"Agent {i+1}:\n{agent_info}\n\n"
 
-        prompt += "Each agent should answer the following questions on a Likert scale:\n"
+        prompt += (
+            "Each agent should answer the following questions on a Likert scale:\n"
+        )
         for question in questions:
             prompt += f"- {question}\n"
 
@@ -58,7 +60,7 @@ class LlmHandler:
         )
 
         return prompt
-    
+
     def get_agents_responses(self, agents, questions):
         """
         Sends a single request to the LLM with all agents and all questions,
@@ -90,30 +92,49 @@ class LlmHandler:
             print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
 
             if len(lines) < len(agents):
-                print(f"[ERROR] Expected {len(agents)} agents in response, but got {len(lines)}.", flush=True)
+                print(
+                    f"[ERROR] Expected {len(agents)} agents in response, but got {len(lines)}.",
+                    flush=True,
+                )
                 return None
 
             for i, line in enumerate(lines):
-                if i >= len(agents):  
-                    print(f"[ERROR] Skipping response line {i+1} because there are only {len(agents)} agents.", flush=True)
+                if i >= len(agents):
+                    print(
+                        f"[ERROR] Skipping response line {i+1} because there are only {len(agents)} agents.",
+                        flush=True,
+                    )
                     continue
-                
+
                 if line.startswith(f"Agent {i+1}:"):
                     parts = line.split(":")
                     if len(parts) < 2:
-                        print(f"[ERROR] Invalid response format at line {i+1}: {line}", flush=True)
-                        continue 
+                        print(
+                            f"[ERROR] Invalid response format at line {i+1}: {line}",
+                            flush=True,
+                        )
+                        continue
 
                     try:
-                        answers = [int(x.strip()) for x in parts[1].split(",") if x.strip().isdigit()]
+                        answers = [
+                            int(x.strip())
+                            for x in parts[1].split(",")
+                            if x.strip().isdigit()
+                        ]
                         if len(answers) != len(questions):
-                            print(f"[ERROR] Mismatch in responses for Agent {i+1}: Expected {len(questions)}, got {len(answers)}.", flush=True)
-                            continue 
+                            print(
+                                f"[ERROR] Mismatch in responses for Agent {i+1}: Expected {len(questions)}, got {len(answers)}.",
+                                flush=True,
+                            )
+                            continue
 
                         agent_responses[agents[i]] = dict(zip(questions, answers))
 
                     except ValueError:
-                        print(f"[ERROR] Failed to convert responses to integers at line {i+1}: {line}", flush=True)
+                        print(
+                            f"[ERROR] Failed to convert responses to integers at line {i+1}: {line}",
+                            flush=True,
+                        )
                         continue
             print("\n[DEBUG] Storing responses in agent objects...")
 
@@ -123,16 +144,20 @@ class LlmHandler:
                 print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
                 for question, answer in responses.items():
                     if question not in agent.new_questions:
-                        agent.new_questions[question] = answer 
+                        agent.new_questions[question] = answer
                     else:
-                        print(f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.")
+                        print(
+                            f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer."
+                        )
 
-                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")  
-                new_agent_responses[f"Agent_{i+1}"] = responses  
+                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
+                new_agent_responses[f"Agent_{i+1}"] = responses
 
-                print("\n[DEBUG] Final agent responses", new_agent_responses, flush=True) 
+                print(
+                    "\n[DEBUG] Final agent responses", new_agent_responses, flush=True
+                )
 
-            return new_agent_responses 
+            return new_agent_responses
 
         except Exception as e:
             print(f"[ERROR] LLM call failed: {e}", flush=True)
