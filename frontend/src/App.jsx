@@ -14,13 +14,26 @@ import InitialDistribution from "./pages/InitialDistribution";
 import AddQuery from "./pages/AddQuery";
 import FutureDistribution from "./pages/FutureDistribution";
 
+const defaultDistribution = [
+  {
+    question: "Question for the agents",
+    data: [
+      { label: "Strongly Disagree", value: 0 },
+      { label: "Disagree", value: 0 },
+      { label: "Neutral", value: 0 },
+      { label: "Agree", value: 0 },
+      { label: "Strongly Agree", value: 0 },
+    ],
+  },
+];
+
 const App = () => {
   // Initial states for user input
   const [question, setQuestion] = useState("");
   const [agentCount, setAgentCount] = useState("");
 
   // Initial states for response and error handling
-  const [response, setResponse] = useState([]);
+  const [response, setResponse] = useState(defaultDistribution);
   const [message, setMessage] = useState({ type: "", text: "" });
   const messageTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +102,7 @@ const App = () => {
 
       const data = await response.json();
       showMessage("success", "CSV submitted successfully");
+      setResponse(data.data.distributions);
     } catch (error) {
       console.error("CSV submission error:", error);
       showMessage("error", "⚠️ Could not submit CSV data");

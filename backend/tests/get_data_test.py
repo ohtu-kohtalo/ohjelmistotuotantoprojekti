@@ -22,14 +22,14 @@ class TestGetData(unittest.TestCase):
         excepted = [
             {
                 "question": "Meat production should be reduced.",
-                "answers": {
-                    "Strongly agree": 0,
-                    "Agree": 2,
-                    "Neutral": 1,
-                    "Disagree": 1,
-                    "Strongly disagree": 1,
-                },
-            }
+                "data": [
+                    {"label": "Strongly Disagree", "value": 1},
+                    {"label": "Disagree", "value": 1},
+                    {"label": "Neutral", "value": 1},
+                    {"label": "Agree", "value": 2},
+                    {"label": "Strongly Agree", "value": 0},
+                ],
+            },
         ]
         self.assertEqual(excepted, distributions)
 
@@ -47,23 +47,23 @@ class TestGetData(unittest.TestCase):
         excepted = [
             {
                 "question": "Meat production should be reduced.",
-                "answers": {
-                    "Strongly agree": 0,
-                    "Agree": 2,
-                    "Neutral": 1,
-                    "Disagree": 1,
-                    "Strongly disagree": 2,
-                },
+                "data": [
+                    {"label": "Strongly Disagree", "value": 2},
+                    {"label": "Disagree", "value": 1},
+                    {"label": "Neutral", "value": 1},
+                    {"label": "Agree", "value": 2},
+                    {"label": "Strongly Agree", "value": 0},
+                ],
             },
             {
                 "question": "Vegetable production should be reduced.",
-                "answers": {
-                    "Strongly agree": 1,
-                    "Agree": 0,
-                    "Neutral": 0,
-                    "Disagree": 0,
-                    "Strongly disagree": 0,
-                },
+                "data": [
+                    {"label": "Strongly Disagree", "value": 0},
+                    {"label": "Disagree", "value": 0},
+                    {"label": "Neutral", "value": 0},
+                    {"label": "Agree", "value": 0},
+                    {"label": "Strongly Agree", "value": 1},
+                ],
             },
         ]
         self.assertEqual(excepted, distributions)

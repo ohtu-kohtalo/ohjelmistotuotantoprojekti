@@ -58,4 +58,30 @@ class GetData:
                         if str(answer) == "5":
                             q["answers"]["Strongly agree"] += 1
 
+        distributions = self._convert_to_correct_form(distributions)
         return distributions
+
+    def _convert_to_correct_form(self, distributions: list) -> list:
+        """Helper function for get_answer_distributions. This function converts the
+        distributions to the form, that can be sent to frontend"""
+        new_distributions = []
+
+        for dist in distributions:
+            new_dist = {}
+            new_dist["question"] = dist["question"]
+            new_dist["data"] = [
+                {
+                    "label": "Strongly Disagree",
+                    "value": dist["answers"]["Strongly disagree"],
+                },
+                {"label": "Disagree", "value": dist["answers"]["Disagree"]},
+                {"label": "Neutral", "value": dist["answers"]["Neutral"]},
+                {"label": "Agree", "value": dist["answers"]["Agree"]},
+                {
+                    "label": "Strongly Agree",
+                    "value": dist["answers"]["Strongly agree"],
+                },
+            ]
+            new_distributions.append(new_dist)
+
+        return new_distributions
