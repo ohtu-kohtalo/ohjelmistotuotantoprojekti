@@ -1,5 +1,4 @@
 import React from "react";
-import Title from "../components/Title";
 
 const HelpPage = () => {
   return (
@@ -11,10 +10,10 @@ const HelpPage = () => {
         Something to tell user what the application is and how to use the
         application
       </p>
-      <p>A quick overview of each selectable 'view':</p>
+      <p>A quick overview of each selectable view:</p>
       <ul className="help-list">
         <li>
-          <strong>Initial Distribution:</strong> See initial agent pool
+          <strong>Initial Distribution:</strong> See initial agent pool answers
           distribution.
         </li>
         <li>

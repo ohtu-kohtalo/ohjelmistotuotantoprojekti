@@ -38,49 +38,41 @@ const App = () => {
   const messageTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initial state for aquired distributions data
-  const [distributions, setDistributions] = useState(null); // Distributions of agents
+  // Initial state for agents
+  const [agents, setAgentCreation] = useState(null); // Agents
 
   useEffect(() => {
     /**
-     * Fetches distributions data from the backend.
+     * Asynchronously creates agents by fetching data from the backend.
      *
-     * This function makes an asynchronous request to the backend URL specified in the environment
-     * variables or defaults to "http://127.0.0.1:5500" if not specified. It handles the response
-     * by checking if the request was successful, parsing the JSON data, and updating the state
-     * with the received data. If an error occurs during the fetch operation, it logs the error
-     * and displays an error message to the user.
+     * This function attempts to initiate a create-agent route on the backend side.
+     * Upon successful fetch, it logs the status message.
      *
      * @async
-     * @function fetchDistributions
-     * @throws Will throw an error if the response is not ok.
-     * @returns {Dictionary} The distributions data received from the backend:
-     * QUESTION: {ANSWER: COUNT}
-     * ----------------------------
-     * Q17B: {null: 4},
-     * Q17C: {null: 4},
-     * T2 : {1: 1, 3: 1, 5: 1, 6: 1},
-     * ...
-     * bv1: {2: 2, 8: 1, 10: 1}
-     * ----------------------------
+     * @function createAgents
+     * @returns {Promise<void>} A promise that resolves when the agents are created.
+     * @throws Will throw an error if the fetch request fails.
      */
-    const fetchDistributions = async () => {
+    const createAgents = async () => {
       try {
         const BACKEND_URL =
           import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
         const response = await fetch(`${BACKEND_URL}/`);
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
-        const data = await response.json();
-        console.log("Distributions received!", data);
-        setDistributions(data);
+        const responseMessage = await response.json();
+        console.log("Distributions received!", responseMessage);
+        setAgentCreation(responseMessage);
       } catch (error) {
-        console.error("Error fetching distributions:", error);
-        showMessage("error", "⚠️ Could not retrieve data from backend");
+        console.error("Error creating agents:", error);
+        showMessage(
+          "error",
+          "⚠️ Could not create agents from initial backend CSV-file"
+        );
       }
     };
 
-    fetchDistributions();
+    createAgents();
   }, []);
 
   const handleCsvSubmit = async (csvQuestions) => {
@@ -126,12 +118,6 @@ const App = () => {
     }, 5000);
   };
 
-  // Helper function to reset form fields
-  const resetForm = () => {
-    setQuestion("");
-    setAgentCount("");
-  };
-
   return (
     <BrowserRouter>
       <div className="app-container">
@@ -160,7 +146,7 @@ const App = () => {
             <Route path="/" element={<HelpPage />} />
             <Route
               path="/initialDistribution"
-              element={<InitialDistribution distributions={distributions} />}
+              element={<InitialDistribution distributions={agents} />}
             />
             <Route
               path="/addQuery"

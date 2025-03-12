@@ -40,9 +40,55 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
     setCsvLoaded(false);
   };
 
+  const [questions, setQuestions] = useState([]);
+
+  const handleAddQuestion = () => {
+    const questionInput = document.getElementById("quickAddQuestion").value;
+    if (questionInput) {
+      setQuestions([...questions, questionInput]);
+      document.getElementById("quickAddQuestion").value = "";
+    }
+  };
+
+  const handleSubmitQuestions = () => {
+    // Logic to handle the submission of questions
+    console.log("Submitted questions:", questions);
+  };
+
   return (
     <div className="card active">
-      <Title className="card-header" text={"Upload CSV File"} />
+      <div className="quick-add-question">
+        <label htmlFor="quickAddQuestion">Quick Add Question:</label>
+        <input
+          type="text"
+          id="quickAddQuestion"
+          name="quickAddQuestion"
+          placeholder="Type your question here"
+        />
+        <button onClick={handleAddQuestion}>Add</button>
+      </div>
+
+      <ul>
+        {questions.map((question, index) => (
+          <li key={index}>
+            <p>{question}</p>
+          </li>
+        ))}
+      </ul>
+
+      <button
+        className="question-submit-button"
+        onClick={handleSubmitQuestions}
+        disabled={questions.length === 0}
+      >
+        Submit Questions
+      </button>
+
+      <Title
+        id="CSV-file-title"
+        className="card-header"
+        text={"Upload CSV File"}
+      />
       {csvLoaded ? (
         <LikertChartContainer chartsData={response} />
       ) : (

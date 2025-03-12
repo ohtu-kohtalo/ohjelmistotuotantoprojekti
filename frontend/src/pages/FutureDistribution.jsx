@@ -17,7 +17,7 @@ const FutureDistribution = () => {
           <img className="button-image" src={clusterIcon} alt="Cluster Chart" />
         </button>
       </div>
-      <h3 className="card-header">Agent Pool Distribution Graphs</h3>
+      <h3 className="card-header">Future Answer Distribution Graphs</h3>
       <div className="graph-placeholder">
         <div className="variable-buttons">
           <button className="variable-button">Age</button>
