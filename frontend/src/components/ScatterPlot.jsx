@@ -93,7 +93,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response", title }) => {
           : d3
               .axisBottom(xScale)
               .tickSize(-height + margin.top + margin.bottom)
-              .tickFormat("")
+              .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", gridColor)
@@ -108,7 +108,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response", title }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", gridColor)
@@ -118,7 +118,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response", title }) => {
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(
-        isCategorical ? d3.axisBottom(xScale) : d3.axisBottom(xScale).ticks(6)
+        isCategorical ? d3.axisBottom(xScale) : d3.axisBottom(xScale).ticks(6),
       )
       .attr("class", "axis")
       .selectAll("text")
@@ -165,7 +165,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response", title }) => {
       .attr("cx", (d) =>
         isCategorical
           ? xScale(d[xAxis]) + xScale.bandwidth() / 2
-          : xScale(d[xAxis])
+          : xScale(d[xAxis]),
       )
       .attr("cy", (d) => yScale(d[clusterBy]))
       .attr("r", 6)
@@ -186,7 +186,7 @@ const ScatterPlot = ({ data, xAxis, clusterBy = "response", title }) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.name}</strong><br>
             ${xAxis}: ${d[xAxis]}<br>
-            Response Score: ${d.response}`
+            Response Score: ${d.response}`,
         );
       })
       .on("mousemove", function (event) {

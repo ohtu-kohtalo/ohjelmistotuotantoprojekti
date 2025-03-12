@@ -109,7 +109,7 @@ const PieChart = ({ data, category, title }) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.data.key}</strong><br>
            Answers: ${d.data.value}<br>
-           Avg Score: ${d.data.avgScore}`
+           Avg Score: ${d.data.avgScore}`,
         );
       })
       .on("mousemove", function (event) {
