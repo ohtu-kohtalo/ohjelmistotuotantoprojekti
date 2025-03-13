@@ -12,7 +12,7 @@ def get_llm_connection():
         if not gemini_api_key:
             raise ValueError("No GEMINI_API_KEY found in environment")
         genai.configure(api_key=gemini_api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
         return Gemini(model)
 

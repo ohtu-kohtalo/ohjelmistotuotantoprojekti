@@ -76,6 +76,8 @@ def create_agents():
             agents.append(agent)
             # Example Agent-object now: Agent(Age=24, Answers={'Q1': 1, 'Q2': 3}, Gender=Male)
 
+        print("\nNumber of agents:", len(agents), "\n", flush=True)
+
         # Return JSON-output to frontend. For debugging purposes mostly.
         return (
             jsonify(

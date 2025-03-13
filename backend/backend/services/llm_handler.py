@@ -7,6 +7,29 @@ class LlmHandler:
         """Initializes the LLM connection using `llm_config.py`."""
         self.llm = get_llm_connection()
 
+    def _list_survey_questions(self, agent: Agent) -> list:
+        """Helper function for `create_prompt`. Makes a list out the survey questions or
+        latent factors if they are used instead.
+
+        Args:
+            agent (Agent):
+                An agent object. The survey questions are taken form one
+                agent instance. This means all agents must have the same questions for the
+                program to work correctly.
+
+        Returns:
+            list:
+                A list of questions. The questions are in the order they appeared in
+                the agent argument.
+        """
+        latent_factors = ["Age", "Gender"]
+
+        latent_factors_dictionary = agent.get_agent_info()["Answers"]
+        for factor in latent_factors_dictionary:
+            latent_factors.append(factor)
+
+        return latent_factors
+
     def create_prompt(self, agents, questions):
         """
         Creates a prompt for all agents and all questions.
@@ -19,28 +42,47 @@ class LlmHandler:
             str: The generated prompt.
         """
         prompt = (
-            "You are simulating multiple consumer agents based on latent factor analysis.\n"
-            "Latent variables take values in the range of approximately -2.4 to +2.4.\n"
-            "These values represent underlying factors that influence consumer behavior, \n"
-            "and the agents' responses will be generated accordingly. \n"
-            "The model should take this range into account when providing Likert-scale responses to statements,\n"
-            "as these values reflect attitudes and preferences that are influenced by these latent factors.\n"
+            "I have made an latent factor analysis for survey respondents on a food and "
+            "food production related survey. "
+            "The latent variables take values in the range of approximately -2.4 to +2.4. "
             "Negative values indicate weaker or less favorable attitudes toward the associated concept, \n"
             "while positive values indicate stronger or more favorable attitudes.\n"
+            "These values represent underlying factors that influence consumer behavior. "
             "The magnitude of the value represents the strength of the attitude or belief.\n"
             "For example a value closer to +2.4 indicates a stronger agreement with a positive statement,\n"
             "while a value closer to -2.4 indicates a stronger disagreement.\n"
             "A value of 0 represents a neutral stance, indicating no strong opinion either way.\n"
-            "Each agent represents a unique consumer with different demographic and consumer behaviour.\n"
-            "They will answer the following questions on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree).\n\n"
+            "Each agent represents a unique consumer.\n"
+            "Here are age, gender and the latent factors for each respondent in a list :\n\n"
+        )
+
+        latent_factors_list = self._list_survey_questions(agents[0])
+        prompt += str(latent_factors_list) + "\n\n"
+
+        prompt += (
+            "And here are the agents' age, gender and values for the latent factors in lists. The "
+            "values are in the same order as in the previous list:\n\n"
         )
 
         for i, agent in enumerate(agents):
             agent_info = agent.get_agent_info()
-            prompt += f"Agent {i+1}:\n{agent_info}\n\n"
+            prompt += f"Agent {i+1}:\n"
+            agent_answers = []
+            agent_answers.append(agent_info["Age"])
+            agent_answers.append(agent_info["Gender"])
+            for _, value in agent_info["Answers"].items():
+                agent_answers.append(value)
+
+            prompt += f"{agent_answers}\n\n"
 
         prompt += (
-            "Each agent should answer the following questions on a Likert scale:\n"
+            "Each agent should answer the questions on a Likert scale from 1-5:\n"
+            "1. Strongly disagree\n"
+            "2. Disagree\n"
+            "3. Neither agree nor disagree\n"
+            "4. Agree\n"
+            "5. Strongly agree\n"
+            "Here are the questions:\n"
         )
         for question in questions:
             prompt += f"- {question}\n"
@@ -51,10 +93,10 @@ class LlmHandler:
             "Responses should be given in a single line per agent, separated by commas.\n"
             "Do not provide any additional explanation or text.\n"
             "The output must only include the agents' responses and nothing else.\n"
-            "For example:\n"
-            "Agent 1: 3, 2, 5, 4\n"
-            "Agent 2: 4, 1, 3, 2\n"
-            "Agent 3: 2, 5, 4, 3\n"
+            "For example, if there are two questions:\n"
+            "Agent 1: 3, 5\n"
+            "Agent 2: 4, 5\n"
+            "Agent 3: 2, 3\n"
             "...\n"
             "Nothing else should be included in the response, such as explanations or extra details."
         )
@@ -81,7 +123,7 @@ class LlmHandler:
 
         try:
             response = self.llm.get_response(prompt)
-            print("[DEBUG] LLM response received:", response, flush=True)
+            # print("[DEBUG] LLM response received:", response, flush=True)
 
             if not response:
                 print("[ERROR] LLM returned an empty response!", flush=True)
@@ -141,7 +183,7 @@ class LlmHandler:
             new_agent_responses = {}
 
             for i, (agent, responses) in enumerate(agent_responses.items()):
-                print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
+                # print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
                 for question, answer in responses.items():
                     if question not in agent.new_questions:
                         agent.new_questions[question] = answer
@@ -150,12 +192,10 @@ class LlmHandler:
                             f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer."
                         )
 
-                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
+                # print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
                 new_agent_responses[f"Agent_{i+1}"] = responses
 
-                print(
-                    "\n[DEBUG] Final agent responses", new_agent_responses, flush=True
-                )
+            # print("\n[DEBUG] Final agent responses", new_agent_responses, flush=True)
 
             return new_agent_responses
 
