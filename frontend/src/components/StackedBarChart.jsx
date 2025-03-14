@@ -100,7 +100,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisBottom(xScale)
           .tickSize(-height + margin.top + margin.bottom)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -115,7 +115,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -197,7 +197,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.category}</strong><br>
              Avg Score: ${d.avg.toFixed(2)}<br>
-             Responses: ${d.count}`
+             Responses: ${d.count}`,
         );
       })
       .on("mousemove", function (event) {
