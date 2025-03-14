@@ -31,8 +31,7 @@ class LlmHandler:
             "For example a value closer to +2.4 indicates a stronger agreement with a positive statement,\n"
             "while a value closer to -2.4 indicates a stronger disagreement.\n"
             "A value of 0 represents a neutral stance, indicating no strong opinion either way.\n"
-            "Each agent represents a unique consumer with different demographic and consumer behaviour.\n"
-            "They will answer the following questions on a Likert scale (1 = Strongly Disagree, 5 = Strongly Agree).\n\n"
+            "Each agent represents a unique consumer with different demographic and consumer behaviour.\n\n"
         )
 
         for i, agent in enumerate(agents):
@@ -40,15 +39,27 @@ class LlmHandler:
             prompt += f"Agent {i+1}:\n{agent_info}\n\n"
 
         prompt += (
-            "Each agent should answer the following questions on a Likert scale:\n"
+            "The Likert scale is as follows:\n"
+            "1 = Strongly Disagree\n"
+            "2 = Disagree\n"
+            "3 = Neutral\n"
+            "4 = Agree\n"
+            "5 = Strongly Agree\n\n"
         )
+
+        if len(questions) == 1:
+            prompt += "The statement to be answered by each agent on a Likert scale:\n"
+        else:
+            prompt += "The following are the statements to be answered by each agent on a Likert scale:\n"
+
         for question in questions:
             prompt += f"- {question}\n"
 
         prompt += (
-            "\n IMPORTANT: Each agent must provide exactly one numerical response per question.\n"
-            "The number of responses must match the number of questions given above.\n"
+            "\n IMPORTANT: Each agent must provide exactly one numerical response per statement.\n"
+            "The number of responses must match the number of statements given above.\n"
             "Responses should be given in a single line per agent, separated by commas.\n"
+            "Each agent's response should begin with 'Agent X:', where X is the agent's number.\n"
             "Do not provide any additional explanation or text.\n"
             "The output must only include the agents' responses and nothing else.\n"
             "For example:\n"
@@ -73,8 +84,6 @@ class LlmHandler:
         Returns:
             dict: Each agent's responses.
         """
-        print("[DEBUG] Generating a single prompt for all agents...")
-
         prompt = self.create_prompt(agents, questions)
 
         print("[DEBUG] Full prompt to LLM:\n", prompt, flush=True)
@@ -141,7 +150,7 @@ class LlmHandler:
             new_agent_responses = {}
 
             for i, (agent, responses) in enumerate(agent_responses.items()):
-                print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
+                # print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
                 for question, answer in responses.items():
                     if question not in agent.new_questions:
                         agent.new_questions[question] = answer
@@ -153,9 +162,11 @@ class LlmHandler:
                 print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
                 new_agent_responses[f"Agent_{i+1}"] = responses
 
-                print(
-                    "\n[DEBUG] Final agent responses", new_agent_responses, flush=True
-                )
+            # Test the new_questions dictionary for each agent
+            # for i, agent in enumerate(agents):
+            #    print(f"[DEBUG] Agent {i+1} final new_questions:", agent.new_questions)
+
+            # print( "\n[DEBUG] Final agent responses", new_agent_responses, flush=True)
 
             return new_agent_responses
 
