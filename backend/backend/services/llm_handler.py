@@ -12,33 +12,112 @@ class LlmHandler:
         Creates a prompt for all agents and all questions.
 
         Args:
-            agent (Agent): List of Agent objects.
-            question (str): The user's question.
+            agents (list): List of Agent objects.
+            questions (list): List of statements to be answered.
 
         Returns:
             str: The generated prompt.
         """
-        prompt = (
+        prompt = self.create_intro()
+
+        latent_variables = self._get_latent_variables(agents[0])
+        prompt += self.add_latent_variables_to_prompt(latent_variables)
+        prompt += self.add_agents_info(agents, latent_variables)
+        prompt += self.add_questions_and_instructions(questions)
+
+        return prompt
+
+    def create_intro(self):
+        """
+        Creates the introductory part of the prompt explaining latent variables.
+
+        Returns:
+            str: The introductory part of the prompt.
+        """
+        return (
             "You are simulating multiple consumer agents based on latent factor analysis.\n"
             "Latent variables take values in the range of approximately -2.4 to +2.4.\n"
             "These values represent underlying factors that influence consumer behavior, \n"
             "and the agents' responses will be generated accordingly. \n"
-            "The model should take this range into account when providing Likert-scale responses to statements,\n"
-            "as these values reflect attitudes and preferences that are influenced by these latent factors.\n"
+            "The model should take this range into account when providing Likert-scale responses to statements.\n"
             "Negative values indicate weaker or less favorable attitudes toward the associated concept, \n"
             "while positive values indicate stronger or more favorable attitudes.\n"
             "The magnitude of the value represents the strength of the attitude or belief.\n"
-            "For example a value closer to +2.4 indicates a stronger agreement with a positive statement,\n"
+            "For example, a value closer to +2.4 indicates a stronger agreement with a positive statement,\n"
             "while a value closer to -2.4 indicates a stronger disagreement.\n"
             "A value of 0 represents a neutral stance, indicating no strong opinion either way.\n"
-            "Each agent represents a unique consumer with different demographic and consumer behaviour.\n\n"
+            "Each agent represents a unique consumer with different demographic and consumer behavior.\n\n"
         )
 
+    def _get_latent_variables(self, agent: Agent) -> list:
+        """
+        Extracts a unique list of latent variable names from the agents' data.
+
+        Args:
+            agents (list): List of Agent objects.
+
+        Returns:
+            list: List of latent variable names.
+        """
+        latent_variables = []
+        latent_variables_dictionary = agent.get_agent_info().get("Answers", {})
+        for variable in latent_variables_dictionary:
+            latent_variables.append(variable)
+
+        return latent_variables
+
+    def add_latent_variables_to_prompt(self, latent_variables):
+        """
+        Adds the list of latent variables to the prompt.
+
+        Args:
+            latent_variables (list): List of latent variable names.
+
+        Returns:
+            str: A string with the latent variable names added to the prompt.
+        """
+        prompt = "Latent variables:\n"
+        for var_name in latent_variables:
+            prompt += f"- {var_name}\n"
+        return prompt
+
+    def add_agents_info(self, agents, latent_variables):
+        """
+        Adds the agent-specific data to the prompt, including their latent variable values.
+
+        Args:
+            agents (list): List of Agent objects.
+            latent_variables (list): List of latent variable names.
+
+        Returns:
+            str: A string with agent information and latent variable values.
+        """
+        prompt = ""
         for i, agent in enumerate(agents):
             agent_info = agent.get_agent_info()
-            prompt += f"Agent {i+1}:\n{agent_info}\n\n"
+            prompt += f"Agent {i+1}:\n"
+            # prompt += f"Age: {agent_info['Age']}\n"
+            # prompt += f"Gender: {agent_info['Gender']}\n"
+            prompt += "Latent variable values:\n"
 
-        prompt += (
+            # Only include the values of latent variables in order
+            for var_name in latent_variables:
+                prompt += f"{agent_info['Answers'].get(var_name, 'N/A')}\n"
+
+            prompt += "\n"
+        return prompt
+
+    def add_questions_and_instructions(self, questions):
+        """
+        Adds the questions and response format instructions to the prompt.
+
+        Args:
+            questions (list): List of statements to be answered.
+
+        Returns:
+            str: A string with the questions and instructions for the responses.
+        """
+        prompt = (
             "The Likert scale is as follows:\n"
             "1 = Strongly Disagree\n"
             "2 = Disagree\n"
@@ -55,8 +134,10 @@ class LlmHandler:
         for question in questions:
             prompt += f"- {question}\n"
 
+        prompt += f"\nThere are {len(questions)} statements to answer.\n"
+
         prompt += (
-            "\n IMPORTANT: Each agent must provide exactly one numerical response per statement.\n"
+            "\nIMPORTANT: Each agent must provide exactly one numerical response per statement.\n"
             "The number of responses must match the number of statements given above.\n"
             "Responses should be given in a single line per agent, separated by commas.\n"
             "Each agent's response should begin with 'Agent X:', where X is the agent's number.\n"
@@ -69,7 +150,6 @@ class LlmHandler:
             "...\n"
             "Nothing else should be included in the response, such as explanations or extra details."
         )
-
         return prompt
 
     def get_agents_responses(self, agents, questions):
@@ -159,7 +239,10 @@ class LlmHandler:
                             f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer."
                         )
 
-                print(f"[DEBUG] Agent {i+1} after update: {agent.new_questions}")
+                print(
+                    f"[DEBUG] Agent {i+1} after update: {agent.new_questions}",
+                    flush=True,
+                )
                 new_agent_responses[f"Agent_{i+1}"] = responses
 
             # Test the new_questions dictionary for each agent
