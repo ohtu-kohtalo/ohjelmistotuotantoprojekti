@@ -38,26 +38,44 @@ body {
   box-shadow: 0 16px 48px rgba(0,0,0,0.9);
 }
 
-.header-container {
+.error-message {
+  position: absolute; /* Relative to parent container */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Ensure precise centering */
+  background-color: rgba(255, 69, 58, 0.95); /* Red with slight transparency */
+  color: white;
+  padding: 16px 24px;
+  border-radius: 10px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  z-index: 1000; /* Ensure it's on top */
+  max-width: 60%;
+  text-align: center;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.header-container .error-message p {
-  color: red;
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 12px;
   font-weight: bold;
-  text-align: center;
-  margin-top: 10px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  width: 1%;
 }
 
-.header-container .success-message p {
-  color: green;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 10px;
+.close-btn:hover {
+  opacity: 0.7;
 }
+
 
 .circle-button {
   border-radius: 50%;

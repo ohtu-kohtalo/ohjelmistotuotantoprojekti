@@ -51,14 +51,14 @@ const App = () => {
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
         const responseMessage = await response.json();
-        console.log("Distributions received!", responseMessage);
+        console.log("Agents created!", responseMessage);
         showMessage("Agents succesfully created from initial CSV-file!");
         // setAgentCreation(); Possible endpoint to display created agents initial information and tendency for answers!
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -66,6 +66,15 @@ const App = () => {
     createAgents();
   }, []);
 
+  /**
+   * Handles the submission of a CSV file containing questions to the backend.
+   *
+   * This function sends the provided questions to the backend as a JSON payload,
+   * waits for the response, and updates the state accordingly.
+   *
+   * @param {Array} csvQuestions - An array of questions extracted from the CSV file.
+   * @returns {Promise<void>} - A promise that resolves once the submission is processed.
+   */
   const handleCsvSubmit = async (csvQuestions) => {
     setIsLoading(true);
     try {
