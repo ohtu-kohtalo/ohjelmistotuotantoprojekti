@@ -8,8 +8,8 @@ const StackedBarChart = ({ data, xAxis }) => {
     if (!data || data.length === 0) return;
 
     // Use the same dimensions and margins as ScatterPlot
-    const width = 825;
-    const height = 650;
+    const width = 425;
+    const height = 350;
     const margin = { top: 50, right: 30, bottom: 50, left: 50 };
 
     // Remove previous SVG before rendering new one
@@ -100,7 +100,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisBottom(xScale)
           .tickSize(-height + margin.top + margin.bottom)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -115,7 +115,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -197,7 +197,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         tooltip.style("visibility", "visible").html(
           `<strong>${d.category}</strong><br>
              Avg Score: ${d.avg.toFixed(2)}<br>
-             Responses: ${d.count}`,
+             Responses: ${d.count}`
         );
       })
       .on("mousemove", function (event) {

@@ -38,12 +38,6 @@ body {
   box-shadow: 0 16px 48px rgba(0,0,0,0.9);
 }
 
-.title {
-  font-size: 24px;
-  margin: 20px 0;
-  font-weight: bold;
-}
-
 .header-container {
   display: flex;
   flex-direction: column;
@@ -156,16 +150,6 @@ input, select, button {
   margin-top: 5px;
 }
 
-.graph-placeholder {
-  height: 90%;
-  background-color: #222;
-  border: 1px solid #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-}
-
 .circle-button {
   border-radius: 50%;
   width: 60px;
@@ -263,18 +247,6 @@ input, select, button {
   width: 100%;
 }
 
-.chart-buttons {
-  display: flex;
-  gap: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
-
-.chart-icon {
-  width: 20px;
-  height: 20px;
-}
-
 .plot-details {
   display: flex;
   width: 100%;
@@ -282,57 +254,7 @@ input, select, button {
   gap: 20px;
 }
 
-.option-container,
-.data-container {
-  width: 50%;
-  padding: 15px;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background-color: #1e1e1e;
-  margin-bottom: 10px;
-  margin-right: 10px;
-}
-
-.option-label {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.option-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.option-item {
-  margin-bottom: 8px;
-}
-
-.option-button {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  background-color: #1e1e1e;
-  border: 1px solid #444;
-  border-radius: 5px;
-  cursor: pointer;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-  color: #e0e0e0;
-}
-
-.option-button:hover {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
 .plot-area {
-  width: 92%;
   min-height: 650px;
   background-color: #1e1e1e;
   padding: 15px;
@@ -341,84 +263,7 @@ input, select, button {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   position: relative;
-}
-
-/* Make SVGs inside the plot area responsive */
-.plot-area svg {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
-}
-
-.scatter-point {
-  stroke: #000;
-  stroke-width: 2px;
-  fill-opacity: 0.7;
-  transition:
-    fill-opacity 0.3s ease,
-    r 0.3s ease;
-}
-
-.scatter-point:hover {
-  fill-opacity: 1;
-  r: 8px;
-  stroke: #000;
-}
-
-.grid line {
-  stroke: #555;
-  stroke-width: 1px;
-}
-
-.axis path,
-.axis line {
-  stroke: #444;
-  stroke-width: 0.8px;
-}
-
-.data-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.data-entries {
-  text-align: center;
-}
-
-.data-summary {
-  list-style-type: disclosure-closed;
-  padding: 0;
-}
-
-.data-summary li {
-  margin-bottom: 5px;
-  font-size: 14px;
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 500px;
-  background-color: #1e1e1e;
-  padding: 20px;
-  border: 1px solid #333;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-}
-
-.chat-message {
-  margin-bottom: 15px;
-}
-
-.chat-message p {
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #333;
 }
 
 .loading-indicator {
@@ -448,43 +293,6 @@ input, select, button {
   100% {
     transform: rotate(360deg);
   }
-}
-
-.chart-container {
-  padding: 20px;
-  background-color: #1e1e1e;
-  border-radius: 10px;
-  width: 100%;
-  height: auto;
-}
-
-.chart-title {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  color: white;
-  margin-bottom: 15px;
-}
-
-.axis-label {
-  font-size: 14px;
-  fill: #e0e0e0;
-}
-
-.bar {
-  rx: 5;
-  cursor: default;
-  transition: fill 0.3s ease;
-}
-
-.axis-text {
-  transform: rotate(-15deg);
-  text-anchor: end;
-  font-size: 14px;
-}
-
-.y-axis-label {
-  font-size: 14px;
 }
 
 #helpPage {
@@ -551,11 +359,6 @@ input, select, button {
   width: 25%;
 }
 
-.quick-add-question button:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
-}
-
 .question-submit-button {
   width: 10%;
   background-color: #007bff;
@@ -568,7 +371,8 @@ input, select, button {
   width: 25%;
 }
 
-.question-submit-button:hover {
+.question-submit-button:hover,
+.quick-add-question button:hover {
   background-color: #0056b3;
   transform: scale(1.05);
 }

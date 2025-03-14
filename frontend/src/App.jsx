@@ -1,14 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router";
 import "./index.css";
-import Title from "./components/Title"; // To be removed
-import QueryForm from "./components/QueryForm"; // To be removed
-import ChatContainer from "./components/ChatContainer"; // To be removed
 import ErrorMessage from "./components/ErrorMessage";
 import SuccessMessage from "./components/SuccessMessage";
-import LoadingIndicator from "./components/LoadingIndicator"; // To be removed
-import PlotContainer from "./components/PlotContainer"; // To be removed
-import CsvUpload from "./components/CsvUpload"; // To be removed
 import HelpPage from "./pages/HelpPage";
 import InitialDistribution from "./pages/InitialDistribution";
 import AddQuery from "./pages/AddQuery";
@@ -28,12 +22,8 @@ const defaultDistribution = [
 ];
 
 const App = () => {
-  // Initial states for user input
-  const [question, setQuestion] = useState("");
-  const [agentCount, setAgentCount] = useState("");
-
   // Initial states for response and error handling
-  const [response, setResponse] = useState(defaultDistribution);
+  const [distribution, setDistribution] = useState(defaultDistribution);
   const [message, setMessage] = useState({ type: "", text: "" });
   const messageTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +36,7 @@ const App = () => {
      * Asynchronously creates agents by fetching data from the backend.
      *
      * This function attempts to initiate a create-agent route on the backend side.
-     * Upon successful fetch, it logs the status message.
+     * Upon successful fetch, it logs the status message and displays success message to user.
      *
      * @async
      * @function createAgents
@@ -62,12 +52,13 @@ const App = () => {
 
         const responseMessage = await response.json();
         console.log("Distributions received!", responseMessage);
-        setAgentCreation(responseMessage);
+        showMessage("Agents succesfully created from initial CSV-file!");
+        // setAgentCreation(); Possible endpoint to display created agents initial information and tendency for answers!
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -94,7 +85,7 @@ const App = () => {
 
       const data = await response.json();
       showMessage("success", "CSV submitted successfully");
-      setResponse(data.data.distributions);
+      setDistribution(data.data.distributions);
     } catch (error) {
       console.error("CSV submission error:", error);
       showMessage("error", "⚠️ Could not submit CSV data");
@@ -146,19 +137,18 @@ const App = () => {
             <Route path="/" element={<HelpPage />} />
             <Route
               path="/initialDistribution"
-              element={<InitialDistribution distributions={agents} />}
+              // Currently bugged! Distributed data cannot be displayed properly in the graphs!
+              // element={<InitialDistribution data={agents} />}
+              // Forcing sample agent data here (Defined in PlotContainer.jsx-component):
+              element={<InitialDistribution />}
             />
             <Route
               path="/addQuery"
               element={
                 <AddQuery
-                  question={question}
-                  setQuestion={setQuestion}
-                  agentCount={agentCount}
-                  setAgentCount={setAgentCount}
                   handleCsvSubmit={handleCsvSubmit}
                   isLoading={isLoading}
-                  response={response}
+                  response={distribution}
                   showMessage={showMessage}
                 />
               }

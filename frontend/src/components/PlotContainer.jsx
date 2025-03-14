@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import pieChartIcon from "../assets/pie-chart.png";
 import barChartIcon from "../assets/bar-chart.png";
-import clusterIcon from "../assets/clustering.png";
-import ScatterPlot from "./ScatterPlot";
 import StackedBarChart from "./StackedBarChart";
-import PieChart from "./PieChart";
 
 const sampleData = [
   { name: "Agent A", age: 25, gender: "Male", income: 30000, response: 1 },
+  { name: "Agent Y", age: 25, gender: "Male", income: 8000, response: 1 },
   { name: "Agent B", age: 40, gender: "Female", income: 60000, response: 3 },
   { name: "Agent C", age: 32, gender: "Male", income: 45000, response: 4 },
   { name: "Agent D", age: 29, gender: "Female", income: 35000, response: 5 },
@@ -26,29 +23,21 @@ const sampleData = [
 const PlotContainer = ({ agentData = sampleData }) => {
   const [chartType, setChartType] = useState("placeholder");
   const [selectedX, setSelectedX] = useState("age"); // Default x-axis
-  const [isClustered, setIsClustered] = useState(false);
+
+  // Set the initial chart type to "bar"
+  useState(() => {
+    setChartType("bar");
+  }, []);
 
   return (
     <div id="initialDistribution" className="card active">
       <div className="card-common-header">
-        <button
-          className="circle-button"
-          onClick={() => setChartType("pie") & setIsClustered(false)}
-        >
-          <img className="button-image" src={pieChartIcon} alt="Pie Chart" />
-        </button>
-        <button
-          className="circle-button"
-          onClick={() => setChartType("bar") & setIsClustered(false)}
-        >
+        <button className="circle-button" onClick={() => setChartType("bar")}>
           <img className="button-image" src={barChartIcon} alt="Bar Chart" />
-        </button>
-        <button className="circle-button" onClick={() => setIsClustered(true)}>
-          <img className="button-image" src={clusterIcon} alt="Cluster Chart" />
         </button>
       </div>
       <h3 className="card-header">Initial Answer Graphs</h3>
-      <div className="graph-placeholder">
+      <div className="plot-area">
         <div className="variable-buttons">
           <button
             className="variable-button"
@@ -69,21 +58,11 @@ const PlotContainer = ({ agentData = sampleData }) => {
             Gender
           </button>
         </div>
-        <div className="plot-area">
-          {isClustered ? (
-            <ScatterPlot
-              data={agentData}
-              xAxis={selectedX}
-              clusterBy="response"
-            />
-          ) : chartType === "pie" ? (
-            <PieChart data={agentData} category={selectedX} />
-          ) : chartType === "bar" ? (
-            <StackedBarChart data={agentData} xAxis={selectedX} />
-          ) : (
-            <p>[Select graph type to display]</p>
-          )}
-        </div>
+        {chartType === "bar" ? (
+          <StackedBarChart data={agentData} xAxis={selectedX} />
+        ) : (
+          <p>[Select graph type to display]</p>
+        )}
       </div>
     </div>
   );
