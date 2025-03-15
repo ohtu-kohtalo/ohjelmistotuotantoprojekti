@@ -1,6 +1,7 @@
 import pytest
 from backend.services.csv_service import extract_questions_from_csv
 
+
 def test_valid_questions(capsys):
     data = {"questions": ["q1", "q2"]}
     result = extract_questions_from_csv(data)
@@ -9,6 +10,7 @@ def test_valid_questions(capsys):
 
     debug = capsys.readouterr().out
     assert "Kysymykset luettu CSV:stä:" in debug
+
 
 def test_empty_questions(capsys):
     data = {"questions": []}
@@ -19,6 +21,7 @@ def test_empty_questions(capsys):
     debug = capsys.readouterr().out
     assert "CSV:ssä ei ollut kelvollisia kysymyksiä!" in debug
 
+
 def test_not_a_list(capsys):
     data = {"questions": "test"}
     result = extract_questions_from_csv(data)
@@ -27,6 +30,7 @@ def test_not_a_list(capsys):
 
     debug = capsys.readouterr().out
     assert "CSV:ssä ei ollut kelvollisia kysymyksiä!" in debug
+
 
 def test_no_questions(capsys):
     data = {}
