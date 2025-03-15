@@ -91,7 +91,7 @@ const LikertBar = ({ data, question }) => {
       })
 
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("fill", colorScale(d.label));
+        d3.select(this).transition().duration(200).attr("stroke-width", "1px");
         tooltip.style("visibility", "hidden");
       });
 
