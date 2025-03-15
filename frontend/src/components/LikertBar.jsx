@@ -51,6 +51,18 @@ const LikertBar = ({ data, question }) => {
       .call(d3.axisLeft(yScale).ticks(6))
       .attr("class", "axis y-axis-label");
 
+      const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("visibility", "hidden")
+      .style("background-color", "rgba(0, 0, 0, 0.7)")
+      .style("color", "white")
+      .style("padding", "5px")
+      .style("border-radius", "4px")
+      .style("font-size", "12px");
+
     svgContainer
       .selectAll(".bar")
       .data(data)
@@ -63,10 +75,24 @@ const LikertBar = ({ data, question }) => {
       .attr("fill", (d) => colorScale(d.label))
       .attr("class", "bar")
       .on("mouseover", function (event, d) {
+        tooltip
+          .html(`Count: ${d.value}`)
+          .style("visibility", "visible")
+          .style("top", event.pageY - 10 + "px")
+          .style("left", event.pageX + 10 + "px");
+
         d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
       })
+
+      .on("mousemove", function (event) {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("fill", colorScale(d.label));
+        d3.select(this).attr("fill", colorScale(d.label))
+        tooltip.style("visibility", "hidden");
       });
 
     svgContainer

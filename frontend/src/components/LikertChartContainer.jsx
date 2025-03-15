@@ -23,15 +23,21 @@ const LikertChartContainer = ({ chartsData }) => {
         data={chartsData[currentIndex].data}
         question={chartsData[currentIndex].question}
       />
-      <div className="flex justify-center space-x-4 mt-4">
-        <button onClick={handlePrev} className="p-2 bg-gray-200 rounded">
-          ⬅ Previous
+      <div className="likert-button-container">
+        <button
+          onClick={handlePrev}
+          className="likert-button"
+        >
+          ⬅
         </button>
-        <button onClick={handleNext} className="p-2 bg-gray-200 rounded">
-          Next ➡
+        <button
+          onClick={handleNext}
+          className="likert-button"
+        >
+          ➡
         </button>
       </div>
-      <p className="text-center mt-2">
+      <p className="chart-info">
         Chart {currentIndex + 1} / {chartsData.length}
       </p>
     </div>
