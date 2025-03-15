@@ -24,16 +24,10 @@ const LikertChartContainer = ({ chartsData }) => {
         question={chartsData[currentIndex].question}
       />
       <div className="likert-button-container">
-        <button
-          onClick={handlePrev}
-          className="likert-button"
-        >
+        <button onClick={handlePrev} className="likert-button">
           ⬅
         </button>
-        <button
-          onClick={handleNext}
-          className="likert-button"
-        >
+        <button onClick={handleNext} className="likert-button">
           ➡
         </button>
       </div>

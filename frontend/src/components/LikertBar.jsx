@@ -51,7 +51,7 @@ const LikertBar = ({ data, question }) => {
       .call(d3.axisLeft(yScale).ticks(6))
       .attr("class", "axis y-axis-label");
 
-      const tooltip = d3
+    const tooltip = d3
       .select("body")
       .append("div")
       .attr("class", "tooltip")
@@ -91,7 +91,7 @@ const LikertBar = ({ data, question }) => {
       })
 
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("fill", colorScale(d.label))
+        d3.select(this).attr("fill", colorScale(d.label));
         tooltip.style("visibility", "hidden");
       });
 
