@@ -79,6 +79,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
     <div>
       <div>
         <input
+          data-testid="csv-file-input"
           ref={fileInputRef}
           type="file"
           accept=".csv"
