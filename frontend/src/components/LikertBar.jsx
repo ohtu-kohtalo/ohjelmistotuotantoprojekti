@@ -75,6 +75,7 @@ const LikertBar = ({ data, question }) => {
       .attr("fill", (d) => colorScale(d.label))
       .attr("class", "bar")
       .on("mouseover", function (event, d) {
+        d3.select(this).transition().duration(200).attr("stroke-width", "2px");
         tooltip
           .html(`Count: ${d.value}`)
           .style("visibility", "visible")
