@@ -13,7 +13,7 @@ const FutureDistribution = () => {
       <div className="graph-placeholder">
         <div className="variable-buttons">
           <button className="variable-button">Age</button>
-          <button className="variable-button">Income</button>
+          { /*<button className="variable-button">Income</button> */ }
           <button className="variable-button">Gender</button>
         </div>
         <div className="plot-area">

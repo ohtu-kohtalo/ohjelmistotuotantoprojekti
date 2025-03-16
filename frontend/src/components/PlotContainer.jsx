@@ -45,12 +45,12 @@ const PlotContainer = ({ agentData = sampleData }) => {
           >
             Age
           </button>
-          <button
+          {/* <button
             className="variable-button"
             onClick={() => setSelectedX("income")}
           >
             Income
-          </button>
+          </button> */}
           <button
             className="variable-button"
             onClick={() => setSelectedX("gender")}
