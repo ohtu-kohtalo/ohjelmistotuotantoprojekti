@@ -37,8 +37,4 @@ class TestAgent(unittest.TestCase):
     def test_get_agent_info_returns_info(self):
         """Test that get_agent_info returns the agent information"""
         info = self.agent.get_agent_info()
-        expected = {
-            "age": "40",
-            "gender": "male",
-            "when": "now"
-        }
+        expected = {"age": "40", "gender": "male", "when": "now"}
