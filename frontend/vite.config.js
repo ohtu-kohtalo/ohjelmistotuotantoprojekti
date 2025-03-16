@@ -9,12 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: "./testSetup.js",
     coverage: {
-      exclude: [
-        "src/main.jsx",
-        "eslint.config.js",
-        "vite.config.js"
-      ]
-    }
+      exclude: ["src/main.jsx", "eslint.config.js", "vite.config.js"],
+    },
   },
   server: {
     allowedHosts: ["frontend-future-customer.2.rahtiapp.fi"],
