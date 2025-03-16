@@ -92,7 +92,6 @@ const StackedBarChart = ({ data, xAxis }) => {
 
     // Add gridlines (using light grey with dashed lines)
 
-
     // Y gridlines
     svg
       .append("g")
@@ -133,9 +132,10 @@ const StackedBarChart = ({ data, xAxis }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
       .call(
-        d3.axisLeft(yScale)
+        d3
+          .axisLeft(yScale)
           .ticks(maxCount)
-        .tickFormat(d => (d % 1 === 0 ? d : ""))
+          .tickFormat((d) => (d % 1 === 0 ? d : "")),
       )
       .attr("class", "axis");
 
@@ -159,7 +159,7 @@ const StackedBarChart = ({ data, xAxis }) => {
       .append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
-      .style("visibility", "hidden")
+      .style("visibility", "hidden");
 
     // Draw bars
     svg
