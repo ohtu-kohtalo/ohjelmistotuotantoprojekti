@@ -36,7 +36,7 @@ const PlotContainer = ({ agentData = sampleData }) => {
           <img className="button-image" src={barChartIcon} alt="Bar Chart" />
         </button>
       </div>
-      <h3 className="card-header">Initial Answer Graphs</h3>
+      <h3 className="card-header">Initial demographic distributions</h3>
       <div className="plot-area">
         <div className="variable-buttons">
           <button
