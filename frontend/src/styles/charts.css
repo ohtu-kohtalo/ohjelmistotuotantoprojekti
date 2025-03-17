@@ -1,0 +1,182 @@
+/* CSS FOR PLOTS (Container space) START*/
+.plot-container {
+    width: 100%; /* Set the width of the plot container to 100% of its parent */
+    min-height: 80vh; /* Set the minimum height of the plot container to 80% of the viewport height */
+    padding: 10px; /* Add 10px padding inside the plot container */
+    background-color: #1e1e1e; /* Set the background color of the plot container to a dark gray */
+    border: 2px solid #444; /* Add a 2px solid border with a darker gray color */
+    border-radius: 10px; /* Round the corners of the plot container with a 10px radius */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5); /* Add a shadow effect to the plot container */
+    margin: 0; /* Remove any default margin from the plot container */
+    }
+
+    .plot-header {
+        display: flex; /* Use flexbox layout for the plot header */
+        align-items: center; /* Align items vertically in the center */
+        justify-content: space-between; /* Distribute space between items */
+        width: 100%; /* Set the width of the plot header to 100% of its parent */
+        margin-bottom: 10px; /* Add a 10px margin below the plot header */
+    }
+
+    .plot-title {
+        text-align: center; /* Center the text inside the plot title */
+        flex-grow: 1; /* Allow the plot title to grow and take up available space */
+    }
+
+    .plot-content {
+        width: 100%; /* Set the width of the plot content to 100% of its parent */
+    }
+
+    .plot-details {
+        display: flex; /* Use flexbox layout for the plot details */
+        width: 100%; /* Set the width of the plot details to 100% of its parent */
+        justify-content: space-between; /* Distribute space between items */
+        gap: 20px; /* Add a 20px gap between items */
+    }
+
+    .plot-area {
+    min-height: 650px; /* Set the minimum height of the plot area to 650px */
+    background-color: #1e1e1e; /* Set the background color of the plot area to a dark gray */
+    padding: 15px; /* Add 15px padding inside the plot area */
+    border-radius: 8px; /* Round the corners of the plot area with an 8px radius */
+    border: 2px solid #444; /* Add a 2px solid border with a darker gray color */
+    display: flex; /* Use flexbox layout for the plot area */
+    justify-content: center; /* Center items horizontally in the plot area */
+    align-items: center; /* Center items vertically in the plot area */
+    position: relative; /* Set the position to relative for positioning child elements */
+}
+
+/* CSS FOR PLOTS (Container space) END*/
+
+/* CSS FOR PLOTS (Charts) START*/
+
+.chart-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .axis-label {
+    font-size: 14px;
+    fill: #e0e0e0;
+  }
+  
+  .bar {
+    rx: 5;
+    cursor: default;
+    transition: fill 0.3s ease;
+  }
+  
+  .axis-text {
+    transform: rotate(-15deg);
+    text-anchor: end;
+    font-size: 14px;
+  }
+  
+  .y-axis-label {
+    font-size: 14px;
+  }
+  
+  svg {
+    display: block !important;
+  }
+  
+  .likert-button {
+    padding: 0.5rem 1rem;
+    background-color: #e5e7eb;
+    color: #000000;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .likert-button:hover {
+    background-color: #b3b6b9;
+  }
+  
+  .likert-button-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .chart-info {
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  .likert-submit-button {
+    padding: 0.5rem 1rem;
+    width: 160px;
+    background-color: #e5e7eb;
+    color: #000000;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .likert-submit-button-container {
+    position: relative;
+  }
+  
+  .likert-submit-button:hover {
+    background-color: #b3b6b9;
+  }
+  
+  .stacked-bar-chart {
+    background-color: transparent;
+    border-radius: 0px;
+    box-shadow: none;
+  }
+  
+  .stacked-bar-chart .grid line {
+    stroke: #444;
+  }
+  
+  .stacked-bar-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    margin-bottom: 15px;
+  }
+  
+  .stacked-bar-chart rect {
+    transition: fill 0.3s ease, transform 0.2s ease;
+    rx: 5;
+  }
+  
+  .stacked-bar-chart rect:hover {
+    fill: #d1d1d1;
+    transform: scale(1.05);
+  }
+  
+  .stacked-bar-chart .axis text {
+    font-size: 12px;
+    fill: #d1d1d1;
+  }
+  
+  .stacked-bar-chart .axis path,
+  .stacked-bar-chart .axis line {
+    stroke: #444;
+  }
+  
+  .stackedbarchart-container {
+    margin-top: -30px; /* Siirtää ylöspäin */
+  }
+  
+  .tooltip {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+/* CSS FOR PLOTS (Charts) END*/
