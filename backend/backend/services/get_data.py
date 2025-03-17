@@ -85,3 +85,36 @@ class GetData:
             new_distributions.append(new_dist)
 
         return new_distributions
+
+    def add_statistics(self, distributions: list) -> list:
+        """Adds statistics to the distributions. Statistics include median, mode and
+        standard deviation.
+
+        Args:
+            distributions (list):
+                The distributions in a list in the form they are sent
+                to frontend.
+
+        Returns:
+            distributions (list):
+                The distributions with the statistics added. With only one distribution,
+                the return value looks like this:
+                [
+                    {
+                        question: "I like pasta",
+                        statistics: {
+                            "median": "Neutral",
+                            "mode": "Neutral",
+                            "standard_deviation": 2,54,
+                        }
+                        data: [
+                            {"label": "Strongly Disagree", "value": 1,}
+                            {"label": "Disagree", "value": 2},
+                            {"label": "Neutral", "value": 5},
+                            {"label": "Agree", "value": 3},
+                            {"label": "Strongly Agree","value": 2},
+                        ]
+                    }
+                ]
+        """
+        # This method is not yet implemented
