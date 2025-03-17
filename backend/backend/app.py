@@ -100,6 +100,26 @@ def create_agents():
 
 @app.route("/receive_user_csv", methods=["POST"])
 def receive_user_csv():
+    """Receives the user's questions and returns answer distributions and statistics
+    for those questions.
+
+    Returns:
+        JSON:
+            A list of answer distributions and statistics for each distribution. An
+            example with one distribution:
+                [
+                    {
+                        question: "I like pasta",
+                        data: [
+                            {"label": "Strongly Disagree", "value": 1,}
+                            {"label": "Disagree", "value": 2},
+                            {"label": "Neutral", "value": 5},
+                            {"label": "Agree", "value": 3},
+                            {"label": "Strongly Agree","value": 2},
+                        ]
+                    }
+                ]
+    """
 
     global agents
 
@@ -131,7 +151,10 @@ def receive_user_csv():
     return jsonify(
         {
             "status": "success",
-            "data": {"responses": responses, "distributions": distributions},
+            "data": {
+                "responses": responses,
+                "distributions": distributions,
+            },
         }
     )
 

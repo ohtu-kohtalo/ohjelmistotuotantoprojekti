@@ -236,7 +236,8 @@ class LlmHandler:
                         agent.new_questions[question] = answer
                     else:
                         print(
-                            f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer."
+                            f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.",
+                            flush=True,
                         )
 
                 print(

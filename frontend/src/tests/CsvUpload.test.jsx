@@ -18,9 +18,9 @@ describe("CsvUpload Component", () => {
 
     render(<CsvUpload onCsvError={onCsvError} onCsvSuccess={onCsvSuccess} />);
 
-    uploadButton = screen.getByRole("button", { name: /upload csv file/i });
+    uploadButton = screen.getByRole("button", { name: /upload/i });
 
-    hiddenInput = uploadButton.nextSibling;
+    hiddenInput = screen.getByTestId("csv-file-input");
   });
 
   it("calls onCsvSuccess for a valid CSV", async () => {

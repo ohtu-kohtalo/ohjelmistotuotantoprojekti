@@ -7,19 +7,18 @@ const StackedBarChart = ({ data, xAxis }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    // Use the same dimensions and margins as ScatterPlot
-    const width = 425;
-    const height = 350;
-    const margin = { top: 50, right: 30, bottom: 50, left: 50 };
+    const width = 800;
+    const height = 500;
+    const margin = { top: 50, right: 30, bottom: 100, left: 50 };
 
-    // Remove previous SVG before rendering new one
     d3.select(svgRef.current).selectAll("*").remove();
 
     // Create SVG element
     const svg = d3
       .select(svgRef.current)
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .attr("class", "stacked-bar-chart");
 
     // Define categories and group the data by category
     let categories = [];
@@ -79,32 +78,19 @@ const StackedBarChart = ({ data, xAxis }) => {
       .range([margin.left, width - margin.right])
       .padding(0.2);
 
+    const maxCount = d3.max(avgData, (d) => d.count);
     const yScale = d3
       .scaleLinear()
-      .domain([0, 5])
+      .domain([0, maxCount * 1.1])
       .range([height - margin.bottom, margin.top]);
 
-    // Use the same color scheme as ScatterPlot
+    // Define color scheme
     const colorScale = d3
       .scaleOrdinal()
       .domain(categories)
-      .range(["#ff7f50", "#ffcc00", "#66c2a5", "#5e81ac", "#ff6f61"]);
+      .range(["#01AFD2", "#FD82B0", "#B82EB7", "#89E2A4", "#F6DC99"]);
 
     // Add gridlines (using light grey with dashed lines)
-    // X gridlines
-    svg
-      .append("g")
-      .attr("class", "grid")
-      .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(
-        d3
-          .axisBottom(xScale)
-          .tickSize(-height + margin.top + margin.bottom)
-          .tickFormat(""),
-      )
-      .selectAll("line")
-      .attr("stroke", "#ddd")
-      .attr("stroke-dasharray", "3,3");
 
     // Y gridlines
     svg
@@ -145,7 +131,12 @@ const StackedBarChart = ({ data, xAxis }) => {
     const yAxisElement = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(yScale))
+      .call(
+        d3
+          .axisLeft(yScale)
+          .ticks(maxCount)
+          .tickFormat((d) => (d % 1 === 0 ? d : "")),
+      )
       .attr("class", "axis");
 
     yAxisElement.selectAll("text").attr("fill", "white");
@@ -160,33 +151,26 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("font-weight", "bold")
       .attr("fill", "white")
       .attr("transform", "rotate(-90)")
-      .text("Response Score");
+      .text("Number of respondents");
 
-    // Create tooltip with ScatterPlot styling
+    // Create tooltip
     const tooltip = d3
       .select("body")
       .append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
-      .style("background", "white")
-      .style("color", "#333")
-      .style("padding", "8px")
-      .style("border", "1px solid #ccc")
-      .style("border-radius", "4px")
-      .style("visibility", "hidden")
-      .style("font-size", "20px")
-      .style("box-shadow", "2px 2px 5px rgba(0,0,0,0.2)");
+      .style("visibility", "hidden");
 
-    // Draw bars with similar transitions and hover effects as ScatterPlot
+    // Draw bars
     svg
       .selectAll("rect")
       .data(avgData)
       .enter()
       .append("rect")
       .attr("x", (d) => xScale(d.category))
-      .attr("y", (d) => yScale(d.avg))
+      .attr("y", (d) => yScale(d.count))
       .attr("width", xScale.bandwidth())
-      .attr("height", (d) => height - margin.bottom - yScale(d.avg))
+      .attr("height", (d) => height - margin.bottom - yScale(d.count))
       .attr("fill", (d) => colorScale(d.category))
       .attr("stroke", "#333")
       .attr("stroke-width", "1px")
@@ -194,11 +178,11 @@ const StackedBarChart = ({ data, xAxis }) => {
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
         d3.select(this).transition().duration(200).attr("stroke-width", "2px");
-        tooltip.style("visibility", "visible").html(
-          `<strong>${d.category}</strong><br>
-             Avg Score: ${d.avg.toFixed(2)}<br>
-             Responses: ${d.count}`,
-        );
+        tooltip
+          .html(`Count: ${d.count}`)
+          .style("visibility", "visible")
+          .style("top", event.pageY - 10 + "px")
+          .style("left", event.pageX + 10 + "px");
       })
       .on("mousemove", function (event) {
         tooltip
@@ -218,8 +202,8 @@ const StackedBarChart = ({ data, xAxis }) => {
 
   return (
     <div className="stackedbarchart-container">
-      <h3 className="chart-title">
-        {`Average response score categorized by ${xAxis}`}
+      <h3 className="stacked-bar-title">
+        {`${xAxis.charAt(0).toUpperCase() + xAxis.slice(1)} distribution`}
       </h3>
       <svg ref={svgRef} />
     </div>
