@@ -40,8 +40,9 @@ class GetData:
                 "Agree": 0,
                 "Strongly agree": 0,
             },
+            "statistics": {"median": 0, "mode": 0, "variation ratio": 0},
         }
-        # Add an agent's answer to the distributions
+        # Add an agent's answer to the distribution
         for agent in agents:
             for q, answer in agent.new_questions.items():
                 if q == question:
@@ -55,7 +56,8 @@ class GetData:
                         distribution["answers"]["Agree"] += 1
                     if str(answer) == "5":
                         distribution["answers"]["Strongly agree"] += 1
-
+        # Add distribution statistics to the distribution
+        distribution = add_statistics(distribution)
         return distribution
 
     def _convert_to_frontend_form(self, distributions: list) -> list:
@@ -79,42 +81,30 @@ class GetData:
                     "value": dist["answers"]["Strongly agree"],
                 },
             ]
+            new_dist["statistics"] = dist["statistics"]
             new_distributions.append(new_dist)
 
         return new_distributions
 
-    def add_statistics(self, distributions: list) -> list:
-        """Adds statistics to the distributions. Statistics include median, mode and
-        standard deviation.
 
-        Args:
-            distributions (list):
-                The distributions in a list in the form they are sent
-                to frontend.
+def add_statistics(data):
+    """Adds statistics to the distribution. Statistics include median, mode and
+    variation ratio
 
-        Returns:
-            distributions (list):
-                The distributions with the statistics added. With only one distribution,
-                the return value looks like this:
-                [
-                    {
-                        question: "I like pasta",
-                        statistics: {
-                            "median": "Neutral",
-                            "mode": "Neutral",
-                            "standard_deviation": 2,54,
-                        }
-                        data: [
-                            {"label": "Strongly Disagree", "value": 1,}
-                            {"label": "Disagree", "value": 2},
-                            {"label": "Neutral", "value": 5},
-                            {"label": "Agree", "value": 3},
-                            {"label": "Strongly Agree","value": 2},
-                        ]
-                    }
-                ]
-        """
-        # This method is not yet implemented
+    Args:
+        data:
+            The distribution.
+
+    Returns:
+        distributions:
+            The distribution with the statistics added.
+    """
+
+    list_data = convert_dictionary_values_to_list(data)
+    data["statistics"]["mode"] = calculate_mode(list_data)
+    data["statistics"]["median"] = calculate_median(list_data)
+    data["statistics"]["variation ratio"] = calculate_variation_ratio(list_data)
+    return data
 
 
 def convert_dictionary_values_to_list(data):
