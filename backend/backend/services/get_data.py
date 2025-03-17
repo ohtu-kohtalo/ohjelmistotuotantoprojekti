@@ -29,7 +29,7 @@ class GetData:
         distributions = self._convert_to_frontend_form(distributions)
         return distributions
 
-    def get_single_answer_distibution(self, question, agents: list) -> list:
+    def get_single_answer_distribution(self, question, agents: list) -> list:
         """ "Returns answer distribution for given a question in dictionary form"""
         distribution = {
             "question": question,
