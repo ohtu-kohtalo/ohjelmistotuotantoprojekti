@@ -1,3 +1,5 @@
+from statistics import mode, median
+
 class GetData:
     """
     GetData class provides methods to manipulate agents answer data.
@@ -10,58 +12,52 @@ class GetData:
             agents (list): A list of agents
 
         Returns:
-            distributions (list): A list of dictionaries. For example with one
-            dictionary the list could look like this:
-            [{
-                'question': 'Pasta is good',
-                'answers': {
-                    'Strongly agree': 10,
-                    'Agree': 14,
-                    'Neutral': 9,
-                    'Disagree': 5,
-                    'Strongly disagree': 3 }
-                }]
+            distributions (list): A list of dictionaries.
         """
         distributions = []
         saved_questions = set()
+        agent = agents[0]
 
-        for agent in agents:
-            for question, answer in agent.new_questions.items():
+        for question, _ in agent.new_questions.items():
+            # Add the question to distributions, if it has not been encountered
+            if question not in saved_questions:
+                saved_questions.add(question)
+                dist = self.get_single_answer_distribution(question, agents)
+                distributions.append(dist)
 
-                # Add the question to distributions, if it has not been encountered
-                if question not in saved_questions:
-                    saved_questions.add(question)
-                    distributions.append(
-                        {
-                            "question": question,
-                            "answers": {
-                                "Strongly agree": 0,
-                                "Agree": 0,
-                                "Neutral": 0,
-                                "Disagree": 0,
-                                "Strongly disagree": 0,
-                            },
-                        }
-                    )
-
-                # Add an agent's answer to the distributions
-                for q in distributions:
-                    if q["question"] == question:
-                        if str(answer) == "1":
-                            q["answers"]["Strongly disagree"] += 1
-                        if str(answer) == "2":
-                            q["answers"]["Disagree"] += 1
-                        if str(answer) == "3":
-                            q["answers"]["Neutral"] += 1
-                        if str(answer) == "4":
-                            q["answers"]["Agree"] += 1
-                        if str(answer) == "5":
-                            q["answers"]["Strongly agree"] += 1
-
-        distributions = self._convert_to_correct_form(distributions)
+        distributions = self._convert_to_frontend_form(distributions)
         return distributions
 
-    def _convert_to_correct_form(self, distributions: list) -> list:
+    def get_single_answer_distibution(self, question, agents: list) -> list:
+        """"Returns answer distribution for given a question in dictionary form"""
+        distribution = {
+                            "question": question,
+                            "answers": {
+                                "Strongly disagree": 0,
+                                "Disagree": 0,
+                                "Neutral": 0,
+                                "Agree": 0,
+                                "Strongly agree": 0,
+                            },
+                        }    
+        # Add an agent's answer to the distributions
+        for agent in agents:
+            for q, answer in agent.new_questions.items():
+                if q == question:
+                    if str(answer) == "1":
+                        distribution["answers"]["Strongly disagree"] += 1
+                    if str(answer) == "2":
+                        distribution["answers"]["Disagree"] += 1
+                    if str(answer) == "3":
+                        distribution["answers"]["Neutral"] += 1
+                    if str(answer) == "4":
+                        distribution["answers"]["Agree"] += 1
+                    if str(answer) == "5":
+                        distribution["answers"]["Strongly agree"] += 1
+        
+        return distribution
+
+    def _convert_to_frontend_form(self, distributions: list) -> list:
         """Helper function for get_answer_distributions. This function converts the
         distributions to the form, that can be sent to frontend"""
         new_distributions = []
@@ -85,3 +81,36 @@ class GetData:
             new_distributions.append(new_dist)
 
         return new_distributions
+
+def convert_dictionary_values_to_list(data):
+    """Converts distribution dictionary values to a list"""
+    answers = data["answers"]
+    values = []
+    for answer, count in answers.items():
+        answer = map_likert_str_to_numbers(answer)
+        values.extend([answer]*count)
+    return values
+
+def map_likert_str_to_numbers(data):
+    """Maps likert-scale str to numbers"""
+    answer_map = {  "Strongly disagree": 1,
+                    "Disagree": 2,
+                    "Neutral": 3,
+                    "Agree": 4,
+                    "Strongly agree": 5}
+    return answer_map[data]
+
+def calculate_mode(data):
+    """"Returns mode for given list of data"""
+    return mode(data)
+
+def calculate_median(data):
+    """Returns median for given list of data"""
+    return median(data)
+
+def calculate_variation_ratio(data):
+    """Returns variation ratio for given list of data"""
+    moodi = calculate_mode(data)
+    mode_observations = data.count(moodi)
+    total_observations = len(data)
+    return 1-(mode_observations/total_observations)
