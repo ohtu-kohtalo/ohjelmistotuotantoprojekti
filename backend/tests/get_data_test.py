@@ -35,7 +35,9 @@ class TestGetData(unittest.TestCase):
 
     def test_get_answer_distributions_two_questions(self):
         """Test get_answer_distributions gives distributions for two answers."""
-        self.agents.append(
+        # Add a new agent to the beginning of the agents list
+        self.agents.insert(
+            0,
             MockAgent(
                 {
                     "Meat production should be reduced.": 1,

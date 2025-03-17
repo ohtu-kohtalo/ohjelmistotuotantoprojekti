@@ -30,7 +30,7 @@ class GetData:
         return distributions
 
     def get_single_answer_distribution(self, question, agents: list) -> list:
-        """ "Returns answer distribution for given a question in dictionary form"""
+        """Returns answer distribution for a given question in dictionary form"""
         distribution = {
             "question": question,
             "answers": {
