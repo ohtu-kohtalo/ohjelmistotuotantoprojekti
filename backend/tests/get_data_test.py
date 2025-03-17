@@ -29,6 +29,7 @@ class TestGetData(unittest.TestCase):
                     {"label": "Agree", "value": 2},
                     {"label": "Strongly Agree", "value": 0},
                 ],
+                "statistics": {"median": 3, "mode": 4, "variation ratio": 0.6},
             },
         ]
         self.assertEqual(excepted, distributions)
@@ -56,6 +57,7 @@ class TestGetData(unittest.TestCase):
                     {"label": "Agree", "value": 2},
                     {"label": "Strongly Agree", "value": 0},
                 ],
+                "statistics": {"median": 2.5, "mode": 1, "variation ratio": 0.6666666666666667},
             },
             {
                 "question": "Vegetable production should be reduced.",
@@ -66,6 +68,7 @@ class TestGetData(unittest.TestCase):
                     {"label": "Agree", "value": 0},
                     {"label": "Strongly Agree", "value": 1},
                 ],
+                "statistics": {"median": 5, "mode": 5, "variation ratio": 0.0},
             },
         ]
         self.assertEqual(excepted, distributions)
