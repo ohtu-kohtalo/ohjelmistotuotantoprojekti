@@ -57,7 +57,11 @@ class TestGetData(unittest.TestCase):
                     {"label": "Agree", "value": 2},
                     {"label": "Strongly Agree", "value": 0},
                 ],
-                "statistics": {"median": 2.5, "mode": 1, "variation ratio": 0.6666666666666667},
+                "statistics": {
+                    "median": 2.5,
+                    "mode": 1,
+                    "variation ratio": 0.6666666666666667,
+                },
             },
             {
                 "question": "Vegetable production should be reduced.",
