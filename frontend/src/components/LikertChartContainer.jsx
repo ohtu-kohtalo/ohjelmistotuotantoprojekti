@@ -10,12 +10,12 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
   return (
-    <div className="card p-4">
+    <div className="likert-chart-container-plot-area">
       <h2 className="text-lg font-bold mb-2 text-center">
         Likert Scale Charts
       </h2>

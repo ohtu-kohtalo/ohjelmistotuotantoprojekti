@@ -50,6 +50,20 @@
 
 /* CSS FOR PLOTS (Charts) START*/
 
+.likert-chart-container-plot-area {
+  position: relative;
+  right: -20vw;
+  top: -20vh;
+  width: 55%;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .chart-title {
     font-size: 18px;
     font-weight: bold;
