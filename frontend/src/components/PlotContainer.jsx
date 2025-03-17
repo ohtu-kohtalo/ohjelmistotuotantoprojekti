@@ -45,12 +45,6 @@ const PlotContainer = ({ agentData = sampleData }) => {
           >
             Age
           </button>
-          {/* <button
-            className="variable-button"
-            onClick={() => setSelectedX("income")}
-          >
-            Income
-          </button> */}
           <button
             className="variable-button"
             onClick={() => setSelectedX("gender")}
