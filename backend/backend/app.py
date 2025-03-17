@@ -159,6 +159,70 @@ def receive_user_csv():
     )
 
 
+@app.route("/receive_user_quick_question", methods=["POST"])
+def receive_user_quick_question():
+    """
+    Receives the user's quick questions and returns a dictionary containing a status
+    message and answer distributions for the questions.
+
+    Returns:
+        JSON:
+            For example:
+            {"status": "success", data: {"distributions": distributions}}.
+
+
+            An example of `distributions` with only one distribution:
+                [
+                    {
+                        question: "I like pasta",
+                        data: [
+                            {"label": "Strongly Disagree", "value": 1,}
+                            {"label": "Disagree", "value": 2},
+                            {"label": "Neutral", "value": 5},
+                            {"label": "Agree", "value": 3},
+                            {"label": "Strongly Agree","value": 2},
+                        ]
+                        statistics: { median: 3, mode: 4, "variation ratio": 0.6 }
+                    }
+                ]
+    """
+    global agents
+
+    data = request.get_json()
+    print("Quick questions in json", data, flush=True)
+
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    if len(data) == 0:
+        return jsonify({"error": "The provided payload is empty"}), 400
+
+    if "questions" not in data:
+        return jsonify({"error": "Missing 'questions' field in payload"}), 400
+
+    questions = data.get("questions", [])
+    print(f"Quick questions in a list: {questions}", flush=True)
+
+    if not isinstance(questions, list):
+        return jsonify({"error": "'questions' must be a list object"}), 400
+
+    if len(questions) == 0:
+        return jsonify({"error": "No questions found"}), 400
+
+    responses = llm_handler.get_agents_responses(agents, questions)
+
+    distributions = GetData().get_answer_distributions(agents)
+
+    return jsonify(
+        {
+            "status": "success",
+            "data": {
+                "distributions": distributions,
+            },
+        }
+    )
+
+
 # IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
