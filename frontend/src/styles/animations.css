@@ -1,0 +1,31 @@
+/* Styles for the loading indicator container */
+.loading-indicator {
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    font-size: 1.2rem; /* Set font size */
+    color: #007bff; /* Set text color */
+}
+
+/* Styles for the spinning element after the loading indicator text */
+.loading-indicator::after {
+    content: ""; /* Empty content for the pseudo-element */
+    display: block; /* Make it a block element */
+    border: 4px solid #f3f3f3; /* Light gray border */
+    border-top: 4px solid #007bff; /* Blue border on top */
+    border-radius: 50%; /* Make it a circle */
+    width: 30px; /* Set width */
+    height: 30px; /* Set height */
+    margin-left: 10px; /* Space between text and spinner */
+    animation: spin 1s linear infinite; /* Apply spinning animation */
+}
+
+/* Keyframes for the spinning animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg); /* Start at 0 degrees */
+    }
+    100% {
+        transform: rotate(360deg); /* End at 360 degrees */
+    }
+}
