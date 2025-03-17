@@ -192,9 +192,6 @@ def download_agent_response_csv():
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
     questions = data["questions"]
-    agent = agents[0]
-    question = questions[0]
-    response = llm_handler.get_agent_response(agent, question)
 
     # Validate that questions is a dictionary.
     if not isinstance(questions, dict):
