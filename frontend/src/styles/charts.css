@@ -51,20 +51,18 @@
 /* CSS FOR PLOTS (Charts) START*/
 
 .likert-chart-container-plot-area {
-  width: 100%; /* Ensure full container width */
-  height: 80%;
-  min-height: 300px; /* Ensure a minimum visible height */
-  max-height: 1200px; /* Prevent it from expanding infinitely */
+  width: 90%; /* Ensure full container width */
+  min-height: 40vh; /* Ensure a minimum visible height */
+  max-height: 75vh; /* Prevent it from expanding infinitely */
   background-color: #1a1a1a;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  border: 2px solid #444;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   overflow: hidden; /* Prevent unexpected resizing */
-  resize: vertical; /* Allow resizing vertically */
   position: relative;
   top: 0; /* Prevents shifting */
   z-index: 1; /* Ensure it's on top */
@@ -79,12 +77,26 @@
 }
 
 .chart-title {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin-bottom: 15px;
+  white-space: nowrap; /* Prevents text from breaking */
+  overflow: hidden; /* Hides overflowing content */
+  display: inline-block;
+  width: 100%; /* Takes full container width */
+  animation: marquee 15s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+      transform: translateX(100%);
   }
+  100% {
+      transform: translateX(-75%);
+  }
+}
   
   .axis-label {
     font-size: 14px;

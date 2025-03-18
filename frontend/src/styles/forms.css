@@ -16,7 +16,6 @@ input, select, button {
     gap: 20px;
     width: 100%;
     max-width: inherit;
-    min-height: 400px;
   }
   
   .quick-add-question-container {
