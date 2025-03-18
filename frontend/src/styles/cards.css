@@ -11,10 +11,4 @@
 
   .card.active {
     display: flex; /* Display the card as a flex container when it has the 'active' class */
-  }
-
-  .card-header {
-    color: #e0e0e0; /* Set the text color of the card header to a light gray */
-    margin-bottom: 10px; /* Add a 10px margin below the card header */
-
 }

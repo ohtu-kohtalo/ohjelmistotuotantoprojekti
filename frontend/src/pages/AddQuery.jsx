@@ -100,7 +100,7 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
         />
       )}
       <>
-        <LikertChartContainer chartsData={response} />
+        <LikertChartContainer chartsData={response || []} />
         <div className="likert-submit-button-container">
           <button onClick={handleReset} className="likert-submit-button">
             Add another query

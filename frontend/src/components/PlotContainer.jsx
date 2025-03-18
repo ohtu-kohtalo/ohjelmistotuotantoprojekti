@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import barChartIcon from "../assets/bar-chart.png";
 import StackedBarChart from "./StackedBarChart";
 
 const sampleData = [
@@ -31,11 +30,6 @@ const PlotContainer = ({ agentData = sampleData }) => {
 
   return (
     <div id="initialDistribution" className="card active">
-      <div className="card-common-header">
-        <button className="circle-button" onClick={() => setChartType("bar")}>
-          <img className="button-image" src={barChartIcon} alt="Bar Chart" />
-        </button>
-      </div>
       <h3 className="card-header">Initial demographic distributions</h3>
       <div className="plot-area">
         <div className="variable-buttons">
@@ -55,7 +49,7 @@ const PlotContainer = ({ agentData = sampleData }) => {
         {chartType === "bar" ? (
           <StackedBarChart data={agentData} xAxis={selectedX} />
         ) : (
-          <p>[Select graph type to display]</p>
+          <p>[Graph placeholder]</p>
         )}
       </div>
     </div>

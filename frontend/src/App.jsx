@@ -8,19 +8,21 @@ import InitialDistribution from "./pages/InitialDistribution";
 import AddQuery from "./pages/AddQuery";
 import FutureDistribution from "./pages/FutureDistribution";
 
-const defaultDistribution = [
-  {
-    question: "Question for the agents",
-    data: [
-      { label: "Strongly Disagree", value: 0 },
-      { label: "Disagree", value: 0 },
-      { label: "Neutral", value: 0 },
-      { label: "Agree", value: 0 },
-      { label: "Strongly Agree", value: 0 },
-    ],
-    statistics: { median: 0, mode: 0, "variation ratio": 0 },
-  },
-];
+// const defaultDistribution = [
+//   {
+//     question: "Question for the agents",
+//     data: [
+//       { label: "Strongly Disagree", value: 0 },
+//       { label: "Disagree", value: 0 },
+//       { label: "Neutral", value: 0 },
+//       { label: "Agree", value: 0 },
+//       { label: "Strongly Agree", value: 0 },
+//     ],
+//     statistics: { median: 0, mode: 0, "variation ratio": 0 },
+//   },
+// ];
+
+const defaultDistribution = [];
 
 const App = () => {
   // Initial states for response and error handling
@@ -59,7 +61,7 @@ const App = () => {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };

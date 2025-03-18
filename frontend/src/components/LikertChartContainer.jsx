@@ -4,6 +4,18 @@ import Statistics from "./StatisticsContainer";
 
 const LikertChartContainer = ({ chartsData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  if (!chartsData || chartsData.length === 0) {
+    return (
+      <div className="likert-chart-container-plot-area">
+        <h2 className="text-lg font-bold mb-2 text-center">
+          Likert Scale Charts
+        </h2>
+        <p className="no-data-placeholder">No question provided for agents</p>
+      </div>
+    );
+  }
+
   const stats = chartsData[currentIndex].statistics;
 
   const handleNext = () => {
@@ -12,7 +24,7 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
