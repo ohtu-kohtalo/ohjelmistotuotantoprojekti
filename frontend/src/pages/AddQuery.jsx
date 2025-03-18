@@ -37,54 +37,71 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
 
   return (
     <div className="card active">
-      <div className="quick-add-question">
-        <label htmlFor="quickAddQuestion">Quick Add Question:</label>
-        <input
-          type="text"
-          id="quickAddQuestion"
-          name="quickAddQuestion"
-          placeholder="Type your question here"
-        />
-        <button onClick={handleAddQuestion}>Add</button>
-      </div>
+      {/* Move LikertChartContainer to the top */}
+      <LikertChartContainer chartsData={response || []} />
 
-      <ul>
-        {questions.map((question, index) => (
-          <li key={index}>
-            <p className="question">{question}</p>
-          </li>
-        ))}
-      </ul>
+      <div className="query-input-container">
+        {/* Quick Add Section */}
+        <div className="quick-add-question-container">
+          <div className="quick-add-question">
+            <label htmlFor="quickAddQuestion">Quick Add Question:</label>
+            <input
+              type="text"
+              id="quickAddQuestion"
+              name="quickAddQuestion"
+              placeholder="Type your question here"
+            />
+            <button onClick={handleAddQuestion}>Add</button>
+          </div>
 
-      <button
-        className="question-submit-button"
-        onClick={handleSubmitQuestions}
-        disabled={questions.length === 0}
-      >
-        Submit Questions
-      </button>
+          {/* List of added questions */}
+          <ul className="question-list">
+            {questions.map((question, index) => (
+              <li key={index} className="question-item">
+                {question}
+              </li>
+            ))}
+          </ul>
 
-      <Title
-        id="CSV-file-title"
-        className="card-header"
-        text={"Upload CSV File"}
-      />
-      {!csvLoaded && (
-        <CsvUpload
-          onCsvError={handleCsvError}
-          onCsvSuccess={handleCsvSuccess}
-          handleCsvSubmit={handleCsvSubmit}
-        />
-      )}
-      <>
-        <LikertChartContainer chartsData={response || []} />
-        <div className="likert-submit-button-container">
-          <button onClick={handleReset} className="likert-submit-button">
+          {/* Submit Questions Button */}
+          <button
+            className="question-submit-button"
+            onClick={handleSubmitQuestions}
+            disabled={questions.length === 0}
+          >
+            Submit
+          </button>
+        </div>
+        {/* CSV Upload Section - Always Visible */}
+        <div className="csv-upload-section">
+          <Title
+            id="CSV-file-title"
+            className="card-header"
+            text={"Upload CSV File"}
+          />
+          <CsvUpload
+            onCsvError={handleCsvError}
+            onCsvSuccess={handleCsvSuccess}
+            handleCsvSubmit={handleCsvSubmit}
+          />
+
+          {/* "Add Another Query" Button - Disabled Until CSV is Provided */}
+          <button
+            onClick={handleReset}
+            className="likert-submit-button"
+            disabled={!csvLoaded} /* Disable button until CSV is uploaded */
+          >
             Add another query
           </button>
         </div>
-      </>
-      {isLoading && <LoadingIndicator />}
+      </div>
+
+      {/* Loading Indicator (Appears on Top) */}
+      {isLoading && (
+        <div className="loading-overlay">
+          <LoadingIndicator />
+        </div>
+      )}
     </div>
   );
 };

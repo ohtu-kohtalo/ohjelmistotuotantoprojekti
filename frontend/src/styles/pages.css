@@ -33,22 +33,3 @@
 
 /* CSS FOR HELP PAGE END */
 
-/* CSS FOR ADD QUERY PAGE START */
-
-#csvFileInput {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-  border: 1px solid #444;
-  padding: 10px;
-  border-radius: 4px;
-  width: 20%;
-  margin-top: 5px;
-  cursor: pointer;
-  transition: transform 0.8s;
-}
-
-#csvFileInput:hover {
-  transform: scale(1.02);
-}
-
-/* CSS FOR ADD QUERY PAGE END */

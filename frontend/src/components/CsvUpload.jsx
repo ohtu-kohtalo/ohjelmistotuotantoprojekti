@@ -1,8 +1,6 @@
 import React, { useState, useRef } from "react";
 import Papa from "papaparse";
 
-import ErrorMessage from "./ErrorMessage";
-
 const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
   const [fileName, setFileName] = useState("");
   const [questions, setQuestions] = useState([]);
@@ -40,7 +38,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
           if (row.length !== 1) {
             onCsvError?.(
-              `Row ${i + 1} can only contain one column. Found ${row.length}.`,
+              `Row ${i + 1} can only contain one column. Found ${row.length}.`
             );
             setFileName("");
             event.target.value = null;
@@ -77,7 +75,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
   return (
     <div>
-      <div>
+      <div className="csv-upload-file">
         <input
           data-testid="csv-file-input"
           ref={fileInputRef}
@@ -88,7 +86,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
         />
       </div>
       <div>
-        <button className="submit-button" onClick={handleButtonClick}>
+        <button className="csv-submit-button" onClick={handleButtonClick}>
           Upload
         </button>
       </div>

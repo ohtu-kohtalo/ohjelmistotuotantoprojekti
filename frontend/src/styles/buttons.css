@@ -108,3 +108,23 @@
         cursor: not-allowed;
         transform: none;
     }
+
+    .likert-submit-button {
+        padding: 0.5rem 1rem;
+        width: 160px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+      }
+      
+      .likert-submit-button:disabled {
+        background-color: #444;
+        color: #888;
+        cursor: not-allowed;
+      }
+      

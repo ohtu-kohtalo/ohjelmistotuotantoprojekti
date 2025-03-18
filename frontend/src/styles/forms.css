@@ -9,31 +9,102 @@ input, select, button {
     margin-top: 5px;
 }
 
-/* Styling for the quick-add-question container */
-.quick-add-question {
-    width: 55%;
+.query-input-container {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+    max-width: inherit;
+    min-height: 400px;
+  }
+  
+  .quick-add-question-container {
+    flex: 1;
+    min-width: 45%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: flex-end; /* Push content to the bottom */
+    height: 100%; /* Ensures it fills available space */
+    margin-top: auto; /* Pushes it downward */
+  }
+  
+  .csv-upload-section {
+    flex: 1;
+    min-width: 45%;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    background-color: #222;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #444;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-    margin-bottom: 15px;
+    justify-content: flex-end; /* Push content to the bottom */
+    height: 100%; /* Ensures it fills available space */
   }
-  
-  .quick-add-question label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #e0e0e0;
+
+  .csv-upload-file {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
-  
-  .quick-add-question input {
-    flex-grow: 1;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #555;
+
+  .csv-upload-file input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+  }
+
+  #csvFileInput {
     background-color: #1e1e1e;
     color: #e0e0e0;
+    padding: 10px;
+    margin-top: 5px;
+    cursor: pointer;
+    transition: transform 0.8s;
+  }
+  
+  #csvFileInput:hover {
+    transform: scale(1.02);
+  }
+
+  .quick-add-question {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto; /* Pushes it downward */
+  }
+  
+  #quickAddQuestion {
+    width: 50%;
+  }
+
+  .question-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .question-submit-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.8s ease;
+    width: 25%;
+  }
+  
+  .question-submit-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  .question-submit-button:disabled {
+    background-color: #444;
+    color: #888;
+    cursor: not-allowed;
 }

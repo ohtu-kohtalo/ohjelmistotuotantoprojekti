@@ -51,7 +51,7 @@
 /* Error message container inside content-block*/
 .success-message {
     position: absolute; /* Relative to parent container */
-    top: 50%; /* Center vertically */
+    top: 5%; /* Center vertically */
     left: 50%; /* Center horizontally */
     transform: translate(-50%, -50%); /* Ensure precise centering */
     background-color: rgba(66, 175, 75, 0.95);

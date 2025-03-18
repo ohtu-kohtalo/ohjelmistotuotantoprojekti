@@ -10,5 +10,9 @@
   }
 
   .card.active {
-    display: flex; /* Display the card as a flex container when it has the 'active' class */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
 }
