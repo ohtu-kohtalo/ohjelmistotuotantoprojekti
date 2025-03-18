@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import LikertBar from "./LikertBar";
+import Statistics from "./StatisticsContainer";
 
 const LikertChartContainer = ({ chartsData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const stats = chartsData[currentIndex].statistics;
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % chartsData.length);
@@ -10,7 +12,7 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
@@ -22,6 +24,11 @@ const LikertChartContainer = ({ chartsData }) => {
       <LikertBar
         data={chartsData[currentIndex].data}
         question={chartsData[currentIndex].question}
+      />
+      <Statistics
+        median={stats.median}
+        mode={stats.mode}
+        variationRatio={stats["variation ratio"]}
       />
       <div className="likert-button-container">
         <button onClick={handlePrev} className="likert-button">

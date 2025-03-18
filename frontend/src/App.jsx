@@ -18,6 +18,7 @@ const defaultDistribution = [
       { label: "Agree", value: 0 },
       { label: "Strongly Agree", value: 0 },
     ],
+    statistics: { median: 0, mode: 0, "variation ratio": 0 },
   },
 ];
 
@@ -58,7 +59,7 @@ const App = () => {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
