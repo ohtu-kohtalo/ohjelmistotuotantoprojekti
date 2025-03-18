@@ -257,12 +257,20 @@ def download_agent_response_csv():
             # Preserve the original order by using the keys from the first agent's new_questions dictionary.
             ordered_keys = list(agents[0].new_questions.keys())
             questions_payload = {key: None for key in ordered_keys}
-            print("[DEBUG] Using first agent's new_questions keys in original order:", ordered_keys, flush=True)
+            print(
+                "[DEBUG] Using first agent's new_questions keys in original order:",
+                ordered_keys,
+                flush=True,
+            )
         else:
             print("[ERROR] No questions available from agents", flush=True)
             return jsonify({"error": "No questions available from agents"}), 400
     else:
-        print("[DEBUG] Questions for CSV from payload:", list(questions_payload.keys()), flush=True)
+        print(
+            "[DEBUG] Questions for CSV from payload:",
+            list(questions_payload.keys()),
+            flush=True,
+        )
 
     # Build the CSV header: "Agent" plus each question key.
     header = ["Agent"] + list(questions_payload.keys())
@@ -284,7 +292,9 @@ def download_agent_response_csv():
                 value = agent.new_questions.get(question, "")
                 row.append(value)
         else:
-            print(f"[DEBUG] Agent {i} does not have 'new_questions' attribute", flush=True)
+            print(
+                f"[DEBUG] Agent {i} does not have 'new_questions' attribute", flush=True
+            )
             # If the agent has no new_questions, fill with empty strings
             row.extend(["" for _ in header[1:]])
         print(f"[DEBUG] Writing row for Agent {i}: {row}", flush=True)
