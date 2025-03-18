@@ -8,10 +8,7 @@ const LikertChartContainer = ({ chartsData }) => {
   if (!chartsData || chartsData.length === 0) {
     return (
       <div className="likert-chart-container-plot-area">
-        <h2 className="text-lg font-bold mb-2 text-center">
-          Likert Scale Charts
-        </h2>
-        <p className="no-data-placeholder">No question provided for agents</p>
+        <p className="no-data-placeholder">[Graph placeholder]</p>
       </div>
     );
   }
@@ -24,15 +21,12 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
   return (
     <div className="likert-chart-container-plot-area">
-      <h2 className="text-lg font-bold mb-2 text-center">
-        Likert Scale Charts
-      </h2>
       <LikertBar
         data={chartsData[currentIndex].data}
         question={chartsData[currentIndex].question}
