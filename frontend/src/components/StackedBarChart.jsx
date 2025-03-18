@@ -101,7 +101,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -135,7 +135,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisLeft(yScale)
           .ticks(maxCount)
-          .tickFormat((d) => (d % 1 === 0 ? d : ""))
+          .tickFormat((d) => (d % 1 === 0 ? d : "")),
       )
       .attr("class", "axis");
 
