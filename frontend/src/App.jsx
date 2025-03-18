@@ -130,9 +130,9 @@ const App = () => {
           <Link to="/addQuery" className="sidebar-link">
             Add Query
           </Link>
-          <Link to="/futureDistribution" className="sidebar-link">
+          {/* <Link to="/futureDistribution" className="sidebar-link">
             Future Distribution
-          </Link>
+          </Link> */}
         </div>
         <div className="content">
           <Routes>
@@ -155,10 +155,10 @@ const App = () => {
                 />
               }
             />
-            <Route
+            {/* <Route
               path="/futureDistribution"
               element={<FutureDistribution />}
-            />
+            /> */}
           </Routes>
         </div>
       </div>
