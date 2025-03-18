@@ -59,7 +59,7 @@ const App = () => {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file"
+          "⚠️ Could not create agents from initial backend CSV-file",
         );
       }
     };
