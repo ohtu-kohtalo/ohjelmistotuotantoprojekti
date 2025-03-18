@@ -7,12 +7,12 @@
   width: 95%; /* Set the width of the card to 95% of its container */
   height: 90%; /* Set the height of the card to 90% of its container */
   overflow: hidden; /* Hide any overflow content */
-  }
+}
 
-  .card.active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    position: relative;
+.card.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
 }

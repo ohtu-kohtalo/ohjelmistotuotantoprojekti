@@ -1,130 +1,133 @@
 /* Styling for button images */
 .button-image {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 /* Styling for circular buttons */
 .circle-button {
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 5px;
-    border: 1px solid #333;
-    cursor: pointer;
-    transition: transform 0.2s;
-    }
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
 
-    /* Hover effect for circular buttons */
-    .circle-button:hover {
-    background-color: #333;
-    transform: scale(1.2);
+/* Hover effect for circular buttons */
+.circle-button:hover {
+  background-color: #333;
+  transform: scale(1.2);
 }
 
 /* Placement of variable buttons */
 .variable-buttons {
-    margin-top: -55px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 5px;
-    z-index: 10;
+  margin-top: -55px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+  z-index: 10;
 }
 
 /* Styling of single variable button */
 .variable-button {
-    border-radius: 50%;
-    height: 30px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #333;
-    cursor: pointer;
-    transition: transform 0.2s;
-    }
-  
-    /* Hover effect for variable buttons */
-    .variable-button:hover {
-        background-color: #6a6a6a;
-        transform: scale(1.05);
-    }
-      
-    /* Styling for submit buttons */
-    .submit-button {
-        color: #e0e0e0;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        width: 0%;
-        transition: transform 0.6s;
-    }
-      
-    /* Hover effect for submit buttons */
-    .submit-button:hover {
-        transform: scale(1.21);
-    }
+  border-radius: 50%;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
 
-    /* Styling for quick add question button */
-    .quick-add-question button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        width: 25%;
-    }
-      
-    /* Styling for question submit button */
-    .question-submit-button {
-        width: 10%;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        width: 25%;
-    }
-      
-    /* Hover effect for question submit button and quick add question button */
-    .question-submit-button:hover,
-    .quick-add-question button:hover {
-        background-color: #0056b3;
-        transform: scale(1.05);
-    }
-      
-    /* Disabled state for question submit button */
-    .question-submit-button:disabled {
-        background-color: #444;
-        color: #888;
-        cursor: not-allowed;
-        transform: none;
-    }
+/* Hover effect for variable buttons */
+.variable-button:hover {
+  background-color: #6a6a6a;
+  transform: scale(1.05);
+}
 
-    .likert-submit-button {
-        padding: 0.5rem 1rem;
-        width: 160px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: background-color 0.2s ease;
-        cursor: pointer;
-      }
-      
-      .likert-submit-button:disabled {
-        background-color: #444;
-        color: #888;
-        cursor: not-allowed;
-      }
-      
+/* Styling for submit buttons */
+.submit-button {
+  color: #e0e0e0;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 0%;
+  transition: transform 0.6s;
+}
+
+/* Hover effect for submit buttons */
+.submit-button:hover {
+  transform: scale(1.21);
+}
+
+/* Styling for quick add question button */
+.quick-add-question button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  width: 25%;
+}
+
+/* Styling for question submit button */
+.question-submit-button {
+  width: 10%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  width: 25%;
+}
+
+/* Hover effect for question submit button and quick add question button */
+.question-submit-button:hover,
+.quick-add-question button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Disabled state for question submit button */
+.question-submit-button:disabled {
+  background-color: #444;
+  color: #888;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.likert-submit-button {
+  padding: 0.5rem 1rem;
+  width: 160px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.likert-submit-button:disabled {
+  background-color: #444;
+  color: #888;
+  cursor: not-allowed;
+}

@@ -1,112 +1,119 @@
 /* Main app container */
 .app-container {
-    background-color: rgba(37, 33, 33, 0.95); /* Dark theme with slight transparency */
-    border-radius: 12px; /* Smooth rounded edges */
-    width: 60%;
-    height: 85vh;
-    display: flex;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6); /* Soft shadow */
-    overflow: hidden; /* Prevents content from overflowing */
-    transition: transform 0.6s, box-shadow 0.3s;
+  background-color: rgba(
+    37,
+    33,
+    33,
+    0.95
+  ); /* Dark theme with slight transparency */
+  border-radius: 12px; /* Smooth rounded edges */
+  width: 60%;
+  height: 85vh;
+  display: flex;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); /* Soft shadow */
+  overflow: hidden; /* Prevents content from overflowing */
+  transition:
+    transform 0.6s,
+    box-shadow 0.3s;
 }
 
 /* Hover effect for app container */
 .app-container:hover {
-    transform: scale(1.05); /* Slightly enlarge the container */
-    box-shadow: 0 16px 48px rgba(0,0,0,0.9); /* Darker and larger shadow */
+  transform: scale(1.05); /* Slightly enlarge the container */
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9); /* Darker and larger shadow */
 }
 
 /* Content area inside the app container */
 .content {
-    background-color: #1e1e1e; /* Dark background color */
-    flex: 1; /* Flex-grow to fill available space */
-    width: 75%; /* Set width to 75% */
-    display: flex; /* Use flexbox layout */
-    align-items: center; /* Center items vertically */
-    justify-content: center; /* Center items horizontally */
-    padding: 20px; /* Padding around the content */
+  background-color: #1e1e1e; /* Dark background color */
+  flex: 1; /* Flex-grow to fill available space */
+  width: 75%; /* Set width to 75% */
+  display: flex; /* Use flexbox layout */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+  padding: 20px; /* Padding around the content */
 }
 
 /* Error message container inside content-block*/
 .error-message {
-    position: absolute; /* Relative to parent container */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Ensure precise centering */
-    background-color: rgba(255, 69, 58, 0.95); /* Red with slight transparency */
-    color: white;
-    padding: 16px 24px;
-    border-radius: 10px;
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-    font-weight: bold;
-    z-index: 1000; /* Ensure it's on top */
-    max-width: 60%;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+  position: absolute; /* Relative to parent container */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Ensure precise centering */
+  background-color: rgba(255, 69, 58, 0.95); /* Red with slight transparency */
+  color: white;
+  padding: 16px 24px;
+  border-radius: 10px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  z-index: 1000; /* Ensure it's on top */
+  max-width: 60%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 /* Error message container inside content-block*/
 .success-message {
-    position: absolute; /* Relative to parent container */
-    top: 5%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Ensure precise centering */
-    background-color: rgba(66, 175, 75, 0.95);
-    color: white;
-    padding: 16px 24px;
-    border-radius: 10px;
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-    font-weight: bold;
-    z-index: 1000; /* Ensure it's on top */
-    max-width: 60%;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+  position: absolute; /* Relative to parent container */
+  top: 5%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Ensure precise centering */
+  background-color: rgba(66, 175, 75, 0.95);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 10px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  z-index: 1000; /* Ensure it's on top */
+  max-width: 60%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 /* Close button for error message */
 .close-btn {
-    background: none; /* No background */
-    border: none; /* No border */
-    color: white; /* White text color */
-    font-size: 12px; /* Small font size */
-    font-weight: bold; /* Bold text */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: opacity 0.3s ease; /* Smooth opacity transition */
-    position: absolute; /* Positioned relative to the error message */
-    top: -10px; /* Slightly above the top edge */
-    right: 10px; /* Positioned to the right */
-    width: 1%; /* Small width */
+  background: none; /* No background */
+  border: none; /* No border */
+  color: white; /* White text color */
+  font-size: 12px; /* Small font size */
+  font-weight: bold; /* Bold text */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: opacity 0.3s ease; /* Smooth opacity transition */
+  position: absolute; /* Positioned relative to the error message */
+  top: -10px; /* Slightly above the top edge */
+  right: 10px; /* Positioned to the right */
+  width: 1%; /* Small width */
 }
-  
+
 .close-btn:hover {
-    opacity: 0.7; /* Slightly transparent on hover */
+  opacity: 0.7; /* Slightly transparent on hover */
 }
 
 .chart-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Force Summary to Appear Below Chart */
 .summary-container {
-    width: 100%;
-    max-width: 500px;
-    background-color: #1e1e1e;
-    padding: 15px 20px;
-    margin-top: 20px; /* Ensures it is always below */
-    color: white;
-    text-align: left;
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    margin-top: -15vh;
+  width: 100%;
+  max-width: 500px;
+  background-color: #1e1e1e;
+  padding: 15px 20px;
+  margin-top: 20px; /* Ensures it is always below */
+  color: white;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: -15vh;
 }
