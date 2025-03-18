@@ -1,30 +1,26 @@
 import React, { useState } from "react";
 import ErrorMessage from "./ErrorMessage";
 
-const CsvDownload = ({ questions = {}, fileName = "agent_answers.csv" }) => {
+const CsvDownload = ({ questions = {}, fileName = "agent_answers.csv", disabled }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // Use backend URL from env or default to localhost port 5500
-  const BACKEND_URL =
-    import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
 
   const handleDownload = async () => {
     setLoading(true);
     setError("");
     try {
       // Send POST request to backend endpoint
-      const response = await fetch(
-        `${BACKEND_URL}/download_agent_response_csv`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // Payload with the questions object.
-          body: JSON.stringify({ questions }),
+      const response = await fetch(`${BACKEND_URL}/download_agent_response_csv`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        // Payload with the questions object.
+        body: JSON.stringify({ questions }),
+      });
 
       // Check for response errors
       if (!response.ok) {
@@ -80,7 +76,11 @@ const CsvDownload = ({ questions = {}, fileName = "agent_answers.csv" }) => {
 
   return (
     <div>
-      <button onClick={handleDownload} disabled={loading}>
+      <button 
+        onClick={handleDownload} 
+        disabled={loading || disabled} 
+        className="csv-download-button"
+      >
         {loading ? "Downloading..." : "Download CSV"}
       </button>
       {/* If an error occurs, render the ErrorMessage component */}
