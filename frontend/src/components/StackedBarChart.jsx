@@ -7,8 +7,8 @@ const StackedBarChart = ({ data, xAxis }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    const width = 800;
-    const height = 500;
+    const width = 600;
+    const height = 400;
     const margin = { top: 50, right: 30, bottom: 100, left: 50 };
 
     d3.select(svgRef.current).selectAll("*").remove();
@@ -101,7 +101,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -135,7 +135,7 @@ const StackedBarChart = ({ data, xAxis }) => {
         d3
           .axisLeft(yScale)
           .ticks(maxCount)
-          .tickFormat((d) => (d % 1 === 0 ? d : "")),
+          .tickFormat((d) => (d % 1 === 0 ? d : ""))
       )
       .attr("class", "axis");
 
@@ -151,7 +151,7 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("font-weight", "bold")
       .attr("fill", "white")
       .attr("transform", "rotate(-90)")
-      .text("Number of respondents");
+      .text("Respondents");
 
     // Create tooltip
     const tooltip = d3

@@ -34,8 +34,9 @@
         gap: 20px; /* Add a 20px gap between items */
     }
 
-    .plot-area {
-    min-height: 650px; /* Set the minimum height of the plot area to 650px */
+  .plot-area {
+    height: 70vh;
+    width: 90%;
     background-color: #1e1e1e; /* Set the background color of the plot area to a dark gray */
     padding: 15px; /* Add 15px padding inside the plot area */
     border-radius: 8px; /* Round the corners of the plot area with an 8px radius */
@@ -44,6 +45,10 @@
     justify-content: center; /* Center items horizontally in the plot area */
     align-items: center; /* Center items vertically in the plot area */
     position: relative; /* Set the position to relative for positioning child elements */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Adds spacing between chart and summary */
 }
 
 /* CSS FOR PLOTS (Container space) END*/
@@ -154,54 +159,81 @@
   }
   
   .stacked-bar-chart {
+    width: 100%; /* Ensures full container width */
+    max-width: 700px; /* Prevents excessive stretching */
+    height: auto; /* Allows dynamic height adjustment */
+    min-height: 300px; /* Prevents shrinking too much */
+    margin: 0 auto; /* Centers it within the parent container */
+    padding: 10px; /* Provides spacing */
     background-color: transparent;
-    border-radius: 0px;
+    border-radius: 8px; /* Slight rounding for modern look */
     box-shadow: none;
-  }
-  
-  .stacked-bar-chart .grid line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Grid lines */
+.stacked-bar-chart .grid line {
     stroke: #444;
-  }
-  
-  .stacked-bar-title {
+}
+
+/* Title styling */
+.stacked-bar-title {
     font-size: 18px;
     font-weight: bold;
     text-align: center;
     color: white;
     margin-bottom: 15px;
-  }
-  
-  .stacked-bar-chart rect {
+}
+
+/* Bar appearance & interaction */
+.stacked-bar-chart rect {
     transition: fill 0.3s ease, transform 0.2s ease;
     rx: 5;
-  }
-  
-  .stacked-bar-chart rect:hover {
+}
+
+/* Smooth hover effect */
+.stacked-bar-chart rect:hover {
     fill: #d1d1d1;
     transform: scale(1.05);
-  }
-  
-  .stacked-bar-chart .axis text {
-    font-size: 12px;
-    fill: #d1d1d1;
-  }
-  
-  .stacked-bar-chart .axis path,
-  .stacked-bar-chart .axis line {
+}
+
+/* Axis text styling */
+.stacked-bar-chart .axis text {
+    font-size: 14px; /* Increased for readability */
+    fill: #e0e0e0; /* Lighter shade for better contrast */
+}
+
+/* Axis lines */
+.stacked-bar-chart .axis path,
+.stacked-bar-chart .axis line {
     stroke: #444;
-  }
-  
-  .stackedbarchart-container {
-    margin-top: -30px; /* Siirtää ylöspäin */
-  }
-  
-  .tooltip {
-    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Stacked bar chart container */
+.stackedbarchart-container {
+    width: 100%;
+    max-width: 700px; /* Increased for better scaling */
+    height: auto;
+    min-height: 350px; /* Allows more vertical space */
+    margin: 0 auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Tooltip styling */
+.tooltip {
+    background-color: rgba(0, 0, 0, 0.85); /* Darker for contrast */
     color: white;
-    padding: 5px;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 14px;
     pointer-events: none;
-  }
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1);
+    transition: opacity 0.3s ease;
+}
 
 /* CSS FOR PLOTS (Charts) END*/

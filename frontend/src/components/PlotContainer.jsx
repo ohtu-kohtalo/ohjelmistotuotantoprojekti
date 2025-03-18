@@ -28,6 +28,26 @@ const PlotContainer = ({ agentData = sampleData }) => {
     setChartType("bar");
   }, []);
 
+  const calculateAverage = (data, key) => {
+    const validValues = data
+      .map((d) => d[key])
+      .filter((value) => typeof value === "number");
+    return validValues.length
+      ? (validValues.reduce((a, b) => a + b, 0) / validValues.length).toFixed(1)
+      : "N/A";
+  };
+
+  const getGenderDistribution = (data) => {
+    const genderCounts = data.reduce((acc, item) => {
+      acc[item.gender] = (acc[item.gender] || 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(genderCounts)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(", ");
+  };
+
   return (
     <div id="initialDistribution" className="card active">
       <h3 className="card-header">Initial demographic distributions</h3>
@@ -46,11 +66,30 @@ const PlotContainer = ({ agentData = sampleData }) => {
             Gender
           </button>
         </div>
-        {chartType === "bar" ? (
-          <StackedBarChart data={agentData} xAxis={selectedX} />
-        ) : (
-          <p>[Graph placeholder]</p>
-        )}
+
+        {/* Ensure Chart and Summary are Wrapped Separately */}
+        <div className="chart-container">
+          {chartType === "bar" ? (
+            <StackedBarChart data={agentData} xAxis={selectedX} />
+          ) : (
+            <p>[Graph placeholder]</p>
+          )}
+        </div>
+
+        {/* Summary should now be outside the chart */}
+        <div className="summary-container">
+          <h4>Data Summary</h4>
+          <p>
+            <strong>Total Entries:</strong> {agentData.length}
+          </p>
+          <p>
+            <strong>Average Age:</strong> {calculateAverage(agentData, "age")}
+          </p>
+          <p>
+            <strong>Gender Distribution:</strong>{" "}
+            {getGenderDistribution(agentData)}
+          </p>
+        </div>
       </div>
     </div>
   );
