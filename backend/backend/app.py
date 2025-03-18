@@ -1,6 +1,8 @@
 import os
+import io
+import csv
 import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
 from .key_config import (
@@ -223,60 +225,81 @@ def receive_user_quick_question():
     )
 
 
-# IMPORTANT!: Not fully finished, cannot finish until output format is defined
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
     """
-    Endpoint to generate and download a CSV file from frontend-provided questions data.
-    Expects a JSON payload with a "questions" object containing question-answer pairs.
+    Endpoint to generate and download a CSV file containing agent responses.
+    The CSV will have one row per agent, where the first column is the agent identifier,
+    and subsequent columns correspond to each question.
 
-    Example:
-    {
-        "questions": {
-            "kysymys1": lickert_vastaus,
-            "kysymys2": lickert_vastaus,
-            "kysymys3": lickert_vastaus
-        }
-    }
-
-    Returns:
-        Failure: Error-messages if the payload is missing or empty, or if the "questions" key is missing.
-        Success: A CSV file download if the payload is valid.
+    AGE AND GENDER TODO
     """
     data = request.get_json()
+    print("[DEBUG] Received data for CSV download:", data, flush=True)
 
     if not data:
+        print("[ERROR] No data provided", flush=True)
         return jsonify({"error": "No data provided"}), 400
 
     if len(data) == 0:
+        print("[ERROR] Empty agent data", flush=True)
         return jsonify({"error": "Empty agent data"}), 400
 
-    # Check if the 'questions' key is present in the payload.
     if "questions" not in data:
+        print("[ERROR] Missing 'questions' field in payload", flush=True)
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
-    questions = data["questions"]
+    questions_payload = data["questions"]
 
-    # Validate that questions is a dictionary.
-    if not isinstance(questions, dict):
-        return jsonify({"error": "'questions' must be an object (dictionary)"}), 400
+    # If questions_payload is empty, use the keys from the first agent's new_questions
+    if not questions_payload:
+        if agents and hasattr(agents[0], "new_questions") and agents[0].new_questions:
+            # Preserve the original order by using the keys from the first agent's new_questions dictionary.
+            ordered_keys = list(agents[0].new_questions.keys())
+            questions_payload = {key: None for key in ordered_keys}
+            print("[DEBUG] Using first agent's new_questions keys in original order:", ordered_keys, flush=True)
+        else:
+            print("[ERROR] No questions available from agents", flush=True)
+            return jsonify({"error": "No questions available from agents"}), 400
+    else:
+        print("[DEBUG] Questions for CSV from payload:", list(questions_payload.keys()), flush=True)
 
-    # Create an in-memory CSV file using StringIO.
-    # Requires modules that need to be added
+    # Build the CSV header: "Agent" plus each question key.
+    header = ["Agent"] + list(questions_payload.keys())
+    print("[DEBUG] CSV Header:", header, flush=True)
 
-    # si = io.StringIO()
-    # # Use the keys of the questions dictionary as the CSV header.
-    # fieldnames = list(questions.keys())
-    # writer = csv.DictWriter(si, fieldnames=fieldnames)
-    # writer.writeheader()
-    # # Write a single row with the answers.
-    # writer.writerow(questions)
+    # Create an in-memory CSV file.
+    si = io.StringIO()
+    writer = csv.writer(si)
+    writer.writerow(header)
+    print("[DEBUG] Header written to CSV", flush=True)
 
-    # # Prepare the CSV file for download.
-    # output = make_response(si.getvalue())
-    # output.headers["Content-Disposition"] = "attachment; filename=questions_data.csv"
-    # output.headers["Content-Type"] = "text/csv"
-    # return output
+    # Iterate over agents to build each row.
+    for i, agent in enumerate(agents, start=1):
+        row = [f"Agent {i}"]
+        if hasattr(agent, "new_questions"):
+            print(f"[DEBUG] Agent {i} new_questions:", agent.new_questions, flush=True)
+            # Retrieve answer for each question in the header
+            for question in header[1:]:
+                value = agent.new_questions.get(question, "")
+                row.append(value)
+        else:
+            print(f"[DEBUG] Agent {i} does not have 'new_questions' attribute", flush=True)
+            # If the agent has no new_questions, fill with empty strings
+            row.extend(["" for _ in header[1:]])
+        print(f"[DEBUG] Writing row for Agent {i}: {row}", flush=True)
+        writer.writerow(row)
+
+    # Get full CSV from in-memory buffer
+    csv_content = si.getvalue()
+    print("[DEBUG] Final CSV content:", csv_content, flush=True)
+
+    # Create HTTP response with CSV file
+    output = make_response(csv_content)
+    # Set correct headers
+    output.headers["Content-Disposition"] = "attachment; filename=agent_responses.csv"
+    output.headers["Content-Type"] = "text/csv"
+    return output
 
 
 @app.route("/health", methods=["GET"])

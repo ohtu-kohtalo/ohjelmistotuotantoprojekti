@@ -20,6 +20,9 @@ const App = () => {
   // Initial state for agents
   const [agents, setAgentCreation] = useState(null); // Agents
 
+  // State for checking whether csv has been uploaded
+  const [csvUploaded, setCsvUploaded] = useState(false);
+
   useEffect(() => {
     /**
      * Asynchronously creates agents by fetching data from the backend.
@@ -84,9 +87,11 @@ const App = () => {
       const data = await response.json();
       showMessage("success", "CSV submitted successfully");
       setDistribution(data.data.distributions);
+      setCsvUploaded(true);
     } catch (error) {
       console.error("CSV submission error:", error);
       showMessage("error", "⚠️ Could not submit CSV data");
+      setCsvUploaded(false);
     } finally {
       setIsLoading(false);
     }
@@ -130,9 +135,9 @@ const App = () => {
           <Link to="/addQuery" className="sidebar-link">
             Add Query
           </Link>
-          {/* <Link to="/futureDistribution" className="sidebar-link">
+          <Link to="/futureDistribution" className="sidebar-link">
             Future Distribution
-          </Link> */}
+          </Link>
         </div>
         <div className="content">
           <Routes>
@@ -155,10 +160,10 @@ const App = () => {
                 />
               }
             />
-            {/* <Route
+            <Route
               path="/futureDistribution"
-              element={<FutureDistribution />}
-            /> */}
+              element={<FutureDistribution csvUploaded={csvUploaded} />}
+            />
           </Routes>
         </div>
       </div>
