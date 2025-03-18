@@ -74,11 +74,11 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
         </div>
         {/* CSV Upload Section - Always Visible */}
         <div className="csv-upload-section">
-          <Title
-            id="CSV-file-title"
-            className="card-header"
-            text={"Upload CSV File"}
-          />
+          <Title id="CSV-file-title" className="card-header" text={""} />
+          <p>
+            You can also upload a CSV file with questions on it. The correct
+            format for the file is one question per row in the first column.
+          </p>
           <CsvUpload
             onCsvError={handleCsvError}
             onCsvSuccess={handleCsvSuccess}

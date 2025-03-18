@@ -4,31 +4,31 @@ const HelpPage = () => {
   return (
     <div id="helpPage" className="card active">
       <h3 className="card-header">
-        Future Customer: A Simulator and Prediction Tool
+        Future Consumer: A Simulator and Prediction Tool
       </h3>
       <p>
-        Something to tell user what the application is and how to use the
-        application
+        This is a software development project for VTT by a team on students at
+        Helsinki University. The program is currently in active development.
+      </p>
+      <p>
+        The program can be used to help predict consumer behaviour by creating
+        agents based on historical data and by simulating their answers to query
+        questions with the help of LLM. The current functionality allows the
+        user to ask questions from the agents and the program returns a likert
+        scale chart of the answers. The user can also export a CSV file of the
+        agents answers for later analysis.
       </p>
       <p>A quick overview of each selectable view:</p>
       <ul className="help-list">
         <li>
-          <strong>Initial Distribution:</strong> See initial agent pool answers
-          distribution.
+          <strong>Initial Distribution:</strong> See the demographic
+          distributions of the agents based on the training data.
         </li>
         <li>
           <strong>Add Query:</strong> Ask agents questions and collect their
           responses.
         </li>
-        <li>
-          <strong>Future Distribution:</strong> Model future scenarios and
-          compare them.
-        </li>
       </ul>
-      <p>
-        Page accessible at any time, click the <strong>Help Page</strong> button
-        in the sidebar.
-      </p>
     </div>
   );
 };
