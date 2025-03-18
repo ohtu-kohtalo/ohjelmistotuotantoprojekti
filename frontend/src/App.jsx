@@ -110,12 +110,16 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="app-container">
-        {message &&
-          (message.type === "error" ? (
-            <ErrorMessage message={message.text} />
-          ) : (
-            <SuccessMessage message={message.text} />
-          ))}
+        {message && (
+          <>
+            {message.type === "error" && (
+              <ErrorMessage message={message.text} />
+            )}
+            {message.type === "success" && (
+              <SuccessMessage message={message.text} />
+            )}
+          </>
+        )}
         <div className="sidebar">
           <Link to="/" className="sidebar-link">
             Help Page

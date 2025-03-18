@@ -48,6 +48,27 @@
     gap: 10px;
 }
 
+/* Error message container inside content-block*/
+.success-message {
+    position: absolute; /* Relative to parent container */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Ensure precise centering */
+    background-color: rgba(66, 175, 75, 0.95);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    z-index: 1000; /* Ensure it's on top */
+    max-width: 60%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 /* Close button for error message */
 .close-btn {
     background: none; /* No background */
