@@ -24,7 +24,7 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
     );
   };
 
