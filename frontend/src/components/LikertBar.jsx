@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 const LikertBar = ({ data, question }) => {
@@ -26,13 +26,7 @@ const LikertBar = ({ data, question }) => {
 
     const colorScale = d3
       .scaleOrdinal()
-      .domain([
-        "Strongly Disagree",
-        "Disagree",
-        "Neutral",
-        "Agree",
-        "Strongly Agree",
-      ])
+      .domain(["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
 
     const svgContainer = svg.attr("width", width).attr("height", height);
@@ -51,17 +45,13 @@ const LikertBar = ({ data, question }) => {
       .call(d3.axisLeft(yScale).ticks(6))
       .attr("class", "axis y-axis-label");
 
+    d3.select(".tooltip").remove();
     const tooltip = d3
       .select("body")
       .append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
-      .style("visibility", "hidden")
-      .style("background-color", "rgba(0, 0, 0, 0.7)")
-      .style("color", "white")
-      .style("padding", "5px")
-      .style("border-radius", "4px")
-      .style("font-size", "12px");
+      .style("visibility", "hidden");
 
     svgContainer
       .selectAll(".bar")
@@ -84,16 +74,18 @@ const LikertBar = ({ data, question }) => {
 
         d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
       })
-
       .on("mousemove", function (event) {
         tooltip
           .style("top", `${event.pageY - 10}px`)
           .style("left", `${event.pageX + 10}px`);
       })
-
       .on("mouseout", function (event, d) {
-        d3.select(this).transition().duration(200).attr("stroke-width", "1px");
         tooltip.style("visibility", "hidden");
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr("stroke-width", "1px")
+          .attr("fill", colorScale(d.label));
       });
 
     svgContainer
@@ -104,10 +96,14 @@ const LikertBar = ({ data, question }) => {
       .attr("text-anchor", "middle")
       .attr("fill", "white")
       .text(question);
+
+    return () => {
+      tooltip.remove();
+    };
   }, [data]);
 
   return (
-    <div className="chart-container p-4">
+    <div id="chart-container" className="chart-container p-4">
       <svg ref={chartRef}></svg>
     </div>
   );
