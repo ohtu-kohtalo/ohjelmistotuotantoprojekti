@@ -36,7 +36,7 @@ const LikertChartContainer = ({ chartsData }) => {
           median={stats.median}
           mode={stats.mode}
           variationRatio={stats["variation ratio"]}
-          />
+        />
       </div>
       <div className="likert-button-container">
         <button onClick={handlePrev} className="likert-button">

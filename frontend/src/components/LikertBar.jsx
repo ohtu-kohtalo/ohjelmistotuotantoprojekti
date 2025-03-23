@@ -66,17 +66,12 @@ const LikertBar = ({ data, question }) => {
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(xScale))
       .attr("class", "axis");
-      
 
     // Add Y axis with white tick labels
     const yAxisElement = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(
-        d3
-          .axisLeft(yScale)
-          .tickFormat((d) => (d % 1 === 0 ? d : "")),
-      )
+      .call(d3.axisLeft(yScale).tickFormat((d) => (d % 1 === 0 ? d : "")))
       .attr("class", "axis");
 
     yAxisElement.selectAll("text").attr("fill", "white");
