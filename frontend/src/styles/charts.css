@@ -59,7 +59,7 @@
   width: 90%; /* Ensure full container width */
   min-height: 40vh; /* Ensure a minimum visible height */
   max-height: 75vh; /* Prevent it from expanding infinitely */
-  background-color: #1a1a1a;
+  background-color: #1e1e1e;
   border-radius: 12px;
   border: 2px solid #444;
   padding: 16px;
@@ -108,24 +108,22 @@
   fill: #e0e0e0;
 }
 
-.bar {
-  rx: 5;
-  cursor: default;
-  transition: fill 0.3s ease;
-}
-
-.axis-text {
-  transform: rotate(-15deg);
-  text-anchor: end;
-  font-size: 14px;
-}
-
 .y-axis-label {
   font-size: 14px;
 }
 
 svg {
   display: block !important;
+}
+
+/* Grid lines */
+.likert-bar-chart .grid line {
+  stroke: #444;
+}
+
+/* Bar appearance & interaction */
+.likert-bar-chart rect {
+  rx: 5;
 }
 
 .likert-button {

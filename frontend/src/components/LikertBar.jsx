@@ -33,27 +33,47 @@ const LikertBar = ({ data, question }) => {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    // Define color scale
+    // Define color scheme
     const colorScale = d3
       .scaleOrdinal()
       .domain(["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
 
-    // Add X axis
+    // Y gridlines
     svg
       .append("g")
-      .attr("transform", `translate(0, ${height - margin.bottom})`)
-      .call(d3.axisBottom(xScale))
-      .attr("class", "axis")
-      .selectAll("text")
-      .attr("class", "axis-text");
+      .attr("class", "grid")
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(
+        d3
+          .axisLeft(yScale)
+          .tickSize(-width + margin.left + margin.right)
+          .tickFormat(""),
+      )
+      .selectAll("line")
+      .attr("stroke", "#ddd")
+      .attr("stroke-dasharray", "3,3");
 
-    // Add Y axis
-    svg
+    // Add X axis with white tick labels
+    const xAxisElement = svg
       .append("g")
-      .attr("transform", `translate(${margin.left}, 0)`)
-      .call(d3.axisLeft(yScale).ticks(6))
-      .attr("class", "axis y-axis-label");
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(xScale))
+      .attr("class", "axis");
+      
+
+    // Add Y axis with white tick labels
+    const yAxisElement = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(
+        d3
+          .axisLeft(yScale)
+          .tickFormat((d) => (d % 1 === 0 ? d : "")),
+      )
+      .attr("class", "axis");
+
+    yAxisElement.selectAll("text").attr("fill", "white");
 
     // Create tooltip
     const tooltip = d3
@@ -65,7 +85,7 @@ const LikertBar = ({ data, question }) => {
 
     // Draw bars
     svg
-      .selectAll(".bar")
+      .selectAll("rect")
       .data(data)
       .enter()
       .append("rect")
@@ -74,7 +94,6 @@ const LikertBar = ({ data, question }) => {
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => height - margin.bottom - yScale(d.value))
       .attr("fill", (d) => colorScale(d.label))
-      .attr("class", "bar")
       .on("mouseover", function (event, d) {
         d3.select(this).transition().duration(200).attr("stroke-width", "2px");
         tooltip
