@@ -79,6 +79,7 @@ class TestGetData(unittest.TestCase):
 
     def test_duplicate_question_in_first_agent(self):
         """Test that duplicate questions in the first agent are not processed twice."""
+
         # Custom dictionary that yields duplicate items for a key.
         class DuplicateKeyDict(dict):
             def items(self):
