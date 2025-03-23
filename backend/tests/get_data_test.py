@@ -79,7 +79,7 @@ class TestGetData(unittest.TestCase):
 
     def test_duplicate_question_in_first_agent(self):
         """Test that duplicate questions in the first agent are not processed twice."""
-
+        
         # Custom dictionary that yields duplicate items for a key.
         class DuplicateKeyDict(dict):
             def items(self):
@@ -99,8 +99,9 @@ class TestGetData(unittest.TestCase):
 
         expected = [
             {
-                "answer_distribution": [
-                    {"label": "Strongly Disagree", "value": 0},
+                "question": "Meat production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 2},
                     {"label": "Disagree", "value": 1},
                     {"label": "Neutral", "value": 1},
                     {"label": "Agree", "value": 2},
@@ -114,7 +115,6 @@ class TestGetData(unittest.TestCase):
             }
         ]
         self.assertEqual(expected, distributions)
-
 
 
 class MockAgent:
