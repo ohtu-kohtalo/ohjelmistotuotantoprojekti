@@ -36,7 +36,13 @@ const LikertBar = ({ data, question }) => {
     // Define color scheme
     const colorScale = d3
       .scaleOrdinal()
-      .domain(["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"])
+      .domain([
+        "Strongly Disagree",
+        "Disagree",
+        "Neutral",
+        "Agree",
+        "Strongly Agree",
+      ])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
 
     // Y gridlines
