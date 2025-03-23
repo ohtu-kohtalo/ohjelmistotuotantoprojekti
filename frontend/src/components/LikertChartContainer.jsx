@@ -31,11 +31,13 @@ const LikertChartContainer = ({ chartsData }) => {
         data={chartsData[currentIndex].data}
         question={chartsData[currentIndex].question}
       />
-      <Statistics
-        median={stats.median}
-        mode={stats.mode}
-        variationRatio={stats["variation ratio"]}
-      />
+      <div className="Statistics">
+        <Statistics
+          median={stats.median}
+          mode={stats.mode}
+          variationRatio={stats["variation ratio"]}
+          />
+      </div>
       <div className="likert-button-container">
         <button onClick={handlePrev} className="likert-button">
           ⬅
@@ -44,7 +46,7 @@ const LikertChartContainer = ({ chartsData }) => {
           ➡
         </button>
       </div>
-      <p className="chart-info">
+      <p className="likert-chart-info">
         Chart {currentIndex + 1} / {chartsData.length}
       </p>
     </div>

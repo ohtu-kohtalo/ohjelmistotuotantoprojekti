@@ -73,6 +73,12 @@
   z-index: 1; /* Ensure it's on top */
 }
 
+.statistics-container {
+  width: 100%;
+  max-width: 600px; /* Limit width to prevent overflow */
+  text-align: center;
+}
+
 .no-data-placeholder {
   font-size: 16px;
   color: #e0e0e0;
@@ -147,13 +153,9 @@ svg {
   margin-top: 1rem;
 }
 
-.chart-info {
+.likert.chart-info {
   text-align: center;
   margin-top: 0.5rem;
-}
-
-.likert-submit-button:hover {
-  background-color: #b3b6b9;
 }
 
 .stacked-bar-chart {
