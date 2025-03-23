@@ -1,17 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 const LikertBar = ({ data, question }) => {
-  const chartRef = useRef();
+  const svgRef = useRef();
 
   useEffect(() => {
-    const svg = d3.select(chartRef.current);
-    svg.selectAll("*").remove();
+    if (!data || data.length === 0) return;
 
     const width = 600;
     const height = 350;
     const margin = { top: 40, right: 40, bottom: 80, left: 70 };
 
+    d3.select(svgRef.current).selectAll("*").remove();
+
+    // Create SVG element
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width)
+      .attr("height", height)
+      .attr("class", "likert-bar-chart");
+
+    // Define scales
     const xScale = d3
       .scaleBand()
       .domain(data.map((d) => d.label))
@@ -24,14 +33,14 @@ const LikertBar = ({ data, question }) => {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
+    // Define color scale
     const colorScale = d3
       .scaleOrdinal()
       .domain(["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
 
-    const svgContainer = svg.attr("width", width).attr("height", height);
-
-    svgContainer
+    // Add X axis
+    svg
       .append("g")
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .call(d3.axisBottom(xScale))
@@ -39,13 +48,14 @@ const LikertBar = ({ data, question }) => {
       .selectAll("text")
       .attr("class", "axis-text");
 
-    svgContainer
+    // Add Y axis
+    svg
       .append("g")
       .attr("transform", `translate(${margin.left}, 0)`)
       .call(d3.axisLeft(yScale).ticks(6))
       .attr("class", "axis y-axis-label");
 
-    d3.select(".tooltip").remove();
+    // Create tooltip
     const tooltip = d3
       .select("body")
       .append("div")
@@ -53,7 +63,8 @@ const LikertBar = ({ data, question }) => {
       .style("position", "absolute")
       .style("visibility", "hidden");
 
-    svgContainer
+    // Draw bars
+    svg
       .selectAll(".bar")
       .data(data)
       .enter()
@@ -88,7 +99,8 @@ const LikertBar = ({ data, question }) => {
           .attr("fill", colorScale(d.label));
       });
 
-    svgContainer
+    // Add chart title
+    svg
       .append("text")
       .attr("class", "chart-title")
       .attr("x", width / 2)
@@ -97,14 +109,15 @@ const LikertBar = ({ data, question }) => {
       .attr("fill", "white")
       .text(question);
 
+    // Cleanup: remove tooltip on unmount
     return () => {
       tooltip.remove();
     };
-  }, [data]);
+  }, [data, question]);
 
   return (
-    <div id="chart-container" className="chart-container p-4">
-      <svg ref={chartRef}></svg>
+    <div className="likert-bar-chart-container">
+      <svg ref={svgRef}></svg>
     </div>
   );
 };
