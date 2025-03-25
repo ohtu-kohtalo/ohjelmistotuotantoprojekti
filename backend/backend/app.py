@@ -80,13 +80,13 @@ def create_agents():
 
         # Convert agents to a list of dicts matching the frontend structure
         agent_dicts = []
-        
+
         for agent in agents:
-            
+
             agent_info = agent.get_agent_info()
             answers = agent_info.get("Answers", {})
             first_response = next(iter(answers.values()), None)
-            
+
             # Prepare the final dict with keys matching the desired format
             agent_dict = {
                 "id": agent.get_id(),
@@ -94,7 +94,7 @@ def create_agents():
                 "gender": agent_info.get("Gender"),
                 "response": first_response,
             }
-            
+
             agent_dicts.append(agent_dict)
 
         return jsonify(agent_dicts), 200
