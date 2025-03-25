@@ -51,8 +51,8 @@ def create_agents():
 
         df = pd.read_csv(csv_file)
 
-        # Limit to the first 50 rows
-        df = df.head(50)
+        # Select random 50 rows
+        df = df.sample(50)
 
         # Convert integer columns to strings
         int_cols = df.select_dtypes(include=["int"]).columns
