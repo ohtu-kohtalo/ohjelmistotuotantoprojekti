@@ -4,6 +4,7 @@ from backend.entities.agent import Agent
 
 class TestAgent(unittest.TestCase):
     def setUp(self):
+        Agent._id_counter = 0
         self.agent = Agent(
             {
                 "age": "40",
@@ -38,3 +39,17 @@ class TestAgent(unittest.TestCase):
         """Test that get_agent_info returns the agent information"""
         info = self.agent.get_agent_info()
         expected = {"age": "40", "gender": "male", "when": "now"}
+
+    def test_get_id(self):
+        """Test that get_id returns the agent id"""
+        self.assertEqual(self.agent.get_id(), 0)
+
+        second_agent = Agent(
+            {
+                "age": "32",
+                "gender": "female",
+                "when": "now",
+            }
+        )
+
+        self.assertEqual(second_agent.get_id(), 1)
