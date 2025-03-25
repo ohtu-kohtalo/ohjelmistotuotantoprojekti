@@ -25,20 +25,14 @@ const StackedBarChart = ({ data, xAxis }) => {
     let groupedData = {};
 
     if (xAxis === "age") {
-      categories = ["18-30", "31-40", "41-50", "51-60", "60+"];
+      categories = ["16-19", "20-25"];
       groupedData = {
-        "18-30": [],
-        "31-40": [],
-        "41-50": [],
-        "51-60": [],
-        "60+": [],
+        "16-19": [],
+        "20-25": [],
       };
       data.forEach((d) => {
-        if (d.age <= 30) groupedData["18-30"].push(d.response);
-        else if (d.age <= 40) groupedData["31-40"].push(d.response);
-        else if (d.age <= 50) groupedData["41-50"].push(d.response);
-        else if (d.age <= 60) groupedData["51-60"].push(d.response);
-        else groupedData["60+"].push(d.response);
+        if (d.age <= 19) groupedData["16-19"].push(d.response);
+        else groupedData["20-25"].push(d.response);
       });
     } else if (xAxis === "income") {
       categories = ["10k-20k", "20k-30k", "30k-40k", "50k-100k", "100k+"];
@@ -81,7 +75,8 @@ const StackedBarChart = ({ data, xAxis }) => {
     const maxCount = d3.max(avgData, (d) => d.count);
     const yScale = d3
       .scaleLinear()
-      .domain([0, maxCount * 1.1])
+      .domain([0, d3.max(avgData, (d) => d.count) * 1.1])
+      .nice()
       .range([height - margin.bottom, margin.top]);
 
     // Define color scheme
@@ -134,7 +129,6 @@ const StackedBarChart = ({ data, xAxis }) => {
       .call(
         d3
           .axisLeft(yScale)
-          .ticks(maxCount)
           .tickFormat((d) => (d % 1 === 0 ? d : "")),
       )
       .attr("class", "axis");
