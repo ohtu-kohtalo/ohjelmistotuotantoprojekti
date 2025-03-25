@@ -126,11 +126,7 @@ const StackedBarChart = ({ data, xAxis }) => {
     const yAxisElement = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(
-        d3
-          .axisLeft(yScale)
-          .tickFormat((d) => (d % 1 === 0 ? d : "")),
-      )
+      .call(d3.axisLeft(yScale).tickFormat((d) => (d % 1 === 0 ? d : "")))
       .attr("class", "axis");
 
     yAxisElement.selectAll("text").attr("fill", "white");
@@ -178,7 +174,10 @@ const StackedBarChart = ({ data, xAxis }) => {
           .style("top", event.pageY - 10 + "px")
           .style("left", event.pageX + 10 + "px");
 
-        d3.select(this).attr("fill", d3.rgb(colorScale(d.category)).darker(0.8));
+        d3.select(this).attr(
+          "fill",
+          d3.rgb(colorScale(d.category)).darker(0.8),
+        );
       })
       .on("mousemove", function (event) {
         tooltip
@@ -188,10 +187,10 @@ const StackedBarChart = ({ data, xAxis }) => {
       .on("mouseout", function (event, d) {
         tooltip.style("visibility", "hidden");
         d3.select(this)
-        .transition()
-        .duration(200)
-        .attr("stroke-width", "1px")
-        .attr("fill", colorScale(d.category));
+          .transition()
+          .duration(200)
+          .attr("stroke-width", "1px")
+          .attr("fill", colorScale(d.category));
       });
 
     // Cleanup: remove tooltip on unmount
