@@ -177,15 +177,21 @@ const StackedBarChart = ({ data, xAxis }) => {
           .style("visibility", "visible")
           .style("top", event.pageY - 10 + "px")
           .style("left", event.pageX + 10 + "px");
+
+        d3.select(this).attr("fill", d3.rgb(colorScale(d.category)).darker(0.8));
       })
       .on("mousemove", function (event) {
         tooltip
           .style("top", `${event.pageY - 10}px`)
           .style("left", `${event.pageX + 10}px`);
       })
-      .on("mouseout", function () {
-        d3.select(this).transition().duration(200).attr("stroke-width", "1px");
+      .on("mouseout", function (event, d) {
         tooltip.style("visibility", "hidden");
+        d3.select(this)
+        .transition()
+        .duration(200)
+        .attr("stroke-width", "1px")
+        .attr("fill", colorScale(d.category));
       });
 
     // Cleanup: remove tooltip on unmount

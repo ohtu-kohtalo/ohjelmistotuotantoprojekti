@@ -195,12 +195,6 @@ svg {
   rx: 5;
 }
 
-/* Smooth hover effect */
-.stacked-bar-chart rect:hover {
-  fill: #d1d1d1;
-  transform: scale(1.05);
-}
-
 /* Axis text styling */
 .stacked-bar-chart .axis text {
   font-size: 14px; /* Increased for readability */
