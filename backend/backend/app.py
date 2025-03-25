@@ -52,7 +52,7 @@ def create_agents():
         df = pd.read_csv(csv_file)
 
         # Limit to the first 15 rows
-        df = df.head(15)
+        df = df.head(50)
 
         # Convert integer columns to strings
         int_cols = df.select_dtypes(include=["int"]).columns
@@ -78,15 +78,26 @@ def create_agents():
             agents.append(agent)
             # Example Agent-object now: Agent(Age=24, Answers={'Q1': 1, 'Q2': 3}, Gender=Male)
 
-        # Return JSON-output to frontend. For debugging purposes mostly.
-        return (
-            jsonify(
-                {
-                    "status": "Initial agent-creation from backend CSV-file was successful"
-                }
-            ),
-            200,
-        )
+        # Convert agents to a list of dicts matching the frontend structure
+        agent_dicts = []
+        
+        for agent in agents:
+            
+            agent_info = agent.get_agent_info()
+            answers = agent_info.get("Answers", {})
+            first_response = next(iter(answers.values()), None)
+            
+            # Prepare the final dict with keys matching the desired format
+            agent_dict = {
+                "id": agent.get_id(),
+                "age": agent_info.get("Age"),
+                "gender": agent_info.get("Gender"),
+                "response": first_response,
+            }
+            
+            agent_dicts.append(agent_dict)
+
+        return jsonify(agent_dicts), 200
 
     except Exception as error:
         return (

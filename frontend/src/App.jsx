@@ -19,7 +19,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Initial state for agents
-  const [agents, setAgentCreation] = useState(null); // Agents
+  const [agents, setAgentCreation] = useState([]); // Agents
 
   // State for checking whether csv has been uploaded
   const [csvUploaded, setCsvUploaded] = useState(false);
@@ -43,15 +43,19 @@ const App = () => {
         const response = await fetch(`${BACKEND_URL}/`);
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
-        const responseMessage = await response.json();
-        console.log("Agents created!", responseMessage);
-        showMessage("Agents succesfully created from initial CSV-file!");
-        // setAgentCreation(); Possible endpoint to display created agents initial information and tendency for answers!
+        const agentsData = await response.json(); // ✅ Expect actual agent data now
+        console.log("Agents created!", agentsData);
+
+        setAgentCreation(agentsData); // ✅ Set agent data into state
+        showMessage(
+          "success",
+          "✅ Agents successfully created from backend CSV!"
+        );
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -148,10 +152,7 @@ const App = () => {
             <Route path="/" element={<HelpPage />} />
             <Route
               path="/initialDistribution"
-              // Currently bugged! Distributed data cannot be displayed properly in the graphs!
-              // element={<InitialDistribution data={agents} />}
-              // Forcing sample agent data here (Defined in PlotContainer.jsx-component):
-              element={<InitialDistribution />}
+              element={<InitialDistribution data={agents} />}
             />
             <Route
               path="/addQuery"
