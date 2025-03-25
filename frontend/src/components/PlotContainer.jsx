@@ -55,10 +55,12 @@ const PlotContainer = ({ agentData = [] }) => {
         </div>
 
         <div className="chart-container">
-          {chartType === "bar" ? (
-            <StackedBarChart data={cleanAgentData} xAxis={selectedX} />
-          ) : (
+          {cleanAgentData.length === 0 ? (
             <p>[Graph placeholder]</p>
+          ) : (
+            chartType === "bar" && (
+              <StackedBarChart data={cleanAgentData} xAxis={selectedX} />
+            )
           )}
         </div>
 

@@ -32,9 +32,9 @@ agents = []
 @app.route("/", methods=["GET"])
 def create_agents():
     """
-    Creates 15 agents based on the CSV-data in backend.
+    Creates 50 agents based on the CSV-data in backend.
 
-    For each row in the backend-CSV (limited to 15 rows):
+    For each row in the backend-CSV (limited to 50 rows):
       - The agent’s info contains the "Age", "Gender" and "Answers" fields. Answers is a dictionary with backend CSV-file question-text as key and the answer-value as value.
       - The new_questions-dictionary will be filled with agents' answers based on user-inputted question(s).
 
@@ -42,7 +42,7 @@ def create_agents():
     Backend CSV-file can be thought of as sort of a training data for the agents and is used to provide LLM with the necessary data to generate responses.
 
     Returns:
-        JSON response indicating whether initial agent creation from backend CSV-file was successful.
+        JSON response indicating whether initial agent creation from backend CSV-file was successful along with the agents' info for display purposes.
     """
 
     try:
@@ -51,7 +51,7 @@ def create_agents():
 
         df = pd.read_csv(csv_file)
 
-        # Limit to the first 15 rows
+        # Limit to the first 50 rows
         df = df.head(50)
 
         # Convert integer columns to strings
