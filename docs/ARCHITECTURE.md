@@ -8,7 +8,7 @@
 > All frontend components import React, this is not explicitly mentioned in the graph
 
 ```mermaid
-graph TD
+graph LR
     App[App.jsx] -->|uses| ErrorMessage[ErrorMessage.jsx]
     App -->|uses| SuccessMessage[SuccessMessage.jsx]
     App -->|uses| HelpPage[HelpPage.jsx]
@@ -49,7 +49,7 @@ graph TD
 ### Backend
 
 ```mermaid
-graph TD
+graph LR
     app[app.py] -->|imports| key_config[key_config.py]
     app -->|imports| llm_config[llm_config.py]
     app -->|imports| agent[agent.py]
@@ -115,22 +115,69 @@ graph TD
 
 ```
 
-## User input flowchart
+## Application flowchart
 
 ```mermaid
 graph TD
-    subgraph Frontend
-        initial[Initial state] --> company_info[User inputs company information]
-        company_info --> agent_count[User chooses number of agents]
-        agent_count --> submit[User presses submit]
-        json[Frontend receives JSON] --> response_state[LLM response gets rendered to the user]
+    %% User Actions
+    subgraph User Actions
+        UA1[Open website]
+        UA2[Upload CSV]
+        %%UA3[Quick add question]
+        UA4[Click Download CSV]
     end
 
-    subgraph Backend
-        submit -->|POST| server[Flask]
-        server --> generator["Call Generator.create_agents()"]
-        generator --> create_agents[Generates agents and returns LLM answer as a string]
-        create_agents --> response[Response is returned to the frontend in JSON]
-        response --> json
+    subgraph Agent Creation
+        F1["Call GET / (create_agents)"]
+        B1["GET / (create_agents)"]
+        B2[Return agents JSON]
+        F2[Store agents in state & show success message]
     end
+
+    subgraph CSV Upload
+        F4[Call handleCsvSubmit]
+        B3[POST /receive_user_csv]
+        B4[Process CSV & generate distributions]
+        B5[Return distribution data]
+        F5[Update state with distribution data]
+        F6[Show success/error message]
+        F7[Render LikertChartContainer with response data]
+    end
+
+    %% Quick Add currently not in use
+    
+    %%subgraph Quick Add
+        %%Q1[User enters question & clicks Add]
+        %%Q2[Update question list in state]
+        %%Q3[User clicks Submit]
+    %%end
+
+    subgraph CSV Download
+        B6[POST /download_agent_response_csv]
+        B7[Generate CSV file from responses]
+        B8[Return CSV file]
+        F9[Trigger file download in browser]
+    end
+
+    UA1 --> F1
+    F1 --> B1
+    B1 --> B2
+    B2 --> F2
+
+    UA2 --> F4
+    F4 --> B3
+    B3 --> B4
+    B4 --> B5
+    B5 --> F5
+    F5 --> F6
+    F6 --> F7
+
+    %%UA3 --> Q1
+    %%Q1 --> Q2
+    %%Q2 --> Q3
+
+    UA4 --> B6
+    B6 --> B7
+    B7 --> B8
+    B8 --> F9
 ```
