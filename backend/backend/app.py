@@ -177,7 +177,6 @@ def receive_user_csv():
         }
     )
 
-
 @app.route("/receive_user_quick_question", methods=["POST"])
 def receive_user_quick_question():
     """
