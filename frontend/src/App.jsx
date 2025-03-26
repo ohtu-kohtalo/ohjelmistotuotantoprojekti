@@ -49,13 +49,13 @@ const App = () => {
         setAgentCreation(agentsData); // ✅ Set agent data into state
         showMessage(
           "success",
-          "✅ Agents successfully created from backend CSV!",
+          "✅ Agents successfully created from backend CSV!"
         );
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -91,7 +91,7 @@ const App = () => {
 
       const data = await response.json();
       showMessage("success", "CSV submitted successfully");
-      setDistribution(data.data.distributions);
+      setDistribution(data.distributions);
       setCsvUploaded(true);
     } catch (error) {
       console.error("CSV submission error:", error);

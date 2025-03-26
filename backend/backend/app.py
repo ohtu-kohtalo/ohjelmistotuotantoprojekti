@@ -120,18 +120,27 @@ def receive_user_csv():
         JSON:
             A list of answer distributions and statistics for each distribution. An
             example with one distribution:
-                [
-                    {
-                        question: "I like pasta",
-                        data: [
-                            {"label": "Strongly Disagree", "value": 1,}
-                            {"label": "Disagree", "value": 2},
-                            {"label": "Neutral", "value": 5},
-                            {"label": "Agree", "value": 3},
-                            {"label": "Strongly Agree","value": 2},
+                {
+                    response: "success"
+                    distributions:
+                        [
+                            {
+                                question: "I like pasta",
+                                data: [
+                                    {"label": "Strongly Disagree", "value": 1,}
+                                    {"label": "Disagree", "value": 2},
+                                    {"label": "Neutral", "value": 5},
+                                    {"label": "Agree", "value": 3},
+                                    {"label": "Strongly Agree","value": 2},
+                                    ]
+                                statistics: {
+                                    "median": 3,
+                                    "mode": 2,
+                                    "variation ratio": 0.7
+                                    }
+                            }
                         ]
-                    }
-                ]
+                }
     """
 
     global agents
@@ -164,10 +173,7 @@ def receive_user_csv():
     return jsonify(
         {
             "status": "success",
-            "data": {
-                "responses": responses,
-                "distributions": distributions,
-            },
+            "distributions": distributions,
         }
     )
 
