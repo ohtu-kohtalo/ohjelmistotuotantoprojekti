@@ -34,27 +34,15 @@ const StackedBarChart = ({ data, xAxis }) => {
         if (d.age <= 19) groupedData["16-19"].push(d.response);
         else groupedData["20-25"].push(d.response);
       });
-    } else if (xAxis === "income") {
-      categories = ["10k-20k", "20k-30k", "30k-40k", "50k-100k", "100k+"];
-      groupedData = {
-        "10k-20k": [],
-        "20k-30k": [],
-        "30k-40k": [],
-        "50k-100k": [],
-        "100k+": [],
-      };
-      data.forEach((d) => {
-        if (d.income <= 20000) groupedData["10k-20k"].push(d.response);
-        else if (d.income <= 30000) groupedData["20k-30k"].push(d.response);
-        else if (d.income <= 40000) groupedData["30k-40k"].push(d.response);
-        else if (d.income <= 100000) groupedData["50k-100k"].push(d.response);
-        else groupedData["100k+"].push(d.response);
-      });
     } else if (xAxis === "gender") {
-      categories = ["Male", "Female"];
-      groupedData = { Male: [], Female: [] };
+      categories = ["Male", "Female", "Other"];
+      groupedData = { Male: [], Female: [], Other: [] };
       data.forEach((d) => {
-        groupedData[d.gender].push(d.response);
+        if (groupedData[d.gender]) {
+          groupedData[d.gender].push(d.response);
+        } else {
+          groupedData["Other"].push(d.response);
+        }
       });
     }
 
