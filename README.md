@@ -5,7 +5,6 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 ![Prettier](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/black.yml/badge.svg)
 ![Black](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/prettier.yml/badge.svg)
 ![Python tests](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/python_tests.yml/badge.svg)
-![React tests](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/react_tests.yml/badge.svg)
 [![codecov](https://codecov.io/gh/ohtu-kohtalo/ohjelmistotuotantoprojekti/graph/badge.svg?token=IXPDGIWJ57)](https://codecov.io/gh/ohtu-kohtalo/ohjelmistotuotantoprojekti)
 
 ## Table of Contents
