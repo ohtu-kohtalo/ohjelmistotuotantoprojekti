@@ -7,8 +7,6 @@ from flask_cors import CORS
 
 from .key_config import (
     CSV_FILE_PATH,
-    GEMINI_API_KEY,
-    OPENAI_API_KEY,
 )
 
 from .llm_config import get_llm_connection

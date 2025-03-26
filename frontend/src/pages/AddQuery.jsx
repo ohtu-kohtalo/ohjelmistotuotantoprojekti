@@ -6,7 +6,9 @@ import LikertChartContainer from "../components/LikertChartContainer";
 
 const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
   const [csvLoaded, setCsvLoaded] = useState(false);
-  const [questions, setQuestions] = useState([]);
+  const [futureScenario, setFutureScenario] = useState("");
+  const [tempMessage, setTempMessage] = useState("");
+  // const [questions, setQuestions] = useState([]);
 
   const handleCsvSuccess = (message) => {
     showMessage("success", message);
@@ -18,22 +20,35 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
     setCsvLoaded(false);
   };
 
-  const handleAddQuestion = () => {
-    const questionInput = document.getElementById("quickAddQuestion").value;
-    if (questionInput) {
-      setQuestions([...questions, questionInput]);
-      document.getElementById("quickAddQuestion").value = "";
-    }
-  };
+  const handleFutureSubmit = () => {
+    if (futureScenario.length >= 5) {
+      // Process your future scenario submission logic here TODO: Implement this to backend
+      console.log("Submitted Future Scenario:", futureScenario);
+      setTempMessage("Scenario submitted succesfully");
 
-  const handleSubmitQuestions = () => {
-    console.log("Submitted questions:", questions);
+      // Clear the temp-message after 3 seconds
+      setTimeout(() => setTempMessage(""), 3000);
+      setFutureScenario("");
+    }
   };
 
   const handleReset = () => {
     setCsvLoaded(false);
-    setQuestions([]);
+    setFutureScenario("");
+    // setQuestions([]);
   };
+
+  // const handleAddQuestion = () => {
+  //   const questionInput = document.getElementById("quickAddQuestion").value;
+  //   if (questionInput) {
+  //     setQuestions([...questions, questionInput]);
+  //     document.getElementById("quickAddQuestion").value = "";
+  //   }
+  // };
+
+  // const handleSubmitQuestions = () => {
+  //   console.log("Submitted questions:", questions);
+  // };
 
   return (
     <div className="card active">
@@ -42,8 +57,8 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
 
       <div className="query-input-container">
         {/* Quick Add Section */}
-        <div className="quick-add-question-container">
-          <div className="quick-add-question">
+        {/* <div className="quick-add-question-container"> */}
+        {/* <div className="quick-add-question">
             <label htmlFor="quickAddQuestion">Quick Add Question:</label>
             <input
               type="text"
@@ -52,26 +67,64 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
               placeholder="Type your question here"
             />
             <button onClick={handleAddQuestion}>Add</button>
-          </div>
+          </div> */}
 
-          {/* List of added questions */}
-          <ul className="question-list">
+        {/* Future Scenario Input */}
+        <div className="future-scenario-input-container">
+          <Title
+            id="futureScenarioTitle"
+            className="card-header"
+            text={"Future Scenario"}
+          />
+          <input
+            type="text"
+            id="futureScenarioInputField"
+            name="futureScenarioInputField"
+            placeholder="Enter future scenario"
+            value={futureScenario}
+            onChange={(e) => setFutureScenario(e.target.value)}
+          />
+          <button
+            id="futureScenarioSubmitButton"
+            onClick={handleFutureSubmit}
+            disabled={futureScenario.length < 5}
+          >
+            Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
+          </button>
+          {/* Temporary Message Display */}
+          {tempMessage && (
+            <div
+              className="temp-message"
+              style={{
+                position: "absolute",
+                marginBottom: "30px",
+                color: "green",
+                fontSize: "12px",
+              }}
+            >
+              {tempMessage}
+            </div>
+          )}
+        </div>
+
+        {/* List of added questions */}
+        {/* <ul className="question-list">
             {questions.map((question, index) => (
               <li key={index} className="question-item">
                 {question}
               </li>
             ))}
-          </ul>
+          </ul> */}
 
-          {/* Submit Questions Button */}
-          <button
+        {/* Submit Questions Button */}
+        {/* <button
             className="question-submit-button"
             onClick={handleSubmitQuestions}
             disabled={questions.length === 0}
           >
             Submit
-          </button>
-        </div>
+          </button> */}
+        {/* </div> */}
         {/* CSV Upload Section - Always Visible */}
         <div className="csv-upload-section">
           <Title id="CSV-file-title" className="card-header" text={""} />
