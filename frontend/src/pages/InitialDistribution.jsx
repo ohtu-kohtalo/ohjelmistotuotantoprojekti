@@ -1,16 +1,42 @@
 import React, { useState } from "react";
 import StackedBarChart from "../components/StackedBarChart";
 
+/**
+ * Component for displaying initial demographic distributions in a card layout.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Array<Object>} [props.data=[]] - Array of agent data objects. Each object may contain properties such as `age` (number or string) and `gender` (string).
+ *
+ * @returns {JSX.Element} A card containing demographic distribution charts and summaries.
+ *
+ * @example
+ * const data = [
+ *   { age: 25, gender: "male" },
+ *   { age: "30", gender: "female" },
+ *   { age: 22, gender: "male" }
+ * ];
+ *
+ * <InitialDistribution data={data} />
+ */
 const InitialDistribution = ({ data = [] }) => {
   const chartType = "bar";
   const [selectedX, setSelectedX] = useState("age");
 
   // Ensure age is treated as number for calculations
+  // Necessary for calculateAverage function
   const cleanAgentData = data.map((agent) => ({
     ...agent,
     age: typeof agent.age === "string" ? parseInt(agent.age, 10) : agent.age,
   }));
 
+  /**
+   * Calculates the average of numeric values for a given key in the data array.
+   *
+   * @param {Array<Object>} data - The array of data objects.
+   * @param {string} key - The key whose numeric values will be averaged, in this case agent-objects age.
+   * @returns {string|number} The average value rounded to one decimal place, or "N/A" if no valid numbers are found i.e no data is provided / incorrect form of data.
+   */
   const calculateAverage = (data, key) => {
     const validValues = data
       .map((d) => d[key])
@@ -21,6 +47,12 @@ const InitialDistribution = ({ data = [] }) => {
       : "N/A";
   };
 
+  /**
+   * Computes the distribution of genders in the data array.
+   *
+   * @param {Array<Object>} data - The array of data objects.
+   * @returns {string} A formatted string representing the count of each gender in the format "Gender: Count".
+   */
   const getGenderDistribution = (data) => {
     const genderCounts = data.reduce((acc, item) => {
       const gender = item.gender?.toString().trim().toLowerCase();

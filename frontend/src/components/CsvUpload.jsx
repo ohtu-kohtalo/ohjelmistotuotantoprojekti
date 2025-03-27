@@ -38,7 +38,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
           if (row.length !== 1) {
             onCsvError?.(
-              `Row ${i + 1} can only contain one column. Found ${row.length}.`,
+              `Row ${i + 1} can only contain one column. Found ${row.length}.`
             );
             setFileName("");
             event.target.value = null;
@@ -60,7 +60,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
         setQuestions(questions);
         event.target.value = null;
 
-        onCsvSuccess?.(`Successfully uploaded "${file.name}".`);
+        onCsvSuccess?.(`Successfully uploaded "${file.name}". 💡`);
 
         handleCsvSubmit(questions);
       },

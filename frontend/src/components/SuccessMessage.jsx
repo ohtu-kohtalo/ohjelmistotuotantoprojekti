@@ -8,9 +8,6 @@ const SuccessMessage = ({ message }) => {
   return (
     <div className="success-message">
       <p>{message}</p>
-      <button className="close-btn" onClick={() => setVisible(false)}>
-        ✖
-      </button>
     </div>
   );
 };

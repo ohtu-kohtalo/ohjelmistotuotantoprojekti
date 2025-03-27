@@ -49,13 +49,13 @@ const App = () => {
         setAgentCreation(agentsData); // ✅ Set agent data into state
         showMessage(
           "success",
-          "✅ Agents successfully created from backend CSV!",
+          "Agents successfully created from backend CSV! ✅"
         );
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -90,7 +90,7 @@ const App = () => {
       }
 
       const data = await response.json();
-      showMessage("success", "CSV submitted successfully");
+      showMessage("success", "CSV submitted successfully! 📂👍");
       setDistribution(data.distributions);
       setCsvUploaded(true);
     } catch (error) {
@@ -119,17 +119,16 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      {/* Render messages above the app-container so they aren’t affected by its hover effect */}
+      {message && (
+        <>
+          {message.type === "error" && <ErrorMessage message={message.text} />}
+          {message.type === "success" && (
+            <SuccessMessage message={message.text} />
+          )}
+        </>
+      )}
       <div className="app-container">
-        {message && (
-          <>
-            {message.type === "error" && (
-              <ErrorMessage message={message.text} />
-            )}
-            {message.type === "success" && (
-              <SuccessMessage message={message.text} />
-            )}
-          </>
-        )}
         <div className="sidebar">
           <Link to="/" className="sidebar-link">
             Help Page
