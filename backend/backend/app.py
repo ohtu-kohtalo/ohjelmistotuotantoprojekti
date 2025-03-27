@@ -166,7 +166,9 @@ def receive_user_csv():
 
     responses = llm_handler.get_agents_responses(agents, questions)
 
-    distributions = GetData().get_answer_distributions(0, agents)  # This now returns the first distribution of the first responses
+    distributions = GetData().get_answer_distributions(
+        0, agents
+    )  # This now returns the first distribution of the first responses
 
     return jsonify(
         {
@@ -289,9 +291,7 @@ def download_agent_response_csv():
                 value = agent.questions.get(question, "")
                 row.append(value)
         else:
-            print(
-                f"[DEBUG] Agent {i} does not have 'questions' attribute", flush=True
-            )
+            print(f"[DEBUG] Agent {i} does not have 'questions' attribute", flush=True)
             # If the agent has no questions, fill with empty strings
             row.extend(["" for _ in header[1:]])
         print(f"[DEBUG] Writing row for Agent {i}: {row}", flush=True)

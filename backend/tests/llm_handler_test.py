@@ -107,16 +107,16 @@ def test_get_agent_responses(dummy_agents, questions):
     """Test that valid responses are processed correctly."""
     handler = LlmHandler()
     handler.llm = DummyLLM()
-    
+
     responses = handler.get_agents_responses(dummy_agents, questions)
-    
+
     expected = {
         "Agent_1": {"q1": 1, "q2": 4, "q3": 2},
         "Agent_2": {"q1": 5, "q2": 5, "q3": 3},
     }
     # Verify that each agent's questions got updated.
-    assert dummy_agents[0].questions == {'q1': [1], 'q2': [4], 'q3': [2]}
-    assert dummy_agents[1].questions == {'q1': [5], 'q2': [5], 'q3': [3]}
+    assert dummy_agents[0].questions == {"q1": [1], "q2": [4], "q3": [2]}
+    assert dummy_agents[1].questions == {"q1": [5], "q2": [5], "q3": [3]}
     assert responses == expected
 
 

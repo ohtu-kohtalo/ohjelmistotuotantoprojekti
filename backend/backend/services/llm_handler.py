@@ -234,10 +234,10 @@ class LlmHandler:
         except Exception as e:
             print(f"[ERROR] LLM call failed: {e}", flush=True)
             return None
-    
+
     def save_responses_to_agents(self, agent_responses):
         """
-        Stores the responses in each agent's `questions` dictionary. Checks if question already exists, 
+        Stores the responses in each agent's `questions` dictionary. Checks if question already exists,
         if not, creates a list with the first response and if yes, adds the new response to the existing list.
 
         Args:
@@ -270,5 +270,3 @@ class LlmHandler:
         # print( "\n[DEBUG] Final agent responses", new_agent_responses, flush=True)
 
         return new_agent_responses
-    
-

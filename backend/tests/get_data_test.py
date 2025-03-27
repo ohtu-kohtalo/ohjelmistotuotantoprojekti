@@ -18,7 +18,7 @@ class TestGetData(unittest.TestCase):
 
     def test_get_answer_distributions(self):
         """Test get_answer_distributions gives correct distributions for one question."""
-        distributions = self.get_data.get_answer_distributions(0,self.agents)
+        distributions = self.get_data.get_answer_distributions(0, self.agents)
         excepted = [
             {
                 "question": "Meat production should be reduced.",
