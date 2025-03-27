@@ -54,7 +54,7 @@ const LikertBar = ({ data, question }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
