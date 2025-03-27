@@ -197,7 +197,7 @@ def receive_future_scenario():
 
     if not data:
         print("No data provided")
-        return jsonify({"error": "No data provided"}), 400
+        return jsonify({"error": "No data (future scenario) provided"}), 400
 
     if not isinstance(data, dict):
         print("Payload must be a dictionary")
