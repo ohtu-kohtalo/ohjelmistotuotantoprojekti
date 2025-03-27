@@ -74,7 +74,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
   };
 
   return (
-    <div>
+    <div className="csv-upload-file-container">
       <div className="csv-upload-file">
         <input
           ref={fileInputRef}

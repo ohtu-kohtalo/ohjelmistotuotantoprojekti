@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Title from "../components/Title";
 import CsvUpload from "../components/CsvUpload";
 import LoadingIndicator from "../components/LoadingIndicator";
 import LikertChartContainer from "../components/LikertChartContainer";
@@ -67,8 +66,8 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
       <div className="query-input-container">
         {/* CSV Upload Section - Always Visible */}
         <div className="csv-upload-section">
-          <Title className="csv-upload-title" text={"CSV-Upload"} />
-          <p>
+          <h1 id="csvUploadTitle">Upload CSV File</h1>
+          <p id="csvUploadDescription">
             Upload a CSV file with questions on it. Correct format for the file
             is one question per row in the first column.
           </p>
@@ -77,24 +76,18 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
             onCsvSuccess={handleCsvSuccess}
             handleCsvSubmit={handleCsvSubmit}
           />
-
           {/* "Add Another Query" Button - Disabled Until CSV is Provided */}
           <button
             onClick={handleReset}
-            className="likert-submit-button"
+            className="likert-question-submit-button"
             disabled={!csvLoaded} /* Disable button until CSV is uploaded */
           >
             Add another query
           </button>
         </div>
-
         {/* Future Scenario Input */}
         <div className="future-scenario-input-container">
-          <Title
-            id="futureScenarioTitle"
-            className="card-header"
-            text={"Future Scenario"}
-          />
+          <h1 id="futureScenarioTitle">Future Scenario</h1>
           <input
             type="text"
             id="futureScenarioInputField"
