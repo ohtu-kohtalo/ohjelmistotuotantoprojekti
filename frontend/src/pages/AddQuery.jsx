@@ -20,15 +20,36 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
     setCsvLoaded(false);
   };
 
-  const handleFutureSubmit = () => {
+  const handleFutureSubmit = async () => {
     if (futureScenario.length >= 5) {
-      // Process your future scenario submission logic here TODO: Implement this to backend
-      console.log("Submitted Future Scenario:", futureScenario);
-      setTempMessage("Scenario submitted succesfully");
+      try {
+        const BACKEND_URL =
+          import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+        const response = await fetch(`${BACKEND_URL}/receive_future_scenario`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scenario: futureScenario,
+          }),
+        });
+        console.log("Submitted Future Scenario:", futureScenario);
+        //console.log("response.ok", response.ok);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
 
-      // Clear the temp-message after 3 seconds
-      setTimeout(() => setTempMessage(""), 3000);
-      setFutureScenario("");
+        // The returned data is a status message {status: "success"}
+        const data = await response.json();
+        console.log("Future scenario return data:", data);
+
+        setTempMessage("Scenario submitted succesfully");
+        // Clear the temp-message after 3 seconds
+        setTimeout(() => setTempMessage(""), 3000);
+        setFutureScenario("");
+      } catch (error) {
+        console.error("Future scenario submission error:", error);
+        showMessage("error", "⚠️ Could not submit the future scenario");
+      }
     }
   };
 
