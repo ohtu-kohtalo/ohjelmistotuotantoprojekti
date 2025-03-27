@@ -27,10 +27,11 @@ button {
   flex-direction: column;
   gap: 15px;
   height: 100%; /* Ensures it fills available space */
+  align-items: center;
 }
 
 #futureScenarioInputField {
-  width: 80%;
+  width: 60%;
 }
 
 #futureScenarioSubmitButton {
@@ -40,7 +41,7 @@ button {
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
-  width: 30%;
+  width: 27%;
   transition:
     background-color 0.3s ease,
     transform 0.8s ease;
@@ -72,10 +73,6 @@ button {
   height: 100%; /* Ensures it fills available space */
 }
 
-.csv-upload-file-container {
-  align-self: flex-start;
-}
-
 .csv-upload-file input {
   width: 100%;
   max-width: 400px;
@@ -97,11 +94,6 @@ button {
   transform: scale(1.02);
 }
 
-#csvUploadTitle {
-  align-self: flex-start;
-}
-
 #csvUploadDescription {
-  align-self: flex-start;
   width: 70%;
 }

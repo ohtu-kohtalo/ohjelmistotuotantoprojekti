@@ -66,7 +66,6 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
       <div className="query-input-container">
         {/* CSV Upload Section - Always Visible */}
         <div className="csv-upload-section">
-          <h1 id="csvUploadTitle">Upload CSV File</h1>
           <p id="csvUploadDescription">
             Upload a CSV file with questions on it. Correct format for the file
             is one question per row in the first column.
@@ -109,7 +108,7 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
               className="temp-message"
               style={{
                 position: "absolute",
-                marginBottom: "30px",
+                marginTop: "70px",
                 color: "green",
                 fontSize: "12px",
               }}

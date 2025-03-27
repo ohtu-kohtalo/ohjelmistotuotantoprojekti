@@ -54,7 +54,7 @@ const LikertBar = ({ data, question }) => {
         d3
           .axisLeft(yScale)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#ddd")
@@ -122,7 +122,7 @@ const LikertBar = ({ data, question }) => {
     // Add chart title
     svg
       .append("text")
-      .attr("class", "chart-title")
+      .attr("class", "likert-chart-title")
       .attr("x", width / 2)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
