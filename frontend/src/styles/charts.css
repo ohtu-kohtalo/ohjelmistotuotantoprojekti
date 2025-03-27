@@ -87,6 +87,31 @@
   align-content: center;
 }
 
+/* Initial Distribution Chart */
+.initial-distribution-chart-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+/* Force Summary to Appear Below Chart */
+.summary-container {
+  width: 100%;
+  max-width: 500px;
+  background-color: #1e1e1e;
+  padding: 15px 20px;
+  margin-top: 20px; /* Ensures it is always below */
+  color: white;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: -15vh;
+}
+
 .chart-title {
   font-size: 16px;
   font-weight: bold;
