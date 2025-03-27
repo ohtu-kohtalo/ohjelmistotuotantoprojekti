@@ -176,6 +176,52 @@ def receive_user_csv():
     )
 
 
+@app.route("/receive_future_scenario", methods=["POST"])
+def receive_future_scenario():
+    """Receives the user's future scenario. Transforms the agents to the future and
+    saves the new agent variables into the agent object
+
+    Returns:
+        JSON:
+            A status message if the transformation was successfull and an error message
+            if something went wrong.
+    """
+
+    global agents
+
+    data = request.get_json()
+    print("\nFuture scenario:\n", data, flush=True)
+    print("\nFuture scenario:\n", type(data), flush=True)
+
+    if not data:
+        print("No data provided")
+        return jsonify({"error": "No data provided"}), 400
+
+    if not isinstance(data, dict):
+        print("Payload must be a dictionary")
+        return jsonify({"error": "Payload must be a dictionary"}), 400
+
+    if len(data) == 0:
+        print("Empty payload")
+        return jsonify({"error": "Empty payload"}), 400
+
+    if "scenario" not in data:
+        print("Missing 'scenario' field in payload")
+        return jsonify({"error": "Missing 'scenario' field in payload"}), 400
+
+    scenario = data["scenario"]
+
+    if not isinstance(scenario, str):
+        print("'scenario' must be an string")
+        return jsonify({"error": "'scenario' must be an string"}), 400
+
+    return jsonify(
+        {
+            "status": "success",
+        }
+    )
+
+
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
     """
