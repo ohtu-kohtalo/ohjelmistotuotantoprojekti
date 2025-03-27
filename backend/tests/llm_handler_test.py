@@ -71,7 +71,7 @@ class FaultyFormatLLM:
 class DummyAgent:
     def __init__(self, info):
         self.info = info
-        self.new_questions = {}
+        self.questions = {}
 
     def get_agent_info(self):
         return self.info
@@ -107,14 +107,16 @@ def test_get_agent_responses(dummy_agents, questions):
     """Test that valid responses are processed correctly."""
     handler = LlmHandler()
     handler.llm = DummyLLM()
+    
     responses = handler.get_agents_responses(dummy_agents, questions)
+    
     expected = {
         "Agent_1": {"q1": 1, "q2": 4, "q3": 2},
         "Agent_2": {"q1": 5, "q2": 5, "q3": 3},
     }
-    # Verify that each agent's new_questions got updated.
-    assert dummy_agents[0].new_questions == expected["Agent_1"]
-    assert dummy_agents[1].new_questions == expected["Agent_2"]
+    # Verify that each agent's questions got updated.
+    assert dummy_agents[0].questions == {'q1': [1], 'q2': [4], 'q3': [2]}
+    assert dummy_agents[1].questions == {'q1': [5], 'q2': [5], 'q3': [3]}
     assert responses == expected
 
 
@@ -221,23 +223,6 @@ def test_value_error(capsys, dummy_agents, questions, monkeypatch):
     assert responses == expected
     debug = capsys.readouterr().out
     assert "Failed to convert responses to integers at line 1:" in debug
-
-
-def test_duplicate_question_handling(capsys, dummy_agents, questions):
-    """
-    Test that if an answer already exists for a question, it is not overwritten.
-    """
-    handler = LlmHandler()
-    handler.llm = DummyLLM()
-    dummy_agents[0].new_questions["q1"] = 42
-    responses = handler.get_agents_responses(dummy_agents, questions)
-    returned_values = list(responses.values())
-    expected_values = [{"q1": 1, "q2": 4, "q3": 2}, {"q1": 5, "q2": 5, "q3": 3}]
-    for ev in expected_values:
-        assert ev in returned_values
-    debug = capsys.readouterr().out
-    assert "Agent 1: Question 'q1' already exists, keeping old answer." in debug
-    assert dummy_agents[0].new_questions["q1"] == 42
 
 
 def test_exception_handling(capsys, dummy_agents, questions):

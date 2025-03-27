@@ -9,16 +9,16 @@ class TestGetData(unittest.TestCase):
         """Set up sample agents for testing."""
         self.get_data = GetData()
         self.agents = [
-            MockAgent({"Meat production should be reduced.": 1}),
-            MockAgent({"Meat production should be reduced.": 2}),
-            MockAgent({"Meat production should be reduced.": 3}),
-            MockAgent({"Meat production should be reduced.": 4}),
-            MockAgent({"Meat production should be reduced.": 4}),
+            MockAgent({"Meat production should be reduced.": [1]}),
+            MockAgent({"Meat production should be reduced.": [2]}),
+            MockAgent({"Meat production should be reduced.": [3]}),
+            MockAgent({"Meat production should be reduced.": [4]}),
+            MockAgent({"Meat production should be reduced.": [4]}),
         ]
 
     def test_get_answer_distributions(self):
         """Test get_answer_distributions gives correct distributions for one question."""
-        distributions = self.get_data.get_answer_distributions(self.agents)
+        distributions = self.get_data.get_answer_distributions(0,self.agents)
         excepted = [
             {
                 "question": "Meat production should be reduced.",
@@ -41,12 +41,12 @@ class TestGetData(unittest.TestCase):
             0,
             MockAgent(
                 {
-                    "Meat production should be reduced.": 1,
-                    "Vegetable production should be reduced.": 5,
+                    "Meat production should be reduced.": [1],
+                    "Vegetable production should be reduced.": [5],
                 },
             ),
         )
-        distributions = self.get_data.get_answer_distributions(self.agents)
+        distributions = self.get_data.get_answer_distributions(0, self.agents)
         excepted = [
             {
                 "question": "Meat production should be reduced.",
@@ -91,11 +91,11 @@ class TestGetData(unittest.TestCase):
 
         # Create a first agent using DuplicateKeyDict.
         duplicate_agent = MockAgent(
-            DuplicateKeyDict({"Meat production should be reduced.": 1})
+            DuplicateKeyDict({"Meat production should be reduced.": [1]})
         )
         # Combine with the remaining agents (skipping the original first agent).
         agents = [duplicate_agent] + self.agents[1:]
-        distributions = self.get_data.get_answer_distributions(agents)
+        distributions = self.get_data.get_answer_distributions(0, agents)
 
         expected = [
             {
@@ -120,13 +120,13 @@ class TestGetData(unittest.TestCase):
 class MockAgent:
     """A class to mock Agent-objects"""
 
-    def __init__(self, new_questions: dict):
+    def __init__(self, questions: dict):
         """Creates an agent.
 
         Args:
             __info (dict): information about the agent, e.g. age and gender, answers to questions
-            new_questions (dict): Questions by the user and answers to them by an LLM
+            questions (dict): Questions by the user and answers to them by an LLM
         """
-        # An example of new_questions:
+        # An example of questions:
         # {'Meat production should be reduced.': 2}
-        self.new_questions = new_questions
+        self.questions = questions

@@ -18,7 +18,7 @@ class Agent:
         self.__id = Agent._id_counter
         Agent._id_counter += 1
         self.__info = info
-        self.new_questions = {}
+        self.questions = {}
 
     def get_id(self) -> int:
         """Returns the unique identifier of the agent."""

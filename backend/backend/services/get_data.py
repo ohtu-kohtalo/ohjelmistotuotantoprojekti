@@ -6,7 +6,7 @@ class GetData:
     GetData class provides methods to manipulate agents answer data.
     """
 
-    def get_answer_distributions(self, agents: list) -> list:
+    def get_answer_distributions(self, index, agents: list) -> list:
         """Return the answer distributions
 
         Args:
@@ -19,17 +19,17 @@ class GetData:
         saved_questions = set()
         agent = agents[0]
 
-        for question, _ in agent.new_questions.items():
+        for question, _ in agent.questions.items():
             # Add the question to distributions, if it has not been encountered
             if question not in saved_questions:
                 saved_questions.add(question)
-                dist = self.get_single_answer_distribution(question, agents)
+                dist = self.get_single_answer_distribution(question, index, agents)
                 distributions.append(dist)
 
         distributions = self._convert_to_frontend_form(distributions)
         return distributions
 
-    def get_single_answer_distribution(self, question, agents: list) -> list:
+    def get_single_answer_distribution(self, question, index, agents: list) -> list:
         """Returns answer distribution for a given question in dictionary form"""
         distribution = {
             "question": question,
@@ -44,17 +44,17 @@ class GetData:
         }
         # Add an agent's answer to the distribution
         for agent in agents:
-            for q, answer in agent.new_questions.items():
+            for q, answer in agent.questions.items():
                 if q == question:
-                    if str(answer) == "1":
+                    if str(answer[index]) == "1":
                         distribution["answers"]["Strongly disagree"] += 1
-                    if str(answer) == "2":
+                    if str(answer[index]) == "2":
                         distribution["answers"]["Disagree"] += 1
-                    if str(answer) == "3":
+                    if str(answer[index]) == "3":
                         distribution["answers"]["Neutral"] += 1
-                    if str(answer) == "4":
+                    if str(answer[index]) == "4":
                         distribution["answers"]["Agree"] += 1
-                    if str(answer) == "5":
+                    if str(answer[index]) == "5":
                         distribution["answers"]["Strongly agree"] += 1
         # Add distribution statistics to the distribution
         distribution = add_statistics(distribution)

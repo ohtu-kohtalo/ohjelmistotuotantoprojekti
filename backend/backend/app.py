@@ -34,7 +34,7 @@ def create_agents():
 
     For each row in the backend-CSV (limited to 50 rows):
       - The agent’s info contains the "Age", "Gender" and "Answers" fields. Answers is a dictionary with backend CSV-file question-text as key and the answer-value as value.
-      - The new_questions-dictionary will be filled with agents' answers based on user-inputted question(s).
+      - The questions-dictionary will be filled with agents' answers based on user-inputted question(s).
 
     Sets up the initial agents based on the CSV-file in the backend to be used later in the application.
     Backend CSV-file can be thought of as sort of a training data for the agents and is used to provide LLM with the necessary data to generate responses.
@@ -166,7 +166,7 @@ def receive_user_csv():
 
     responses = llm_handler.get_agents_responses(agents, questions)
 
-    distributions = GetData().get_answer_distributions(agents)
+    distributions = GetData().get_answer_distributions(0, agents)  # This now returns the first distribution of the first responses
 
     return jsonify(
         {
@@ -248,14 +248,14 @@ def download_agent_response_csv():
 
     questions_payload = data["questions"]
 
-    # If questions_payload is empty, use the keys from the first agent's new_questions
+    # If questions_payload is empty, use the keys from the first agent's questions
     if not questions_payload:
-        if agents and hasattr(agents[0], "new_questions") and agents[0].new_questions:
-            # Preserve the original order by using the keys from the first agent's new_questions dictionary.
-            ordered_keys = list(agents[0].new_questions.keys())
+        if agents and hasattr(agents[0], "questions") and agents[0].questions:
+            # Preserve the original order by using the keys from the first agent's questions dictionary.
+            ordered_keys = list(agents[0].questions.keys())
             questions_payload = {key: None for key in ordered_keys}
             print(
-                "[DEBUG] Using first agent's new_questions keys in original order:",
+                "[DEBUG] Using first agent's questions keys in original order:",
                 ordered_keys,
                 flush=True,
             )
@@ -282,17 +282,17 @@ def download_agent_response_csv():
     # Iterate over agents to build each row.
     for i, agent in enumerate(agents, start=1):
         row = [f"Agent {i}"]
-        if hasattr(agent, "new_questions"):
-            print(f"[DEBUG] Agent {i} new_questions:", agent.new_questions, flush=True)
+        if hasattr(agent, "questions"):
+            print(f"[DEBUG] Agent {i} questions:", agent.questions, flush=True)
             # Retrieve answer for each question in the header
             for question in header[1:]:
-                value = agent.new_questions.get(question, "")
+                value = agent.questions.get(question, "")
                 row.append(value)
         else:
             print(
-                f"[DEBUG] Agent {i} does not have 'new_questions' attribute", flush=True
+                f"[DEBUG] Agent {i} does not have 'questions' attribute", flush=True
             )
-            # If the agent has no new_questions, fill with empty strings
+            # If the agent has no questions, fill with empty strings
             row.extend(["" for _ in header[1:]])
         print(f"[DEBUG] Writing row for Agent {i}: {row}", flush=True)
         writer.writerow(row)

@@ -155,7 +155,7 @@ class LlmHandler:
     def get_agents_responses(self, agents, questions):
         """
         Sends a single request to the LLM with all agents and all questions,
-        and then stores the responses in each agent's `new_questions` dictionary.
+        and then stores the responses in each agent's `questions` dictionary.
 
         Args:
             agents (list): List of Agent objects.
@@ -227,33 +227,48 @@ class LlmHandler:
                         continue
             print("\n[DEBUG] Storing responses in agent objects...")
 
-            new_agent_responses = {}
-
-            for i, (agent, responses) in enumerate(agent_responses.items()):
-                # print(f"[DEBUG] Agent {i+1} before update: {agent.new_questions}")
-                for question, answer in responses.items():
-                    if question not in agent.new_questions:
-                        agent.new_questions[question] = answer
-                    else:
-                        print(
-                            f"[DEBUG] Agent {i+1}: Question '{question}' already exists, keeping old answer.",
-                            flush=True,
-                        )
-
-                print(
-                    f"[DEBUG] Agent {i+1} after update: {agent.new_questions}",
-                    flush=True,
-                )
-                new_agent_responses[f"Agent_{i+1}"] = responses
-
-            # Test the new_questions dictionary for each agent
-            # for i, agent in enumerate(agents):
-            #    print(f"[DEBUG] Agent {i+1} final new_questions:", agent.new_questions)
-
-            # print( "\n[DEBUG] Final agent responses", new_agent_responses, flush=True)
+            new_agent_responses = self.save_responses_to_agents(agent_responses)
 
             return new_agent_responses
 
         except Exception as e:
             print(f"[ERROR] LLM call failed: {e}", flush=True)
             return None
+    
+    def save_responses_to_agents(self, agent_responses):
+        """
+        Stores the responses in each agent's `questions` dictionary. Checks if question already exists, 
+        if not, creates a list with the first response and if yes, adds the new response to the existing list.
+
+        Args:
+            agent_responses (dict): A dictionary of agents responses.
+
+        Returns:
+            dict: Each agent's responses.
+        """
+
+        new_agent_responses = {}
+
+        for i, (agent, responses) in enumerate(agent_responses.items()):
+            # print(f"[DEBUG] Agent {i+1} before update: {agent.questions}")
+            for question, answer in responses.items():
+                if question not in agent.questions:
+                    agent.questions[question] = [answer]
+                else:
+                    agent.questions[question].append(answer)
+
+            print(
+                f"[DEBUG] Agent {i+1} after update: {agent.questions}",
+                flush=True,
+            )
+            new_agent_responses[f"Agent_{i+1}"] = responses
+
+        # Test the questions dictionary for each agent
+        # for i, agent in enumerate(agents):
+        #    print(f"[DEBUG] Agent {i+1} final questions:", agent.questions)
+
+        # print( "\n[DEBUG] Final agent responses", new_agent_responses, flush=True)
+
+        return new_agent_responses
+    
+
