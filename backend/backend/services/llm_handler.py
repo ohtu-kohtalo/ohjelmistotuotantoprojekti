@@ -164,6 +164,21 @@ class LlmHandler:
         Returns:
             dict: Each agent's responses.
         """
+        #### Lots of TODO
+        #### Check whether future latent variables exist
+        # future_variables_exist = Transformer().check_future_variables()
+
+        #### Make the prompts and get the answers
+        # if future_variables_exist:
+        #     original_prompt = self.create_prompt(agents, questions, "future")
+        #     future_prompt = self.create_prompt(agents, questions, "original")
+        #     responses = llm.get_parallel_responses([original_prompt, future_prompt])
+        # else:
+        #     original_prompt = self.create_prompt(agents, questions, "original")
+        #     response = self.llm.get_response(prompt)
+
+        ### Parse and save the answers by the LLM
+
         prompt = self.create_prompt(agents, questions)
 
         print("[DEBUG] Full prompt to LLM:\n", prompt, flush=True)
