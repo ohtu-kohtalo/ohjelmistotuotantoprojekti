@@ -7,7 +7,9 @@ import fs from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-test("Confirm that user can upload and download a csv file", async ({ page }) => {
+test("Confirm that user can upload and download a csv file", async ({
+  page,
+}) => {
   await page.goto("http://localhost:5173");
 
   // Navigate to the "Add Query" page
@@ -19,7 +21,9 @@ test("Confirm that user can upload and download a csv file", async ({ page }) =>
   await fileInput.setInputFiles(filePath);
 
   // Confirm that CSV has been uploaded
-  await expect(page.locator(".likert-chart-container-plot-area")).toBeVisible({ timeout: 10000 });
+  await expect(page.locator(".likert-chart-container-plot-area")).toBeVisible({
+    timeout: 10000,
+  });
 
   // Confirm that the download button is enabled
   const downloadButton = page.locator("button.csv-download-button");
