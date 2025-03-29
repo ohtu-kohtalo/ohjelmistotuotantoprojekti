@@ -16,9 +16,9 @@ and food production. The questions of the survey concerned sustainability, techn
 behaviour. 
 
 Using latent factor analysis, I have made latent factors from the questions. 
-The latent variables take values in the range of -2.4 to +2.4, where a value closer to 
-+2.4 indicates a stronger agreement with a the latent variable and a value closer to 
--2.4 indicates a stronger disagreement. 
+The latent variables take values in the range of -3 to +3, where a value closer to 
++3 indicates a stronger agreement with a the latent variable and a value closer to 
+-3 indicates a stronger disagreement. 
 
 I will give you the latent factors of some of the survey's respondents. I will also
 give you a scenario of the future. I then want you to transform the agents into the 
@@ -57,6 +57,7 @@ Next I will give you the values of the respondents for the latent variables. The
 will be in the same order as in the previous listing.
 
 """
+    PROMPT_END = """END"""
 
     def __init__(self, llm=get_llm_connection()):
         """Initializes the LLM connection.
@@ -98,12 +99,14 @@ will be in the same order as in the previous listing.
         prompt += self.INTRO_END
 
         latent_variables = self._get_latent_variables(agents[0])
+
         ### For now, the latent variables are hard coded into the prompt (in INTRO_END)
         # prompt += self.add_latent_variables()
 
-        # prompt += self.add_agent_variable_values(agents)
-        # prompt += seld.add_prompt_end()
+        prompt += self._add_agent_variable_values(agents, latent_variables)
+        prompt += self.PROMPT_END
 
+        print("\nPrompt:\n", prompt)
         return prompt
 
     def _get_latent_variables(self, agent) -> list:
@@ -123,3 +126,33 @@ will be in the same order as in the previous listing.
             latent_variables.append(variable)
 
         return latent_variables
+
+    def _add_agent_variable_values(self, agents, latent_variables):
+        """
+        Lists the latent variable values of the agents.
+
+        Args:
+            agents (list): List of Agent objects.
+            latent_variables (list): List of latent variable names.
+
+        Returns:
+            str: A string with the latent variable values of the agents.
+        """
+        prompt = ""
+        for i, agent in enumerate(agents):
+            agent_info = agent.get_agent_info()
+            prompt += f"Respondet {i+1}:\n"
+            # prompt += f"Age: {agent_info['Age']}\n"
+            # prompt += f"Gender: {agent_info['Gender']}\n"
+            prompt += "Latent variable values:\n"
+
+            # Add the values of the latent variables always in the same order.
+            # The order is set in the latent_variables -variable
+            for var_name in latent_variables:
+                value = agent_info["Answers"].get(var_name, "N/A")
+                if isinstance(value, float):
+                    value = round(value, 1)
+                prompt += f"{value}\n"
+
+            prompt += "\n"
+        return prompt
