@@ -298,3 +298,6 @@ backend/data/*
 
 # Playwright
 test-results/
+
+# Pylint rules
+.pylintrc
