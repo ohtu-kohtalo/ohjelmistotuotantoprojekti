@@ -63,7 +63,7 @@ were given previously. Before each respondent's values, include the text 'Respon
 the respondent's number. Here is an example, how the response could look like for the first two 
 respondents.
 
-Respondet 1:
+Respondent 1
 0.5
 2.4
 2.4
@@ -78,7 +78,7 @@ Respondet 1:
 0.4
 1.0
 
-Respondet 2:
+Respondent 2
 0.9
 -1.9
 -1.4
@@ -118,31 +118,40 @@ anything else.
             bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
-        prompt = self.create_prompt(agents, future_scenario)
-        print("\nPrompt:\n", prompt)
+        # Get the latent variables in a list
+        latent_variables = self._get_latent_variables(agents[0])
+
+        prompt = self.create_prompt(agents, future_scenario, latent_variables)
+        # print("\nPrompt:\n", prompt)
 
         response = self.__llm.get_response(prompt)
-        print("\nresponse:\n", response)
-        # new_latent_variables = self.parse_response(response)
+        print("\nresponse:\n", response, flush=True)
+
+        new_latent_variables = self._parse_response(
+            response, len(agents), latent_variables
+        )
+
         # self.save_new_variables_to_agents(new_latent_variables, agents)
+
         return True
 
-    def create_prompt(self, agents: list, future_scenario: str) -> str:
+    def create_prompt(
+        self, agents: list, future_scenario: str, latent_variables: list
+    ) -> str:
         """Creates a prompt that will ask the LLM to transform the agents into the future.
 
         Args:
             agents (list): A list of agents
             future_scenario (str): The future scenario given by the user
+            latent_variables (list): The latent variables
         """
         prompt = self.INTRO_BEGINNING
         # The future scenario is currently hard coded into the prompt
         prompt += self.FUTURE_SCENARIO
         prompt += self.INTRO_END
 
-        latent_variables = self._get_latent_variables(agents[0])
-
         ### For now, the latent variables are hard coded into the prompt (in INTRO_END)
-        # prompt += self.add_latent_variables()
+        # prompt += self._add_latent_variables()
 
         prompt += self._add_agent_variable_values(agents, latent_variables)
         prompt += self.PROMPT_END
@@ -181,9 +190,7 @@ anything else.
         prompt = ""
         for i, agent in enumerate(agents):
             agent_info = agent.get_agent_info()
-            prompt += f"Respondet {i+1}:\n"
-            # prompt += f"Age: {agent_info['Age']}\n"
-            # prompt += f"Gender: {agent_info['Gender']}\n"
+            prompt += f"Respondent {i+1}:\n"
             prompt += "Latent variable values:\n"
 
             # Add the values of the latent variables always in the same order.
@@ -196,3 +203,103 @@ anything else.
 
             prompt += "\n"
         return prompt
+
+    def _parse_response(
+        self, response: str, number_of_agents: int, latent_variables: list
+    ) -> dict:
+        """Parses the future transformation response by the LLM and stores the new latent variables
+        into a dictionary.
+
+        Args:
+            response (str): Response by the LLM.
+            number_of_agents (int): The number of agents that the program is using.
+            latent_variables (list): The latent variables in a list.
+
+        Returns:
+            dict: A dictionary containing the latent variables for each agent. An example:
+            {1: {"variable1": 2.2, "variable2": -0.3}, 2: {"variable1": 1.4, "variable2": 0.5}}
+        """
+        new_latent_values = {i: {} for i in range(1, number_of_agents + 1)}
+
+        response = response.split("Respondent")
+        response = [values.split("\n") for values in response]
+        # print("\nParsed response:\n", response, flush=True)
+
+        agent_id = 0
+        for value_list in response:
+            # Line breaks in the response can create lists with empty strings: ['', ''].
+            # Skip these.
+            if self._only_empty_strings_in_a_list(value_list):
+                continue
+
+            latent_value_number = 0
+            first_value = True
+
+            for entry in value_list:
+                # Line breaks create empty strings: ''. Skip these.
+                if entry == "":
+                    continue
+
+                # The first value should be the id number of the agent (respondent)
+                if first_value:
+                    if entry.find(str(agent_id)):
+                        agent_id += 1
+                        first_value = False
+                        continue
+                    # Raise error if the first value was not the expected agent id
+                    raise RuntimeError(
+                        "Agent id numbers did not match when parsing LLM response"
+                    )
+
+                # Check that the value is a real number
+                try:
+                    float(entry)
+                except ValueError as exc:
+                    raise TypeError(
+                        f"A value for a latent variable was not a float. The value was {entry}"
+                    ) from exc
+
+                # Check that the LLM did not give too many values. The number of values must not be
+                # greater than the number of latent variables.
+                if latent_value_number >= len(latent_variables):
+                    raise RuntimeError("Too many new latent values were being added")
+                latent_variable = latent_variables[latent_value_number]
+                latent_value_number += 1
+
+                # Add the latent variable into the dictionary
+                new_latent_values[agent_id][latent_variable] = entry
+
+            # Check that all latent variables got a value
+            number_given = len(new_latent_values[agent_id])
+
+            if number_given != len(latent_variables):
+                raise RuntimeError(
+                    f"Agent number {agent_id} got too few new latent variables. "
+                    f"It got {number_given}."
+                )
+
+        # print("\nnew_latent_values\n:", flush=True)
+        # for key, values in new_latent_values.items():
+        #     print("\nAgent", key, flush=True)
+        #     print(values, flush=True)
+
+        # Check that all agents got the new latent values
+        if agent_id != number_of_agents:
+            error = (
+                "An incorrect number of agents got new latent variables. There were ",
+                f"{number_of_agents} agents, but {agent_id} got new values",
+            )
+            raise RuntimeError(error)
+
+        return new_latent_values
+
+    def _only_empty_strings_in_a_list(self, list_to_check: list) -> bool:
+        """Checks whether a list contains only empty string. Returns True if it does and False
+        otherwise."""
+        only_empty_strings = True
+        for value in list_to_check:
+            if value != "":
+                only_empty_strings = False
+                return only_empty_strings
+
+        return only_empty_strings
