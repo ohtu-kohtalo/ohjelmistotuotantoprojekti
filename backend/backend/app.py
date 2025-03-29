@@ -15,6 +15,7 @@ from .services.get_data import GetData
 from .services.gemini_service import Gemini
 from .services.llm_handler import LlmHandler
 from .services.csv_service import extract_questions_from_csv
+from .services.agent_transformer import AgentTransformer
 
 app = Flask(__name__)
 CORS(app)
@@ -192,8 +193,7 @@ def receive_future_scenario():
     global agents
 
     data = request.get_json()
-    print("\nFuture scenario:\n", data, flush=True)
-    print("\nFuture scenario:\n", type(data), flush=True)
+    print("\nFuture scenario:\n  ", data, flush=True)
 
     if not data:
         print("No data provided")
@@ -216,6 +216,12 @@ def receive_future_scenario():
     if not isinstance(scenario, str):
         print("'scenario' must be an string")
         return jsonify({"error": "'scenario' must be an string"}), 400
+
+    agents_transformed = AgentTransformer().transform_agents_to_future(agents, scenario)
+    if agents_transformed:
+        print("Agents successfully transformed\n", flush=True)
+    else:
+        print("Agent transformation failed\n", flush=True)
 
     return jsonify(
         {
