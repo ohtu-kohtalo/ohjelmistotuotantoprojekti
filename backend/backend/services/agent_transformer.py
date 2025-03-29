@@ -97,6 +97,7 @@ will be in the same order as in the previous listing.
         prompt += self.FUTURE_SCENARIO
         prompt += self.INTRO_END
 
+        latent_variables = self._get_latent_variables(agents[0])
         ### For now, the latent variables are hard coded into the prompt (in INTRO_END)
         # prompt += self.add_latent_variables()
 
@@ -104,3 +105,21 @@ will be in the same order as in the previous listing.
         # prompt += seld.add_prompt_end()
 
         return prompt
+
+    def _get_latent_variables(self, agent) -> list:
+        """
+        Takes an agent as an argument, searches its latent variables and returns the latent
+        variable names in a list.
+
+        Args:
+            agent (Agent): An Agent object.
+
+        Returns:
+            list: A list of latent variable names.
+        """
+        latent_variables = []
+        latent_variables_dictionary = agent.get_agent_info().get("Answers", {})
+        for variable in latent_variables_dictionary:
+            latent_variables.append(variable)
+
+        return latent_variables
