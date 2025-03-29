@@ -29,7 +29,83 @@ class AgentTransformer:
             agents (list): A list of agent-objects.
 
         Returns:
-            bool: **True** if future transformation was successfull for all agents and **False**
+            bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
+        # prompt = self.create_prompt(agents, future_scenario)
+        # response = self.__llm.get_response(prompt)
+        # new_latent_variables = self.parse_response(response)
+        # self.save_new_variables_to_agents(new_latent_variables, agents)
         return True
+
+    def create_prompt(self, agents: list, future_scenario: str) -> str:
+        """Creates a prompt that will ask the LLM to transform the agents into the future.
+
+        Args:
+            agents (list): A list of agents
+            future_scenario (str): The future scenario given by the user
+        """
+        prompt = self.create_intro(future_scenario)
+
+        # For now, the latent variables are hard coded into the prompt in create_intro
+        # prompt += self.add_latent_variables()
+
+        # prompt += self.add_latent_variable_values(agents)
+        # prompt += seld.add_prompt_end()
+
+    def create_intro(self, future_scenario) -> str:
+        """
+        Creates the introductory part of the prompt explaining latent variables.
+
+        Returns:
+            str: The introductory part of the prompt.
+        """
+        future_scenario = """
+In five years from now new technologies are developed to create cultured meat. This meat is grown 
+synthetically in laboratories. It does not have the same ethical issues as traditional meat 
+production. Its climate impact is small, although still a little more than using vegetarian 
+choices. Its price is only a little above the price of traditionally produced meat. In a short time
+it becomes a very popular product with good availability.
+"""
+
+        intro_beginning = """
+I have a survey about the views and opinions that young people have about food 
+and food production. The questions of the survey concerned sustainability, technology and 
+behaviour. 
+
+Using latent factor analysis, I have made latent factors from the questions. 
+The latent variables take values in the range of -2.4 to +2.4, where a value closer to 
++2.4 indicates a stronger agreement with a the latent variable and a value closer to 
+-2.4 indicates a stronger disagreement. 
+
+I will give you the latent factors of some of the survey's respondents. I will also
+give you a scenario of the future. I then want you to transform the agents into the 
+future: this means you should change the latent variables for each of the respondents 
+and these changes should be based on the future scenario. I other words, you need to 
+infer how the views and opinions of the respondents would change, if the given future 
+scenario would actually take place.
+
+This is the future scenario:
+"""
+
+        intro_end = """
+These are the latent variables:
+ - Future Awareness - Awareness of global agricultural challenges
+ - Perceived Individual Efficiency - Belief in personal impact on sustainability
+ - Perceived Collective Efficiency - Belief in societal changes for sustainability
+ - Advocacy and Career Intentions - Interest in sustainability careers
+ - Tech Orientation - Trust in food production technology
+ - Unwillingness to Change - Resistance to dietary changes
+ - Low Behavioral Activation - Perceived low impact of personal choices
+ - Social Support - Influence of peers on food choices
+ - Influencing Others - Encouraging sustainable choices
+ - Belief About Consequences - Impact of food choices on environment & health
+ - Emotions - Satisfaction and guilt related to sustainable food choices
+ - Food Preparation Skills - Ability to cook sustainable meals
+ - Green Purchase Intention - Commitment to buying sustainable food
+
+Next I will give you the values of the respondents for the latent variables. The latent variables 
+will be in the same order as in the previous listing.
+
+"""
+        return intro_beginning + future_scenario + intro_end

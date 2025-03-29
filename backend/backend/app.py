@@ -219,7 +219,7 @@ def receive_future_scenario():
 
     agents_transformed = AgentTransformer().transform_agents_to_future(agents, scenario)
     if agents_transformed:
-        print("Agents successfully transformed\n", flush=True)
+        print("Agent transformation succeeded\n", flush=True)
     else:
         print("Agent transformation failed\n", flush=True)
 
