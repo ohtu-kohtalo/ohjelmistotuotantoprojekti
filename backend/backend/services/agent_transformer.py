@@ -57,7 +57,45 @@ Next I will give you the values of the respondents for the latent variables. The
 will be in the same order as in the previous listing.
 
 """
-    PROMPT_END = """END"""
+    PROMPT_END = """
+Now create the new latent values for the respondents. Give the values in the same order as they 
+were given previously. Before each respondent's values, include the text 'Respondent' and after that
+the respondent's number. Here is an example, how the response could look like for the first two 
+respondents.
+
+Respondet 1:
+0.5
+2.4
+2.4
+1.1
+0.9
+-0.4
+-1.3
+0.1
+1.5
+2.2
+0.7
+0.4
+1.0
+
+Respondet 2:
+0.9
+-1.9
+-1.4
+-1.6
+-1.9
+0.1
+1.5
+-1.3
+-2.1
+-2.5
+-0.5
+-0.8
+-1.1
+
+Give the new latent values for all of the respondents like in the previous example. Do not output 
+anything else.
+"""
 
     def __init__(self, llm=get_llm_connection()):
         """Initializes the LLM connection.
@@ -81,7 +119,10 @@ will be in the same order as in the previous listing.
             otherwise.
         """
         prompt = self.create_prompt(agents, future_scenario)
-        # response = self.__llm.get_response(prompt)
+        print("\nPrompt:\n", prompt)
+
+        response = self.__llm.get_response(prompt)
+        print("\nresponse:\n", response)
         # new_latent_variables = self.parse_response(response)
         # self.save_new_variables_to_agents(new_latent_variables, agents)
         return True
@@ -106,7 +147,6 @@ will be in the same order as in the previous listing.
         prompt += self._add_agent_variable_values(agents, latent_variables)
         prompt += self.PROMPT_END
 
-        print("\nPrompt:\n", prompt)
         return prompt
 
     def _get_latent_variables(self, agent) -> list:
