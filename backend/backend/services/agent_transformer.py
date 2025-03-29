@@ -8,67 +8,9 @@ class AgentTransformer:
 
     Attributes:
         __llm: The LLM model. By default uses the model defined in the .env file.
-
-
     """
 
-    def __init__(self, llm=get_llm_connection()):
-        """Initializes the LLM connection.
-
-        Args:
-            llm: The LLM model. By default uses the model defined in the .env file."""
-        self.__llm = llm
-
-    def transform_agents_to_future(self, agents: list, future_scenario: str) -> bool:
-        """Transforms agents to future. Takes a future scenario and a list of agent-objects as
-        arguments. Then asks an LLM to create new info variables for the agents based on the future
-        scenario and the original info variables of the agents. The new info varibles are then
-        saved into the agents.
-
-        Args:
-            agents (list): A list of agent-objects.
-
-        Returns:
-            bool: **True** if future transformation was successful for all agents and **False**
-            otherwise.
-        """
-        # prompt = self.create_prompt(agents, future_scenario)
-        # response = self.__llm.get_response(prompt)
-        # new_latent_variables = self.parse_response(response)
-        # self.save_new_variables_to_agents(new_latent_variables, agents)
-        return True
-
-    def create_prompt(self, agents: list, future_scenario: str) -> str:
-        """Creates a prompt that will ask the LLM to transform the agents into the future.
-
-        Args:
-            agents (list): A list of agents
-            future_scenario (str): The future scenario given by the user
-        """
-        prompt = self.create_intro(future_scenario)
-
-        # For now, the latent variables are hard coded into the prompt in create_intro
-        # prompt += self.add_latent_variables()
-
-        # prompt += self.add_latent_variable_values(agents)
-        # prompt += seld.add_prompt_end()
-
-    def create_intro(self, future_scenario) -> str:
-        """
-        Creates the introductory part of the prompt explaining latent variables.
-
-        Returns:
-            str: The introductory part of the prompt.
-        """
-        future_scenario = """
-In five years from now new technologies are developed to create cultured meat. This meat is grown 
-synthetically in laboratories. It does not have the same ethical issues as traditional meat 
-production. Its climate impact is small, although still a little more than using vegetarian 
-choices. Its price is only a little above the price of traditionally produced meat. In a short time
-it becomes a very popular product with good availability.
-"""
-
-        intro_beginning = """
+    INTRO_BEGINNING = """
 I have a survey about the views and opinions that young people have about food 
 and food production. The questions of the survey concerned sustainability, technology and 
 behaviour. 
@@ -87,8 +29,15 @@ scenario would actually take place.
 
 This is the future scenario:
 """
+    FUTURE_SCENARIO = """
+In five years from now new technologies are developed to create cultured meat. This meat is grown 
+synthetically in laboratories. It does not have the same ethical issues as traditional meat 
+production. Its climate impact is small, although still a little more than using vegetarian 
+choices. Its price is only a little above the price of traditionally produced meat. In a short time
+it becomes a very popular product with good availability.
 
-        intro_end = """
+"""
+    INTRO_END = """
 These are the latent variables:
  - Future Awareness - Awareness of global agricultural challenges
  - Perceived Individual Efficiency - Belief in personal impact on sustainability
@@ -108,4 +57,50 @@ Next I will give you the values of the respondents for the latent variables. The
 will be in the same order as in the previous listing.
 
 """
-        return intro_beginning + future_scenario + intro_end
+
+    def __init__(self, llm=get_llm_connection()):
+        """Initializes the LLM connection.
+
+        Args:
+            llm: The LLM model. By default uses the model defined in the .env file."""
+        self.__llm = llm
+
+    def transform_agents_to_future(self, agents: list, future_scenario: str) -> bool:
+        """Transforms agents to future. Takes a future scenario and a list of agent-objects as
+        arguments. Then asks an LLM to create new info variables for the agents based on the future
+        scenario and the original info variables of the agents. The new info varibles are then
+        saved into the agents.
+
+        Args:
+            agents (list): A list of agent-objects.
+            future_scenario (str): A scenario by the user of the future.
+
+        Returns:
+            bool: **True** if future transformation was successful for all agents and **False**
+            otherwise.
+        """
+        prompt = self.create_prompt(agents, future_scenario)
+        # response = self.__llm.get_response(prompt)
+        # new_latent_variables = self.parse_response(response)
+        # self.save_new_variables_to_agents(new_latent_variables, agents)
+        return True
+
+    def create_prompt(self, agents: list, future_scenario: str) -> str:
+        """Creates a prompt that will ask the LLM to transform the agents into the future.
+
+        Args:
+            agents (list): A list of agents
+            future_scenario (str): The future scenario given by the user
+        """
+        prompt = self.INTRO_BEGINNING
+        # The future scenario is currently hard coded into the prompt
+        prompt += self.FUTURE_SCENARIO
+        prompt += self.INTRO_END
+
+        ### For now, the latent variables are hard coded into the prompt (in INTRO_END)
+        # prompt += self.add_latent_variables()
+
+        # prompt += self.add_agent_variable_values(agents)
+        # prompt += seld.add_prompt_end()
+
+        return prompt
