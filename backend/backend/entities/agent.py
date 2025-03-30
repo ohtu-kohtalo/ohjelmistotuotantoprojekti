@@ -54,9 +54,18 @@ class Agent:
         """Returns all of the questions and answers."""
         return self.__info
 
-    def overwrite_future_info_and_questions(self):
+    def delete_future_info_and_questions(self):
         """Overwrites the `future_info`, `questions` and future `future_questions` attributes
-        with empty dictionaries."""
+        with empty dictionaries. Returns `None`."""
         self.__future_info = {"Anwers": {}}
         self.questions = {}
         self.future_questions = {}
+
+    def save_new_future_latent_variables(self, new_variables: dict):
+        """Save new future latent variables into the __future_into argument.
+
+        Args:
+            new_variables (dict):
+                The new variables in a dictionary, where the keys are the latent variable names and
+                the values are the new values for the latent variables."""
+        self.__future_info = {"Answers": new_variables}

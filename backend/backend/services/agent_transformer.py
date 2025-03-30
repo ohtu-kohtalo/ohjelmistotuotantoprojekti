@@ -125,13 +125,16 @@ anything else.
         # print("\nPrompt:\n", prompt)
 
         response = self.__llm.get_response(prompt)
-        print("\nresponse:\n", response, flush=True)
+        # print("\nLLM response:\n", response, flush=True)
 
         new_latent_variables = self._parse_response(
             response, len(agents), latent_variables
         )
 
-        # self.save_new_variables_to_agents(new_latent_variables, agents)
+        # Delete old questions and the latent variables based on the previous future scenario
+        self._delete_old_variables_and_questions(agents)
+
+        self._save_new_variables_to_agents(new_latent_variables, agents)
 
         return True
 
@@ -256,7 +259,7 @@ anything else.
                     float(entry)
                 except ValueError as exc:
                     raise TypeError(
-                        f"A value for a latent variable was not a float. The value was {entry}"
+                        f"A value for a latent variable was not a real number. The value was {entry}"
                     ) from exc
 
                 # Check that the LLM did not give too many values. The number of values must not be
@@ -278,7 +281,7 @@ anything else.
                     f"It got {number_given}."
                 )
 
-        # print("\nnew_latent_values\n:", flush=True)
+        # print("\nnew_latent_values:\n", flush=True)
         # for key, values in new_latent_values.items():
         #     print("\nAgent", key, flush=True)
         #     print(values, flush=True)
@@ -309,3 +312,21 @@ anything else.
         if agents:
             return bool(agents[0].get_agent_future_info().get("Answers"))
         return False
+
+    def _delete_old_variables_and_questions(self, agents: list):
+        """Deletes the all questions, anwers and future latent variables from the Agent-objects.
+        Only the original latent variables and demographic information are left intact.
+        """
+        for agent in agents:
+            agent.delete_future_info_and_questions()
+
+    def _save_new_variables_to_agents(self, new_latent_variables, agents):
+        """Saves the created latent variables into the Agent-objects.
+
+        Args:
+            new_latent_variables (dict): The new latent variables for the agents in a dictionary.
+            agents (list): The Agent-objects in a list.
+        """
+        for i, agent in enumerate(agents):
+            # In new_latent_variables the agents are numbered beginning from 1.
+            agent.save_new_future_latent_variables(new_latent_variables[i + 1])
