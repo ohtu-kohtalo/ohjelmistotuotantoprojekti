@@ -218,10 +218,10 @@ def receive_future_scenario():
         return jsonify({"error": "'scenario' must be an string"}), 400
 
     agents_transformed = AgentTransformer().transform_agents_to_future(agents, scenario)
-    # if agents_transformed:
-    #     print("Agent transformation succeeded\n", flush=True)
-    # else:
-    #     print("Agent transformation failed\n", flush=True)
+    if agents_transformed:
+        print("Agent transformation succeeded\n", flush=True)
+    else:
+        print("Agent transformation failed\n", flush=True)
 
     return jsonify(
         {

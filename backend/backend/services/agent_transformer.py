@@ -35,9 +35,9 @@ synthetically in laboratories. It does not have the same ethical issues as tradi
 production. Its climate impact is small, although still a little more than using vegetarian 
 choices. Its price is only a little above the price of traditionally produced meat. In a short time
 it becomes a very popular product with good availability.
-
 """
     INTRO_END = """
+
 These are the latent variables:
  - Future Awareness - Awareness of global agricultural challenges
  - Perceived Individual Efficiency - Belief in personal impact on sustainability
@@ -118,11 +118,14 @@ anything else.
             bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
+        if future_scenario == "default":
+            future_scenario = self.FUTURE_SCENARIO
+
         # Get the latent variables in a list
         latent_variables = self._get_latent_variables(agents[0])
 
         prompt = self.create_prompt(agents, future_scenario, latent_variables)
-        # print("\nPrompt:\n", prompt)
+        print("\nPrompt:\n", prompt, flush=True)
 
         response = self.__llm.get_response(prompt)
         # print("\nLLM response:\n", response, flush=True)
@@ -150,7 +153,7 @@ anything else.
         """
         prompt = self.INTRO_BEGINNING
         # The future scenario is currently hard coded into the prompt
-        prompt += self.FUTURE_SCENARIO
+        prompt += future_scenario
         prompt += self.INTRO_END
 
         ### For now, the latent variables are hard coded into the prompt (in INTRO_END)
