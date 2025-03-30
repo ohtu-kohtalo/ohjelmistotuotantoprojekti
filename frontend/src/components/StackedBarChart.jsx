@@ -25,14 +25,30 @@ const StackedBarChart = ({ data, xAxis }) => {
     let groupedData = {};
 
     if (xAxis === "age") {
-      categories = ["16-19", "20-25"];
+      categories = ["16", "17", "18", "19", "20", "21", "22", "23", "24", "25"];
       groupedData = {
-        "16-19": [],
-        "20-25": [],
+        "16": [],
+        "17": [],
+        "18": [],
+        "19": [],
+        "20": [],
+        "21": [],
+        "22": [],
+        "23": [],
+        "24": [],
+        "25": [],
       };
       data.forEach((d) => {
-        if (d.age <= 19) groupedData["16-19"].push(d.response);
-        else groupedData["20-25"].push(d.response);
+        if (d.age == 16) groupedData["16"].push(d.response);
+        else if (d.age == 17) groupedData["17"].push(d.response);
+        else if (d.age == 18) groupedData["18"].push(d.response);
+        else if (d.age == 19) groupedData["19"].push(d.response);
+        else if (d.age == 20) groupedData["20"].push(d.response);
+        else if (d.age == 21) groupedData["21"].push(d.response);
+        else if (d.age == 22) groupedData["22"].push(d.response);
+        else if (d.age == 23) groupedData["23"].push(d.response);
+        else if (d.age == 24) groupedData["24"].push(d.response);
+        else groupedData["25"].push(d.response);
       });
     } else if (xAxis === "gender") {
       categories = ["Male", "Female", "Other"];
@@ -71,7 +87,7 @@ const StackedBarChart = ({ data, xAxis }) => {
     const colorScale = d3
       .scaleOrdinal()
       .domain(categories)
-      .range(["#01AFD2", "#FD82B0", "#B82EB7", "#89E2A4", "#F6DC99"]);
+      .range(["#01AFD2", "#FD82B0", "#89E2A4", "#B82EB7", "#F6DC99", "#5B8BF7", "#C678DD", "#80ff80", "#FFFF8F", "#7BDFF2"]);
 
     // Add gridlines (using light grey with dashed lines)
 
