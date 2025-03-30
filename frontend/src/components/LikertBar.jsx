@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-const LikertBar = ({ data, question }) => {
+const LikertBar = ({ data, futureData, question }) => {
   const svgRef = useRef();
 
   useEffect(() => {
@@ -9,9 +9,15 @@ const LikertBar = ({ data, question }) => {
 
     const width = 600;
     const height = 350;
-    const margin = { top: 40, right: 40, bottom: 80, left: 70 };
+    const margin = { top: 40, right: 80, bottom: 80, left: 30 };
 
     d3.select(svgRef.current).selectAll("*").remove();
+
+    // Calculate the max value from both data and futureData
+    const maxValue = Math.max(
+      d3.max(data, (d) => d.value),
+      futureData && futureData.length > 0 ? d3.max(futureData, (d) => d.value) : 0
+    );
 
     // Create SVG element
     const svg = d3
@@ -29,11 +35,11 @@ const LikertBar = ({ data, question }) => {
 
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.value) * 1.1])
+      .domain([0, maxValue * 1.1])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    // Define color scheme
+    // Define color scheme for current data
     const colorScale = d3
       .scaleOrdinal()
       .domain([
@@ -44,6 +50,10 @@ const LikertBar = ({ data, question }) => {
         "Strongly Agree",
       ])
       .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
+
+    // Define colors for current and future data
+    const currentColor = "#4682B4"; // Current data color (blue)
+    const futureColor = "#8A2BE2"; // Future data color (purple)
 
     // Y gridlines
     svg
@@ -84,40 +94,155 @@ const LikertBar = ({ data, question }) => {
       .style("position", "absolute")
       .style("visibility", "hidden");
 
-    // Draw bars
-    svg
-      .selectAll("rect")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("x", (d) => xScale(d.label))
-      .attr("y", (d) => yScale(d.value))
-      .attr("width", xScale.bandwidth())
-      .attr("height", (d) => height - margin.bottom - yScale(d.value))
-      .attr("fill", (d) => colorScale(d.label))
-      .on("mouseover", function (event, d) {
-        d3.select(this).transition().duration(200).attr("stroke-width", "2px");
-        tooltip
-          .html(`Count: ${d.value}`)
-          .style("visibility", "visible")
-          .style("top", event.pageY - 10 + "px")
-          .style("left", event.pageX + 10 + "px");
+    if (futureData && futureData.length > 0) {
+      // Grouped bar chart: if futureData not empty
+      const groupedData = data.map((d) => ({
+        label: d.label,
+        current: d.value,
+        future: futureData.find((f) => f.label === d.label)?.value || 0,
+      }));
 
-        d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
-      })
-      .on("mousemove", function (event) {
-        tooltip
-          .style("top", `${event.pageY - 10}px`)
-          .style("left", `${event.pageX + 10}px`);
-      })
-      .on("mouseout", function (event, d) {
-        tooltip.style("visibility", "hidden");
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr("stroke-width", "1px")
-          .attr("fill", colorScale(d.label));
-      });
+      // Create bars for grouped bar chart
+      svg
+        .selectAll(".bar-group")
+        .data(groupedData)
+        .enter()
+        .append("g")
+        .attr("class", "bar-group")
+        .attr("transform", (d) => `translate(${xScale(d.label)},0)`)
+        .each(function (d) {
+          const group = d3.select(this);
+
+          group
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", (d) => yScale(d.current))
+            .attr("width", xScale.bandwidth() / 2)
+            .attr("height", (d) => height - margin.bottom - yScale(d.current))
+            .attr("fill", currentColor)
+            .on("mouseover", function (event, d) {
+              d3.select(this).transition().duration(200).attr("stroke-width", "2px");
+              tooltip
+                .html(`Current Count: ${d.current}`)
+                .style("visibility", "visible")
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
+
+              d3.select(this).attr("fill", d3.rgb(currentColor).darker(0.8));
+            })
+            .on("mousemove", function (event) {
+              tooltip
+                .style("top", `${event.pageY - 10}px`)
+                .style("left", `${event.pageX + 10}px`);
+            })
+            .on("mouseout", function (event, d) {
+              tooltip.style("visibility", "hidden");
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("stroke-width", "1px")
+                .attr("fill", currentColor);
+            });
+
+          group
+            .append("rect")
+            .attr("x", xScale.bandwidth() / 2)
+            .attr("y", (d) => yScale(d.future))
+            .attr("width", xScale.bandwidth() / 2)
+            .attr("height", (d) => height - margin.bottom - yScale(d.future))
+            .attr("fill", futureColor)
+            .on("mouseover", function (event, d) {
+              d3.select(this).transition().duration(200).attr("stroke-width", "2px");
+              tooltip
+                .html(`Future Count: ${d.future}`)
+                .style("visibility", "visible")
+                .style("top", event.pageY - 10 + "px")
+                .style("left", event.pageX + 10 + "px");
+
+              d3.select(this).attr("fill", d3.rgb(futureColor).darker(0.8));
+            })
+            .on("mousemove", function (event) {
+              tooltip
+                .style("top", `${event.pageY - 10}px`)
+                .style("left", `${event.pageX + 10}px`);
+            })
+            .on("mouseout", function (event, d) {
+              tooltip.style("visibility", "hidden");
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("stroke-width", "1px")
+                .attr("fill", futureColor);
+            });
+
+          svg
+            .append("circle")
+            .attr("cx", width - margin.right + 20)
+            .attr("cy", margin.top + 90)
+            .attr("r", 8)
+            .style("fill", currentColor);
+          
+          svg
+            .append("text")
+            .attr("x", width - margin.right + 35)
+            .attr("y", margin.top + 90)
+            .text("Present")
+            .style("font-size", "12px")
+            .attr("fill", "white")
+            .attr("alignment-baseline", "middle");
+
+          svg
+            .append("circle")
+            .attr("cx", width - margin.right + 20)
+            .attr("cy", margin.top + 110)
+            .attr("r", 8)
+            .style("fill", futureColor);
+          
+          svg
+            .append("text")
+            .attr("x", width - margin.right + 35)
+            .attr("y", margin.top + 110)
+            .text("Future")
+            .style("font-size", "12px")
+            .attr("fill", "white")
+            .attr("alignment-baseline", "middle");
+        });
+    } else {
+      // Standard bar chart (original behavior)
+      svg
+        .selectAll("rect")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("x", (d) => xScale(d.label))
+        .attr("y", (d) => yScale(d.value))
+        .attr("width", xScale.bandwidth())
+        .attr("height", (d) => height - margin.bottom - yScale(d.value))
+        .attr("fill", (d) => colorScale(d.label))
+        .on("mouseover", function (event, d) {
+          d3.select(this).transition().duration(200).attr("stroke-width", "2px");
+          tooltip
+            .html(`Count: ${d.value}`)
+            .style("visibility", "visible")
+            .style("top", event.pageY - 10 + "px")
+            .style("left", event.pageX + 10 + "px");
+
+          d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
+        })
+        .on("mousemove", function (event) {
+          tooltip
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mouseout", function (event, d) {
+          tooltip.style("visibility", "hidden");
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("stroke-width", "1px")
+            .attr("fill", colorScale(d.label));
+        });
+    }
 
     // Add chart title
     svg
@@ -133,7 +258,7 @@ const LikertBar = ({ data, question }) => {
     return () => {
       tooltip.remove();
     };
-  }, [data, question]);
+  }, [data, futureData, question]);
 
   return (
     <div className="likert-bar-chart-container">
