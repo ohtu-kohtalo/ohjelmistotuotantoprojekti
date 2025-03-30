@@ -6,6 +6,26 @@ class GetData:
     GetData class provides methods to manipulate agents answer data.
     """
 
+    def get_all_distributions(self, agents: list, index=0):
+        """
+        Returns both current and future distributions for a list of agents.
+
+        Args:
+            agents (list): List of Agent objects
+            index (int): Which index of responses to use (default 0)
+
+        Returns:
+            Tuple: (current_distributions, future_distributions)
+        """
+        current = self.get_answer_distributions(index, agents)
+
+        if agents and agents[0].future_questions:
+            future = self.get_answer_distributions_future(index, agents)
+        else:
+            future = []
+
+        return current, future
+
     def get_answer_distributions(self, index, agents: list) -> list:
         """Return the answer distributions
 
@@ -29,7 +49,26 @@ class GetData:
         distributions = self._convert_to_frontend_form(distributions)
         return distributions
 
-    def get_single_answer_distribution(self, question, index, agents: list) -> list:
+    def get_answer_distributions_future(self, index, agents: list) -> list:
+        """Return the answer distributions from future_questions instead of current questions"""
+        distributions = []
+        saved_questions = set()
+        agent = agents[0]
+
+        for question, _ in agent.future_questions.items():
+            if question not in saved_questions:
+                saved_questions.add(question)
+                dist = self.get_single_answer_distribution(
+                    question, index, agents, future=True
+                )
+                distributions.append(dist)
+
+        distributions = self._convert_to_frontend_form(distributions)
+        return distributions
+
+    def get_single_answer_distribution(
+        self, question, index, agents: list, future=False
+    ) -> list:
         """Returns answer distribution for a given question in dictionary form"""
         distribution = {
             "question": question,
@@ -44,7 +83,9 @@ class GetData:
         }
         # Add an agent's answer to the distribution
         for agent in agents:
-            for q, answer in agent.questions.items():
+            answers_dict = agent.future_questions if future else agent.questions
+
+            for q, answer in answers_dict.items():
                 if q == question:
                     if str(answer[index]) == "1":
                         distribution["answers"]["Strongly disagree"] += 1

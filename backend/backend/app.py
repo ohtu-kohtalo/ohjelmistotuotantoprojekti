@@ -167,14 +167,16 @@ def receive_user_csv():
 
     responses = llm_handler.get_agents_responses(agents, questions)
 
-    distributions = GetData().get_answer_distributions(
-        0, agents
-    )  # This now returns the first distribution of the first responses
+    get_data = GetData()
+    current_distributions, future_distributions = get_data.get_all_distributions(agents)
+    print("[DEBUG] Current distributions:", current_distributions, flush=True)
+    print("[DEBUG] Future distributions:", future_distributions, flush=True)
 
     return jsonify(
         {
             "status": "success",
-            "distributions": distributions,
+            "distributions": current_distributions,
+            "future_distributions": future_distributions,
         }
     )
 
