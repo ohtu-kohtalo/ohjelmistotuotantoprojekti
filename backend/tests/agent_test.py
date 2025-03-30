@@ -61,8 +61,8 @@ class TestAgent(unittest.TestCase):
 
     def test_delete_future_info_and_questions(self):
         """Test that delete_future_info_and_questions resets future attributes."""
-        self.agent.future_questions = {"q1": "yes"}
-        self.agent.questions = {"q2": "no"}
+        self.agent.future_questions = {"q1": "3"}
+        self.agent.questions = {"q2": "2"}
         self.agent._Agent__future_info = {"Anwers": {"var1": 10}}
 
         self.agent.delete_future_info_and_questions()
