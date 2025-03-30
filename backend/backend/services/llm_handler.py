@@ -152,102 +152,87 @@ class LlmHandler:
         )
         return prompt
 
+    #### Lots of TODO
+    #### Check whether future latent variables exist
+    # future_variables_exist = Transformer().check_future_variables()
+
+    #### Make the prompts and get the answers
+    # if future_variables_exist:
+    #     original_prompt = self.create_prompt(agents, questions, "future")
+    #     future_prompt = self.create_prompt(agents, questions, "original")
+    #     responses = llm.get_parallel_responses([original_prompt, future_prompt])
+    # else:
+    #     original_prompt = self.create_prompt(agents, questions, "original")
+    #     response = self.llm.get_response(prompt)
+
+    ### Parse and save the answers by the LLM
+
     def get_agents_responses(self, agents, questions):
-        """
-        Sends a single request to the LLM with all agents and all questions,
-        and then stores the responses in each agent's `questions` dictionary.
+        """Retrieves and processes responses from a language model"""
+        response = self.send_prompt_to_llm(agents, questions)
+        if response is None:
+            return None
 
-        Args:
-            agents (list): List of Agent objects.
-            questions (list): List of questions.
+        agent_responses = self.parse_responses(response, agents, questions)
+        if agent_responses is None:
+            return None
 
-        Returns:
-            dict: Each agent's responses.
-        """
-        #### Lots of TODO
-        #### Check whether future latent variables exist
-        # future_variables_exist = Transformer().check_future_variables()
+        return self.save_responses_to_agents(agent_responses)
 
-        #### Make the prompts and get the answers
-        # if future_variables_exist:
-        #     original_prompt = self.create_prompt(agents, questions, "future")
-        #     future_prompt = self.create_prompt(agents, questions, "original")
-        #     responses = llm.get_parallel_responses([original_prompt, future_prompt])
-        # else:
-        #     original_prompt = self.create_prompt(agents, questions, "original")
-        #     response = self.llm.get_response(prompt)
-
-        ### Parse and save the answers by the LLM
-
+    def send_prompt_to_llm(self, agents, questions):
+        """Constructs and sends a prompt to the language model and retrieves the response."""
         prompt = self.create_prompt(agents, questions)
-
         print("[DEBUG] Full prompt to LLM:\n", prompt, flush=True)
+        response = self.llm.get_response(prompt)
+        return response
 
-        try:
-            response = self.llm.get_response(prompt)
-            print("[DEBUG] LLM response received:", response, flush=True)
+    def parse_responses(self, response, agents, questions):
+        """Extracts and parses the responses from the LLM into structured data."""
+        if not response:
+            print("[ERROR] LLM returned an empty response!", flush=True)
+            return None
 
-            if not response:
-                print("[ERROR] LLM returned an empty response!", flush=True)
-                return None
+        lines = response.strip().split("\n")
+        print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
+        return self.process_lines(lines, agents, questions)
 
-            agent_responses = {}
-            lines = response.strip().split("\n")
-            print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
-
-            if len(lines) < len(agents):
+    def process_lines(self, lines, agents, questions):
+        """Processes each line of the LLM's response, assigning each parsed line to the corresponding agent."""
+        agent_responses = {}
+        for i, line in enumerate(lines):
+            if i >= len(agents):
                 print(
-                    f"[ERROR] Expected {len(agents)} agents in response, but got {len(lines)}.",
+                    f"[ERROR] Skipping response line {i+1} due to insufficient agent count.",
                     flush=True,
                 )
-                return None
+                continue
+            agent_response = self.parse_line(line, i, questions)
+            if agent_response:
+                agent_responses[agents[i]] = agent_response
+        return agent_responses
 
-            for i, line in enumerate(lines):
-                if i >= len(agents):
-                    print(
-                        f"[ERROR] Skipping response line {i+1} because there are only {len(agents)} agents.",
-                        flush=True,
-                    )
-                    continue
+    def parse_line(self, line, index, questions):
+        """Parses an individual line from the LLM response and constructs a dictionary of answers."""
+        if not line.startswith(f"Agent {index+1}:"):
+            return None
 
-                if line.startswith(f"Agent {i+1}:"):
-                    parts = line.split(":")
-                    if len(parts) < 2:
-                        print(
-                            f"[ERROR] Invalid response format at line {i+1}: {line}",
-                            flush=True,
-                        )
-                        continue
+        parts = line.split(":")
+        if len(parts) < 2:
+            print(
+                f"[ERROR] Invalid response format at line {index+1}: {line}", flush=True
+            )
+            return None
 
-                    try:
-                        answers = [
-                            int(x.strip())
-                            for x in parts[1].split(",")
-                            if x.strip().isdigit()
-                        ]
-                        if len(answers) != len(questions):
-                            print(
-                                f"[ERROR] Mismatch in responses for Agent {i+1}: Expected {len(questions)}, got {len(answers)}.",
-                                flush=True,
-                            )
-                            continue
-
-                        agent_responses[agents[i]] = dict(zip(questions, answers))
-
-                    except ValueError:
-                        print(
-                            f"[ERROR] Failed to convert responses to integers at line {i+1}: {line}",
-                            flush=True,
-                        )
-                        continue
-            print("\n[DEBUG] Storing responses in agent objects...")
-
-            new_agent_responses = self.save_responses_to_agents(agent_responses)
-
-            return new_agent_responses
-
-        except Exception as e:
-            print(f"[ERROR] LLM call failed: {e}", flush=True)
+        try:
+            answers = [
+                int(x.strip()) for x in parts[1].split(",") if x.strip().isdigit()
+            ]
+            return dict(zip(questions, answers))
+        except ValueError:
+            print(
+                f"[ERROR] Conversion to integer failed at line {index+1}: {line}",
+                flush=True,
+            )
             return None
 
     def save_responses_to_agents(self, agent_responses):
