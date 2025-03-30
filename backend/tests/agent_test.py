@@ -53,3 +53,8 @@ class TestAgent(unittest.TestCase):
         )
 
         self.assertEqual(second_agent.get_id(), 1)
+
+    def test_get_agent_future_info(self):
+        """Test that get_agent_future_info returns the future info."""
+        future_info = self.agent.get_agent_future_info()
+        self.assertEqual(future_info, {"Anwers": {}})
