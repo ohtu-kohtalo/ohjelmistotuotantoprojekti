@@ -70,3 +70,9 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(self.agent.get_agent_future_info(), {"Anwers": {}})
         self.assertEqual(self.agent.questions, {})
         self.assertEqual(self.agent.future_questions, {})
+
+    def test_save_new_future_latent_variables(self):
+        """Test that save_new_future_latent_variables updates future_info correctly."""
+        new_variables = {"var1": 10, "var2": 20}
+        self.agent.save_new_future_latent_variables(new_variables)
+        self.assertEqual(self.agent.get_agent_future_info(), {"Answers": new_variables})
