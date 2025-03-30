@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import CsvUpload from "../components/CsvUpload";
 import LoadingIndicator from "../components/LoadingIndicator";
 import LikertChartContainer from "../components/LikertChartContainer";
@@ -22,6 +22,21 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
   const [csvLoaded, setCsvLoaded] = useState(false);
   const [futureScenario, setFutureScenario] = useState("");
   const [tempMessage, setTempMessage] = useState("");
+  const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
+  const tempMessageTimeout = useRef(null);
+
+  /**
+   * Shows a temporary message for a defined duration, and ensures no overlap.
+   * @param {string | JSX.Element} message - The message to display.
+   * @param {number} duration - Duration in ms.
+   */
+  const showTempMessage = (message, duration = 3000) => {
+    setTempMessage(message);
+    if (tempMessageTimeout.current) clearTimeout(tempMessageTimeout.current);
+    tempMessageTimeout.current = setTimeout(() => {
+      setTempMessage("");
+    }, duration);
+  };
 
   /**
    * Handles successful CSV upload.
@@ -48,34 +63,39 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
   const handleFutureSubmit = async () => {
     if (futureScenario.length >= 5) {
       try {
+        const helperFutureScenario = futureScenario;
+
+        showTempMessage("Scenario submitted 📨");
+        setFutureScenarioLoading(true);
+        setFutureScenario("");
+
         const BACKEND_URL =
           import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
         const response = await fetch(`${BACKEND_URL}/receive_future_scenario`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            scenario: futureScenario,
+            scenario: helperFutureScenario,
           }),
         });
-        console.log("Submitted Future Scenario:", futureScenario);
+
+        console.log("Submitted Future Scenario:", helperFutureScenario);
+
         if (!response.ok) {
           throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
-        // The returned data is a status message {status: "success"}
-        // Console.log for debugging purposes
         const data = await response.json();
         console.log("Future scenario return data:", data);
 
-        // Set a temporary message to show the user that the scenario was submitted
-        setTempMessage("Scenario submitted succesfully ✅");
-
-        // Clear the temp-message after 3 seconds
-        setTimeout(() => setTempMessage(""), 3000);
-        setFutureScenario("");
+        setFutureScenarioLoading(false);
+        showTempMessage("Scenario deployed succesfully ✅");
       } catch (error) {
         console.error("Future scenario submission error:", error);
-        setTempMessage("⚠️ Error submitting scenario!");
+        showTempMessage(
+          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>
+        );
+        setFutureScenarioLoading(false);
       }
     }
   };
@@ -102,11 +122,10 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
             onCsvSuccess={handleCsvSuccess}
             handleCsvSubmit={handleCsvSubmit}
           />
-          {/* "Add Another Query" Button - Disabled Until CSV is Provided */}
           <button
             onClick={handleReset}
             className="likert-question-submit-button"
-            disabled={!csvLoaded} /* Disable button until CSV is uploaded */
+            disabled={!csvLoaded}
           >
             Add another query
           </button>
@@ -125,7 +144,7 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
           <button
             id="futureScenarioSubmitButton"
             onClick={handleFutureSubmit}
-            disabled={futureScenario.length < 5}
+            disabled={futureScenario.length < 5 || futureScenarioLoading}
           >
             Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
           </button>
@@ -145,7 +164,14 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
         </div>
       </div>
 
-      {/* Loading Indicator (Appears on Top) */}
+      {/* For future scenario loading */}
+      {futureScenarioLoading && (
+        <div className="loading-overlay">
+          <LoadingIndicator />
+        </div>
+      )}
+
+      {/* Loading Indicator (Appears on Top) (For CSV-uploading)*/}
       {isLoading && (
         <div className="loading-overlay">
           <LoadingIndicator />
