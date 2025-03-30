@@ -16,7 +16,9 @@ const LikertBar = ({ data, futureData, question }) => {
     // Calculate the max value from both data and futureData
     const maxValue = Math.max(
       d3.max(data, (d) => d.value),
-      futureData && futureData.length > 0 ? d3.max(futureData, (d) => d.value) : 0
+      futureData && futureData.length > 0
+        ? d3.max(futureData, (d) => d.value)
+        : 0,
     );
 
     // Create SVG element
@@ -121,7 +123,10 @@ const LikertBar = ({ data, futureData, question }) => {
             .attr("height", (d) => height - margin.bottom - yScale(d.current))
             .attr("fill", currentColor)
             .on("mouseover", function (event, d) {
-              d3.select(this).transition().duration(200).attr("stroke-width", "2px");
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("stroke-width", "2px");
               tooltip
                 .html(`Current Count: ${d.current}`)
                 .style("visibility", "visible")
@@ -152,7 +157,10 @@ const LikertBar = ({ data, futureData, question }) => {
             .attr("height", (d) => height - margin.bottom - yScale(d.future))
             .attr("fill", futureColor)
             .on("mouseover", function (event, d) {
-              d3.select(this).transition().duration(200).attr("stroke-width", "2px");
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("stroke-width", "2px");
               tooltip
                 .html(`Future Count: ${d.future}`)
                 .style("visibility", "visible")
@@ -181,7 +189,7 @@ const LikertBar = ({ data, futureData, question }) => {
             .attr("cy", margin.top + 90)
             .attr("r", 8)
             .style("fill", currentColor);
-          
+
           svg
             .append("text")
             .attr("x", width - margin.right + 35)
@@ -197,7 +205,7 @@ const LikertBar = ({ data, futureData, question }) => {
             .attr("cy", margin.top + 110)
             .attr("r", 8)
             .style("fill", futureColor);
-          
+
           svg
             .append("text")
             .attr("x", width - margin.right + 35)
@@ -220,7 +228,10 @@ const LikertBar = ({ data, futureData, question }) => {
         .attr("height", (d) => height - margin.bottom - yScale(d.value))
         .attr("fill", (d) => colorScale(d.label))
         .on("mouseover", function (event, d) {
-          d3.select(this).transition().duration(200).attr("stroke-width", "2px");
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("stroke-width", "2px");
           tooltip
             .html(`Count: ${d.value}`)
             .style("visibility", "visible")
