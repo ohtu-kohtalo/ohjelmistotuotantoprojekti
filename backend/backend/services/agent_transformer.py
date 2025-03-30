@@ -303,3 +303,9 @@ anything else.
                 return only_empty_strings
 
         return only_empty_strings
+
+    def future_variables_exist(self, agents):
+        """Checks if the first agent in the list has future latent variable values already set."""
+        if agents:
+            return bool(agents[0].get_agent_future_info().get("Answers"))
+        return False
