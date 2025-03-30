@@ -127,16 +127,25 @@ anything else.
         prompt = self.create_prompt(agents, future_scenario, latent_variables)
         print("\nPrompt:\n", prompt, flush=True)
 
-        response = self.__llm.get_response(prompt)
+        try:
+            response = self.__llm.get_response(prompt)
         # print("\nLLM response:\n", response, flush=True)
+        except Exception as exc:
+            raise RuntimeError(
+                "Something went wrong when LLM was creating an answer"
+            ) from exc
 
-        new_latent_variables = self._parse_response(
-            response, len(agents), latent_variables
-        )
+        try:
+            new_latent_variables = self._parse_response(
+                response, len(agents), latent_variables
+            )
+        except Exception as exc:
+            raise RuntimeError(
+                "Something went wrong while parsing the LLM's answer"
+            ) from exc
 
         # Delete old questions and the latent variables based on the previous future scenario
         self._delete_old_variables_and_questions(agents)
-
         self._save_new_variables_to_agents(new_latent_variables, agents)
 
         return True
