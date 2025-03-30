@@ -1,5 +1,8 @@
 import pytest
-pytestmark = pytest.mark.skip(reason="llm_handler under construction - tests disabled temporarily")
+
+pytestmark = pytest.mark.skip(
+    reason="llm_handler under construction - tests disabled temporarily"
+)
 from backend.services.llm_handler import LlmHandler
 
 
