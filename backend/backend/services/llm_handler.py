@@ -1,11 +1,14 @@
 from ..llm_config import get_llm_connection
 from ..entities.agent import Agent
+from ..services.agent_transformer import AgentTransformer
 
 
 class LlmHandler:
     def __init__(self):
         """Initializes the LLM connection using `llm_config.py`."""
         self.llm = get_llm_connection()
+
+        self.transformer = AgentTransformer()
 
     def create_prompt(self, agents, questions):
         """
@@ -18,11 +21,16 @@ class LlmHandler:
         Returns:
             str: The generated prompt.
         """
+
+        future_data_exists = self.transformer.future_variables_exist(agents)
+
         prompt = self.create_intro()
 
         latent_variables = self._get_latent_variables(agents[0])
         prompt += self.add_latent_variables_to_prompt(latent_variables)
-        prompt += self.add_agents_info(agents, latent_variables)
+        prompt += self.add_agents_info(
+            agents, latent_variables, future=future_data_exists
+        )
         prompt += self.add_questions_and_instructions(questions)
 
         return prompt
@@ -81,7 +89,7 @@ class LlmHandler:
             prompt += f"- {var_name}\n"
         return prompt
 
-    def add_agents_info(self, agents, latent_variables):
+    def add_agents_info(self, agents, latent_variables, future=False):
         """
         Adds the agent-specific data to the prompt, including their latent variable values.
 
@@ -94,7 +102,7 @@ class LlmHandler:
         """
         prompt = ""
         for i, agent in enumerate(agents):
-            agent_info = agent.get_agent_info()
+            info = agent.get_agent_future_info() if future else agent.get_agent_info()
             prompt += f"Agent {i+1}:\n"
             # prompt += f"Age: {agent_info['Age']}\n"
             # prompt += f"Gender: {agent_info['Gender']}\n"
@@ -102,8 +110,7 @@ class LlmHandler:
 
             # Only include the values of latent variables in order
             for var_name in latent_variables:
-                prompt += f"{agent_info['Answers'].get(var_name, 'N/A')}\n"
-
+                prompt += f"{info['Answers'].get(var_name, 'N/A')}\n"
             prompt += "\n"
         return prompt
 
