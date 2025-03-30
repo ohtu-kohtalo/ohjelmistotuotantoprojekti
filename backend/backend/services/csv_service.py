@@ -1,18 +1,18 @@
 def extract_questions_from_csv(data):
     """
-    Suodattaa ja palauttaa kysymykset CSV-tiedostosta.
+    Extracts and returns questions from the uploaded CSV data.
 
     Args:
-        data (dict): JSON-data, joka sisältää CSV:n kysymykset.
+        data (dict): JSON data containing questions from the CSV file.
 
     Returns:
-        list: Lista kysymyksistä.
+        list: A list of questions.
     """
     questions = data.get("questions", [])
-    print(f"[DEBUG] Kysymykset luettu CSV:stä: {questions}", flush=True)
+    print(f"[DEBUG] Questions extracted from CSV: {questions}", flush=True)
 
     if not isinstance(questions, list) or len(questions) == 0:
-        print("[ERROR] CSV:ssä ei ollut kelvollisia kysymyksiä!", flush=True)
+        print("[ERROR] No valid questions found in the CSV!", flush=True)
         return []
 
     return questions

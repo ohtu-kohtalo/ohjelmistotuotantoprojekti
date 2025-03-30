@@ -9,7 +9,7 @@ def test_valid_questions(capsys):
     assert result == ["q1", "q2"]
 
     debug = capsys.readouterr().out
-    assert "Kysymykset luettu CSV:stä:" in debug
+    assert "Questions extracted from CSV:" in debug
 
 
 def test_empty_questions(capsys):
@@ -19,7 +19,7 @@ def test_empty_questions(capsys):
     assert result == []
 
     debug = capsys.readouterr().out
-    assert "CSV:ssä ei ollut kelvollisia kysymyksiä!" in debug
+    assert "No valid questions found in the CSV!" in debug
 
 
 def test_not_a_list(capsys):
@@ -29,7 +29,7 @@ def test_not_a_list(capsys):
     assert result == []
 
     debug = capsys.readouterr().out
-    assert "CSV:ssä ei ollut kelvollisia kysymyksiä!" in debug
+    assert "No valid questions found in the CSV!" in debug
 
 
 def test_no_questions(capsys):
@@ -39,4 +39,4 @@ def test_no_questions(capsys):
     assert result == []
 
     debug = capsys.readouterr().out
-    assert "CSV:ssä ei ollut kelvollisia kysymyksiä!" in debug
+    assert "No valid questions found in the CSV!" in debug
