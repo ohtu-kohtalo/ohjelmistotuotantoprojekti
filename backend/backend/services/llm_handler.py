@@ -10,7 +10,7 @@ class LlmHandler:
 
         self.transformer = AgentTransformer()
 
-    def create_prompt(self, agents, questions):
+    def create_prompt(self, agents, questions, future=False):
         """
         Creates a prompt for all agents and all questions.
 
@@ -22,15 +22,11 @@ class LlmHandler:
             str: The generated prompt.
         """
 
-        future_data_exists = self.transformer.future_variables_exist(agents)
-
         prompt = self.create_intro()
 
         latent_variables = self._get_latent_variables(agents[0])
         prompt += self.add_latent_variables_to_prompt(latent_variables)
-        prompt += self.add_agents_info(
-            agents, latent_variables, future=future_data_exists
-        )
+        prompt += self.add_agents_info(agents, latent_variables, future)
         prompt += self.add_questions_and_instructions(questions)
 
         return prompt
@@ -159,39 +155,63 @@ class LlmHandler:
         )
         return prompt
 
-    #### Lots of TODO
-    #### Check whether future latent variables exist
-    # future_variables_exist = Transformer().check_future_variables()
-
-    #### Make the prompts and get the answers
-    # if future_variables_exist:
-    #     original_prompt = self.create_prompt(agents, questions, "future")
-    #     future_prompt = self.create_prompt(agents, questions, "original")
-    #     responses = llm.get_parallel_responses([original_prompt, future_prompt])
-    # else:
-    #     original_prompt = self.create_prompt(agents, questions, "original")
-    #     response = self.llm.get_response(prompt)
-
-    ### Parse and save the answers by the LLM
-
     def get_agents_responses(self, agents, questions):
-        """Retrieves and processes responses from a language model"""
-        response = self.send_prompt_to_llm(agents, questions)
-        if response is None:
-            return None
+        """Retrieves and processes responses from a language model."""
 
-        agent_responses = self.parse_responses(response, agents, questions)
-        if agent_responses is None:
-            return None
+        future_variables_exists = self.transformer.future_variables_exist(agents)
 
-        return self.save_responses_to_agents(agent_responses)
+        if future_variables_exists:
+            # Create two prompts: one for original latent values, one for updated values
+            prompts = [
+                self.create_prompt(agents, questions, future=False),
+                self.create_prompt(agents, questions, future=True),
+            ]
+            responses = self.llm.get_parallel_responses(prompts)
+            print("[DEBUG] Content of responses:", responses)
 
-    def send_prompt_to_llm(self, agents, questions):
-        """Constructs and sends a prompt to the language model and retrieves the response."""
-        prompt = self.create_prompt(agents, questions)
-        print("[DEBUG] Full prompt to LLM:\n", prompt, flush=True)
-        response = self.llm.get_response(prompt)
-        return response
+            # If response is a single string, split it manually into two parts
+            if isinstance(responses, str):
+                responses = responses.split("## Answer")
+                responses = [r.strip() for r in responses if r.strip()]
+
+            if not responses or len(responses) != 2:
+                print(
+                    "[ERROR] Expected 2 responses from LLM, got:",
+                    len(responses),
+                    flush=True,
+                )
+                return None
+
+            original_response = responses[0]
+            future_response = responses[1]
+
+            # Parse both responses
+            original_parsed = self.parse_responses(original_response, agents, questions)
+            future_parsed = self.parse_responses(future_response, agents, questions)
+
+            if original_parsed is None or future_parsed is None:
+                print("[ERROR] Parsing failed for one or both responses", flush=True)
+                return None
+
+            self.save_responses_to_agents(original_parsed, future=False)
+            self.save_responses_to_agents(future_parsed, future=True)
+
+            return {
+                "original": original_parsed,
+                "future": future_parsed,
+            }
+
+        else:
+            # No future scenario: only one prompt
+            prompt = self.create_prompt(agents, questions, future=False)
+            response = self.llm.get_response(prompt)
+
+            parsed = self.parse_responses(response, agents, questions)
+            if parsed is None:
+                return None
+
+            self.save_responses_to_agents(parsed, future=False)
+            return {"original": parsed}
 
     def parse_responses(self, response, agents, questions):
         """Extracts and parses the responses from the LLM into structured data."""
@@ -242,38 +262,33 @@ class LlmHandler:
             )
             return None
 
-    def save_responses_to_agents(self, agent_responses):
+    def save_responses_to_agents(self, agent_responses, future=False):
         """
-        Stores the responses in each agent's `questions` dictionary. Checks if question already exists,
-        if not, creates a list with the first response and if yes, adds the new response to the existing list.
+        Stores the responses in each agent's `questions` or `future_questions` dictionary.
 
         Args:
             agent_responses (dict): A dictionary of agents responses.
+            future (bool): Whether to save to future_questions (True) or questions (False).
 
         Returns:
             dict: Each agent's responses.
         """
-
         new_agent_responses = {}
 
         for i, (agent, responses) in enumerate(agent_responses.items()):
-            # print(f"[DEBUG] Agent {i+1} before update: {agent.questions}")
+            target = agent.future_questions if future else agent.questions
+
             for question, answer in responses.items():
-                if question not in agent.questions:
-                    agent.questions[question] = [answer]
+                if question not in target:
+                    target[question] = [answer]
                 else:
-                    agent.questions[question].append(answer)
+                    target[question].append(answer)
 
             print(
-                f"[DEBUG] Agent {i+1} after update: {agent.questions}",
+                f"[DEBUG] Agent {i+1} {'future_' if future else ''}questions updated:",
+                target,
                 flush=True,
             )
             new_agent_responses[f"Agent_{i+1}"] = responses
-
-        # Test the questions dictionary for each agent
-        # for i, agent in enumerate(agents):
-        #    print(f"[DEBUG] Agent {i+1} final questions:", agent.questions)
-
-        # print( "\n[DEBUG] Final agent responses", new_agent_responses, flush=True)
 
         return new_agent_responses
