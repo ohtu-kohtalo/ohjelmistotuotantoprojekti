@@ -93,7 +93,7 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
       } catch (error) {
         console.error("Future scenario submission error:", error);
         showTempMessage(
-          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>
+          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>,
         );
         setFutureScenarioLoading(false);
       }
