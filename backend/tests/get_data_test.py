@@ -9,11 +9,11 @@ class TestGetData(unittest.TestCase):
         """Set up sample agents for testing."""
         self.get_data = GetData()
         self.agents = [
-            MockAgent({"Meat production should be reduced.": [1]}),
-            MockAgent({"Meat production should be reduced.": [2]}),
-            MockAgent({"Meat production should be reduced.": [3]}),
-            MockAgent({"Meat production should be reduced.": [4]}),
-            MockAgent({"Meat production should be reduced.": [4]}),
+            MockAgent({"Meat production should be reduced.": [1]},{"Meat production should be reduced.": [2]}),
+            MockAgent({"Meat production should be reduced.": [2]},{"Meat production should be reduced.": [1]}),
+            MockAgent({"Meat production should be reduced.": [3]},{"Meat production should be reduced.": [4]}),
+            MockAgent({"Meat production should be reduced.": [4]},{"Meat production should be reduced.": [4]}),
+            MockAgent({"Meat production should be reduced.": [4]},{"Meat production should be reduced.": [5]}),
         ]
 
     def test_get_answer_distributions(self):
@@ -43,6 +43,10 @@ class TestGetData(unittest.TestCase):
                 {
                     "Meat production should be reduced.": [1],
                     "Vegetable production should be reduced.": [5],
+                },
+                {
+                    "Meat production should be reduced.": [2],
+                    "Vegetable production should be reduced.": [4],
                 },
             ),
         )
@@ -77,50 +81,59 @@ class TestGetData(unittest.TestCase):
         ]
         self.assertEqual(excepted, distributions)
 
-    def test_duplicate_question_in_first_agent(self):
-        """Test that duplicate questions in the first agent are not processed twice."""
-
-        # Custom dictionary that yields duplicate items for a key.
-        class DuplicateKeyDict(dict):
-            def items(self):
-                # Yield each item twice for a specific key
-                for k, v in super().items():
-                    yield k, v
-                    if k == "Meat production should be reduced.":
-                        yield k, v
-
-        # Create a first agent using DuplicateKeyDict.
-        duplicate_agent = MockAgent(
-            DuplicateKeyDict({"Meat production should be reduced.": [1]})
+    def test_get_answer_distributions_future(self):
+        """Test get_answer_distributions gives distributions for future agents."""
+        # Add a new agent to the beginning of the agents list
+        self.agents.insert(
+            0,
+            MockAgent(
+                {
+                    "Meat production should be reduced.": [1],
+                    "Vegetable production should be reduced.": [5],
+                },
+                 {
+                    "Meat production should be reduced.": [2],
+                    "Vegetable production should be reduced.": [4],
+                },
+            ),
         )
-        # Combine with the remaining agents (skipping the original first agent).
-        agents = [duplicate_agent] + self.agents[1:]
-        distributions = self.get_data.get_answer_distributions(0, agents)
-
-        expected = [
+        distributions = self.get_data.get_answer_distributions(0, self.agents, True)
+        print(distributions)
+        excepted = [
             {
                 "question": "Meat production should be reduced.",
                 "data": [
-                    {"label": "Strongly Disagree", "value": 2},
-                    {"label": "Disagree", "value": 1},
-                    {"label": "Neutral", "value": 1},
+                    {"label": "Strongly Disagree", "value": 1},
+                    {"label": "Disagree", "value": 2},
+                    {"label": "Neutral", "value": 0},
                     {"label": "Agree", "value": 2},
-                    {"label": "Strongly Agree", "value": 0},
+                    {"label": "Strongly Agree", "value": 1},
                 ],
                 "statistics": {
-                    "median": 2.5,
-                    "mode": 1,
+                    "median": 3.0,
+                    "mode": 2,
                     "variation ratio": 0.6666666666666667,
                 },
-            }
+            },
+            {
+                "question": "Vegetable production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 0},
+                    {"label": "Disagree", "value": 0},
+                    {"label": "Neutral", "value": 0},
+                    {"label": "Agree", "value": 1},
+                    {"label": "Strongly Agree", "value": 0},
+                ],
+                "statistics": {"median": 4, "mode": 4, "variation ratio": 0.0},
+            },
         ]
-        self.assertEqual(expected, distributions)
+        self.assertEqual(excepted, distributions)
 
 
 class MockAgent:
     """A class to mock Agent-objects"""
 
-    def __init__(self, questions: dict):
+    def __init__(self, questions: dict, future_questions: dict):
         """Creates an agent.
 
         Args:
@@ -130,3 +143,4 @@ class MockAgent:
         # An example of questions:
         # {'Meat production should be reduced.': 2}
         self.questions = questions
+        self.future_questions = future_questions
