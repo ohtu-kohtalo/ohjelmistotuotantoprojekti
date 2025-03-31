@@ -86,6 +86,10 @@ Respondent 2:
         compare = "Introfuture scenarioEndRespondent 1:\nLatent variable values:\n2\n\nRespondent 2:\nLatent variable values:\n3\n\nRespondent 3:\nLatent variable values:\n4\n\nRespondent 4:\nLatent variable values:\n5\n\nRespondent 5:\nLatent variable values:\n1\n\nThe End"
         self.assertEqual(compare, result)
 
+    def test_get_latent_variables(self):
+        result = AgentTransformer._get_latent_variables(self, self.agents[0])
+        self.assertEqual(["Overall happiness level"], result)
+
     def test_add_agent_variable_values(self):
         "Tests the return of variable values in prompt"
         latent_variables = ["Overall happiness level"]
