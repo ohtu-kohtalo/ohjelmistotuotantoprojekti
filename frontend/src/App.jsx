@@ -149,7 +149,7 @@ const App = () => {
             Add Query
           </Link>
           <div className="sidebar-csv-download">
-            <CsvDownload fileName="agent_answers.csv" disabled={!csvUploaded} />
+            <CsvDownload fileName="agent_answers.zip" disabled={!csvUploaded} />
           </div>
         </div>
         <div className="content">

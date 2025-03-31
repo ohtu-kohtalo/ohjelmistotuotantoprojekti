@@ -3,6 +3,7 @@ import ErrorMessage from "./ErrorMessage";
 
 const CsvDownload = ({
   questions = {},
+  future_questions = {},
   fileName = "agent_answers.csv",
   disabled,
 }) => {
@@ -25,8 +26,8 @@ const CsvDownload = ({
           headers: {
             "Content-Type": "application/json",
           },
-          // Payload with the questions object.
-          body: JSON.stringify({ questions }),
+          // Payload with the question objects
+          body: JSON.stringify({ questions, future_questions }),
         },
       );
 

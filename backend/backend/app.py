@@ -1,6 +1,7 @@
 import os
 import io
 import csv
+import zipfile
 import pandas as pd
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
@@ -235,8 +236,8 @@ def receive_future_scenario():
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
     """
-    Endpoint to generate and download a CSV file containing agent responses.
-    The CSV will have one row per agent, where the first column is the agent identifier,
+    Endpoint to generate and download a CSV files containing current and future agent responses.
+    The CSVs will have one row per agent, where the first column is the agent identifier,
     and subsequent columns correspond to each question.
 
     AGE AND GENDER TODO
@@ -261,7 +262,7 @@ def download_agent_response_csv():
     # If questions_payload is empty, use the keys from the first agent's questions
     if not questions_payload:
         if agents and hasattr(agents[0], "questions") and agents[0].questions:
-            # Preserve the original order by using the keys from the first agent's questions dictionary.
+            # Preserve the original order by using the keys from the first agent's questions dictionary
             ordered_keys = list(agents[0].questions.keys())
             questions_payload = {key: None for key in ordered_keys}
             print(
@@ -272,48 +273,74 @@ def download_agent_response_csv():
         else:
             print("[ERROR] No questions available from agents", flush=True)
             return jsonify({"error": "No questions available from agents"}), 400
-    else:
-        print(
-            "[DEBUG] Questions for CSV from payload:",
-            list(questions_payload.keys()),
-            flush=True,
-        )
 
-    # Build the CSV header: "Agent" plus each question key.
-    header = ["Agent"] + list(questions_payload.keys())
-    print("[DEBUG] CSV Header:", header, flush=True)
+    # Create headers
+    header_current = ["Agent"] + list(questions_payload.keys())
+    # In-memory CSV
+    si_current = io.StringIO()
+    writer_current = csv.writer(si_current)
+    writer_current.writerow(header_current)
 
-    # Create an in-memory CSV file.
-    si = io.StringIO()
-    writer = csv.writer(si)
-    writer.writerow(header)
-    print("[DEBUG] Header written to CSV", flush=True)
-
-    # Iterate over agents to build each row.
+    # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
         row = [f"Agent {i}"]
         if hasattr(agent, "questions"):
-            print(f"[DEBUG] Agent {i} questions:", agent.questions, flush=True)
-            # Retrieve answer for each question in the header
-            for question in header[1:]:
+            for question in header_current[1:]:
                 value = agent.questions.get(question, "")
                 row.append(value)
         else:
-            print(f"[DEBUG] Agent {i} does not have 'questions' attribute", flush=True)
-            # If the agent has no questions, fill with empty strings
-            row.extend(["" for _ in header[1:]])
-        print(f"[DEBUG] Writing row for Agent {i}: {row}", flush=True)
-        writer.writerow(row)
+            # Replace empty questions with empty strings
+            row.extend(["" for _ in header_current[1:]])
+        writer_current.writerow(row)
+    # Retrieve CSV content
+    csv_content_current = si_current.getvalue()
 
-    # Get full CSV from in-memory buffer
-    csv_content = si.getvalue()
-    print("[DEBUG] Final CSV content:", csv_content, flush=True)
+    # Build CSV for future agent responses
+    future_questions_payload = data.get("future_questions")
+    if not future_questions_payload:
+        if agents and hasattr(agents[0], "future_questions") and agents[0].future_questions:
+            # Preserve the original order by using the keys from the first agent's questions dictionary
+            ordered_keys = list(agents[0].future_questions.keys())
+            future_questions_payload = {key: None for key in ordered_keys}
+            print("[DEBUG] Using first agent's future_questions keys in original order:",
+                  ordered_keys, flush=True)
+        else:
+            # If no future questions exist, only create agent column
+            future_questions_payload = {}
+            print("[DEBUG] No future questions available from agents. Creating empty CSV for future responses.", flush=True)
 
-    # Create HTTP response with CSV file
-    output = make_response(csv_content)
-    # Set correct headers
-    output.headers["Content-Disposition"] = "attachment; filename=agent_responses.csv"
-    output.headers["Content-Type"] = "text/csv"
+    # Create headers
+    header_future = ["Agent"] + list(future_questions_payload.keys())
+    si_future = io.StringIO()
+    writer_future = csv.writer(si_future)
+    writer_future.writerow(header_future)
+
+    # Iterate over agents and write responses
+    for i, agent in enumerate(agents, start=1):
+        row = [f"Agent {i}"]
+        if hasattr(agent, "future_questions"):
+            for question in header_future[1:]:
+                value = agent.future_questions.get(question, "")
+                row.append(value)
+        else:
+            # Replace empty questions with empty strings
+            row.extend(["" for _ in header_future[1:]])
+        writer_future.writerow(row)
+    # Retrieve CSV content
+    csv_content_future = si_future.getvalue()
+
+    # Add CSVs to zip file
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.writestr("agent_responses.csv", csv_content_current)
+        zip_file.writestr("agent_future_responses.csv", csv_content_future)
+    # Reset buffer
+    zip_buffer.seek(0)
+
+    # Create HTTP response with zip payload
+    output = make_response(zip_buffer.read())
+    output.headers["Content-Disposition"] = "attachment; filename=agent_responses.zip"
+    output.headers["Content-Type"] = "application/zip"
     return output
 
 
