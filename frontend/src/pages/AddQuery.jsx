@@ -10,11 +10,15 @@ import LikertChartContainer from "../components/LikertChartContainer";
  * and submitting a potential future scenario for agents. It includes input validation, error handling,
  * and temporary feedback messages for user interactions.
  *
- * @param {Object} props - The component props.
+ * @param {Object} props - The page props:
+ *
  * @param {Function} props.handleCsvSubmit - Callback function to handle CSV file submission.
  * @param {boolean} props.isLoading - Indicates whether a loading state is active.
  * @param {Function} props.showMessage - Function to display messages (success or error) to the user.
- * @param {Array} props.response - Data used to render Likert charts.
+ * @param {Array} props.response - Data used to render Likert charts. *
+ * @param {Array} props.futureResponse - Future scenario data from the backend.
+ * @param {Function} props.resetResponse - Clears the chart data.
+ * @param {Function} props.setCsvUploaded - Notifies App-level state of CSV submission.
  *
  * @returns {JSX.Element} The rendered AddQuery component.
  */
@@ -68,15 +72,25 @@ const AddQuery = ({
     setCsvLoaded(false);
   };
 
+  /**
+   * Submits the future scenario input to the backend for processing.
+   *
+   * - Checks if the input scenario is at least 5 characters long.
+   * - Shows a temporary message indicating submission has started.
+   * - Sends a POST request to the backend endpoint `/receive_future_scenario`.
+   * - Logs the submitted scenario and backend response.
+   * - Displays a success or error message based on the result.
+   * - Always resets loading state after completion.
+   */
   const handleFutureSubmit = async () => {
     if (futureScenario.length >= 5) {
+      const helperFutureScenario = futureScenario;
+
+      showTempMessage("Scenario submitted 📨");
+      setFutureScenarioLoading(true);
+      setFutureScenario("");
+
       try {
-        const helperFutureScenario = futureScenario;
-
-        showTempMessage("Scenario submitted 📨");
-        setFutureScenarioLoading(true);
-        setFutureScenario("");
-
         const BACKEND_URL =
           import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
         const response = await fetch(`${BACKEND_URL}/receive_future_scenario`, {
@@ -96,13 +110,14 @@ const AddQuery = ({
         const data = await response.json();
         console.log("Future scenario return data:", data);
 
-        setFutureScenarioLoading(false);
         showTempMessage("Scenario deployed succesfully ✅");
+        handleReset();
       } catch (error) {
         console.error("Future scenario submission error:", error);
         showTempMessage(
-          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>,
+          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>
         );
+      } finally {
         setFutureScenarioLoading(false);
       }
     }
