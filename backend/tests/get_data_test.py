@@ -9,11 +9,26 @@ class TestGetData(unittest.TestCase):
         """Set up sample agents for testing."""
         self.get_data = GetData()
         self.agents = [
-            MockAgent({"Meat production should be reduced.": [1]},{"Meat production should be reduced.": [2]}),
-            MockAgent({"Meat production should be reduced.": [2]},{"Meat production should be reduced.": [1]}),
-            MockAgent({"Meat production should be reduced.": [3]},{"Meat production should be reduced.": [4]}),
-            MockAgent({"Meat production should be reduced.": [4]},{"Meat production should be reduced.": [4]}),
-            MockAgent({"Meat production should be reduced.": [4]},{"Meat production should be reduced.": [5]}),
+            MockAgent(
+                {"Meat production should be reduced.": [1]},
+                {"Meat production should be reduced.": [2]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [2]},
+                {"Meat production should be reduced.": [1]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [3]},
+                {"Meat production should be reduced.": [4]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [4]},
+                {"Meat production should be reduced.": [4]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [4]},
+                {"Meat production should be reduced.": [5]},
+            ),
         ]
 
     def test_get_answer_distributions(self):
@@ -91,7 +106,7 @@ class TestGetData(unittest.TestCase):
                     "Meat production should be reduced.": [1],
                     "Vegetable production should be reduced.": [5],
                 },
-                 {
+                {
                     "Meat production should be reduced.": [2],
                     "Vegetable production should be reduced.": [4],
                 },
