@@ -20,17 +20,19 @@ class GetData:
         current = self.get_answer_distributions(index, agents)
 
         if agents and agents[0].future_questions:
-            future = self.get_answer_distributions_future(index, agents)
+            future = self.get_answer_distributions(index, agents, future=True)
         else:
             future = []
 
         return current, future
 
-    def get_answer_distributions(self, index, agents: list) -> list:
+    def get_answer_distributions(self, index, agents: list, future=False) -> list:
         """Return the answer distributions
 
         Args:
+            index (int): Index number
             agents (list): A list of agents
+            future (boolean): True if future agents, false if not
 
         Returns:
             distributions (list): A list of dictionaries.
@@ -38,28 +40,13 @@ class GetData:
         distributions = []
         saved_questions = set()
         agent = agents[0]
+        questions = agent.future_questions if future else agent.questions
 
-        for question, _ in agent.questions.items():
-            # Add the question to distributions, if it has not been encountered
-            if question not in saved_questions:
-                saved_questions.add(question)
-                dist = self.get_single_answer_distribution(question, index, agents)
-                distributions.append(dist)
-
-        distributions = self._convert_to_frontend_form(distributions)
-        return distributions
-
-    def get_answer_distributions_future(self, index, agents: list) -> list:
-        """Return the answer distributions from future_questions instead of current questions"""
-        distributions = []
-        saved_questions = set()
-        agent = agents[0]
-
-        for question, _ in agent.future_questions.items():
+        for question, _ in questions.items():
             if question not in saved_questions:
                 saved_questions.add(question)
                 dist = self.get_single_answer_distribution(
-                    question, index, agents, future=True
+                    question, index, agents, future=future
                 )
                 distributions.append(dist)
 
