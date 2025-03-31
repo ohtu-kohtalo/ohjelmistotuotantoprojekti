@@ -18,7 +18,7 @@ import LikertChartContainer from "../components/LikertChartContainer";
  *
  * @returns {JSX.Element} The rendered AddQuery component.
  */
-const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
+const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response, resetResponse, setCsvUploaded }) => {
   const [csvLoaded, setCsvLoaded] = useState(false);
   const [futureScenario, setFutureScenario] = useState("");
   const [tempMessage, setTempMessage] = useState("");
@@ -102,7 +102,9 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
 
   const handleReset = () => {
     setCsvLoaded(false);
+    setCsvUploaded(false);
     setFutureScenario("");
+    resetResponse();
   };
 
   return (
@@ -127,7 +129,7 @@ const AddQuery = ({ handleCsvSubmit, isLoading, showMessage, response }) => {
             className="likert-question-submit-button"
             disabled={!csvLoaded}
           >
-            Add another query
+            Reset
           </button>
         </div>
         {/* Future Scenario Input */}

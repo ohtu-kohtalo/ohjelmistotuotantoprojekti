@@ -157,6 +157,8 @@ const App = () => {
                   isLoading={isLoading}
                   response={distribution}
                   showMessage={showMessage}
+                  resetResponse={() => setDistribution([])}
+                  setCsvUploaded={setCsvUploaded}
                 />
               }
             />
