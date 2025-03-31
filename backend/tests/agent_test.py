@@ -57,17 +57,17 @@ class TestAgent(unittest.TestCase):
     def test_get_agent_future_info(self):
         """Test that get_agent_future_info returns the future info."""
         future_info = self.agent.get_agent_future_info()
-        self.assertEqual(future_info, {"Anwers": {}})
+        self.assertEqual(future_info, {"Answers": {}})
 
     def test_delete_future_info_and_questions(self):
         """Test that delete_future_info_and_questions resets future attributes."""
         self.agent.future_questions = {"q1": "3"}
         self.agent.questions = {"q2": "2"}
-        self.agent._Agent__future_info = {"Anwers": {"var1": 10}}
+        self.agent._Agent__future_info = {"Answers": {"var1": 10}}
 
         self.agent.delete_future_info_and_questions()
 
-        self.assertEqual(self.agent.get_agent_future_info(), {"Anwers": {}})
+        self.assertEqual(self.agent.get_agent_future_info(), {"Answers": {}})
         self.assertEqual(self.agent.questions, {})
         self.assertEqual(self.agent.future_questions, {})
 
