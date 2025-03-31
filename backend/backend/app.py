@@ -298,16 +298,26 @@ def download_agent_response_csv():
     # Build CSV for future agent responses
     future_questions_payload = data.get("future_questions")
     if not future_questions_payload:
-        if agents and hasattr(agents[0], "future_questions") and agents[0].future_questions:
+        if (
+            agents
+            and hasattr(agents[0], "future_questions")
+            and agents[0].future_questions
+        ):
             # Preserve the original order by using the keys from the first agent's questions dictionary
             ordered_keys = list(agents[0].future_questions.keys())
             future_questions_payload = {key: None for key in ordered_keys}
-            print("[DEBUG] Using first agent's future_questions keys in original order:",
-                  ordered_keys, flush=True)
+            print(
+                "[DEBUG] Using first agent's future_questions keys in original order:",
+                ordered_keys,
+                flush=True,
+            )
         else:
             # If no future questions exist, only create agent column
             future_questions_payload = {}
-            print("[DEBUG] No future questions available from agents. Creating empty CSV for future responses.", flush=True)
+            print(
+                "[DEBUG] No future questions available from agents. Creating empty CSV for future responses.",
+                flush=True,
+            )
 
     # Create headers
     header_future = ["Agent"] + list(future_questions_payload.keys())
