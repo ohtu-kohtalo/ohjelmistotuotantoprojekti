@@ -20,7 +20,7 @@ class Agent:
         self.__id = Agent._id_counter
         Agent._id_counter += 1
         self.__info = info
-        self.__future_info = {"Anwers": {}}
+        self.__future_info = {"Answers": {}}
         self.questions = {}
         self.future_questions = {}
 
