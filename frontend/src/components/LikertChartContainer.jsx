@@ -2,17 +2,8 @@ import React, { useState } from "react";
 import LikertBar from "./LikertBar";
 import Statistics from "./StatisticsContainer";
 
-const LikertChartContainer = ({ chartsData }) => {
+const LikertChartContainer = ({ chartsData, futureData }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Mock futureData for demonstration purposes
-  const mockFutureData = [
-    // { label: "Strongly Disagree", value: 10 },
-    // { label: "Disagree", value: 20 },
-    // { label: "Neutral", value: 30 },
-    // { label: "Agree", value: 40 },
-    // { label: "Strongly Agree", value: 50 },
-  ];
 
   if (!chartsData || chartsData.length === 0) {
     return (
@@ -30,7 +21,7 @@ const LikertChartContainer = ({ chartsData }) => {
 
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
@@ -38,7 +29,7 @@ const LikertChartContainer = ({ chartsData }) => {
     <div className="likert-chart-container-plot-area">
       <LikertBar
         data={chartsData[currentIndex].data}
-        futureData={mockFutureData} // Pass the mock futureData here
+        futureData={futureData[currentIndex]?.data}
         question={chartsData[currentIndex].question}
       />
       <div className="Statistics">

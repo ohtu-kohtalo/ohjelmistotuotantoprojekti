@@ -8,17 +8,18 @@ import InitialDistribution from "./pages/InitialDistribution";
 import AddQuery from "./pages/AddQuery";
 import CsvDownload from "./components/CsvDownload";
 
-const defaultDistribution = [];
-
 const App = () => {
+  // Initial state for distributions
+  const [distribution, setDistribution] = useState([]);
+  const [futureDistribution, setFutureDistribution] = useState([]);
+
   // Initial states for response and error handling
-  const [distribution, setDistribution] = useState(defaultDistribution);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const messageTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const messageTimeoutRef = useRef(null);
 
   // Initial state for agents
-  const [agents, setAgentCreation] = useState([]); // Agents
+  const [agents, setAgentCreation] = useState([]);
 
   // State for checking whether csv has been uploaded
   const [csvUploaded, setCsvUploaded] = useState(false);
@@ -48,13 +49,13 @@ const App = () => {
         setAgentCreation(agentsData); // ✅ Set agent data into state
         showMessage(
           "success",
-          "Agents successfully created from backend CSV! ✅",
+          "Agents successfully created from backend CSV! ✅"
         );
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -88,9 +89,18 @@ const App = () => {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
 
-      const data = await response.json();
       showMessage("success", "CSV submitted successfully! 📂👍");
+      const data = await response.json();
+
+      console.log("[DEBUG] Reached here #1");
+
       setDistribution(data.distributions);
+      setFutureDistribution(data.future_distributions);
+
+      if (data.future_distributions.length > 0) {
+        console.log("[DEBUG] Reached here #2, with futureDistribution!");
+      }
+
       setCsvUploaded(true);
     } catch (error) {
       console.error("CSV submission error:", error);
@@ -156,8 +166,12 @@ const App = () => {
                   handleCsvSubmit={handleCsvSubmit}
                   isLoading={isLoading}
                   response={distribution}
+                  futureResponse={futureDistribution}
                   showMessage={showMessage}
-                  resetResponse={() => setDistribution([])}
+                  resetResponse={() => {
+                    setDistribution([]);
+                    setFutureDistribution([]);
+                  }}
                   setCsvUploaded={setCsvUploaded}
                 />
               }

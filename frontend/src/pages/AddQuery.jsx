@@ -23,6 +23,7 @@ const AddQuery = ({
   isLoading,
   showMessage,
   response,
+  futureResponse,
   resetResponse,
   setCsvUploaded,
 }) => {
@@ -100,7 +101,7 @@ const AddQuery = ({
       } catch (error) {
         console.error("Future scenario submission error:", error);
         showTempMessage(
-          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>,
+          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>
         );
         setFutureScenarioLoading(false);
       }
@@ -117,7 +118,10 @@ const AddQuery = ({
   return (
     <div className="card active">
       {/* Move LikertChartContainer to the top */}
-      <LikertChartContainer chartsData={response || []} />
+      <LikertChartContainer
+        chartsData={response || []}
+        futureData={futureResponse || []}
+      />
 
       <div className="query-input-container">
         {/* CSV Upload Section */}
