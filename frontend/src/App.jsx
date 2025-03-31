@@ -6,7 +6,6 @@ import SuccessMessage from "./components/SuccessMessage";
 import HelpPage from "./pages/HelpPage";
 import InitialDistribution from "./pages/InitialDistribution";
 import AddQuery from "./pages/AddQuery";
-import FutureDistribution from "./pages/FutureDistribution";
 import CsvDownload from "./components/CsvDownload";
 
 const defaultDistribution = [];
@@ -49,13 +48,13 @@ const App = () => {
         setAgentCreation(agentsData); // ✅ Set agent data into state
         showMessage(
           "success",
-          "Agents successfully created from backend CSV! ✅",
+          "Agents successfully created from backend CSV! ✅"
         );
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -139,9 +138,6 @@ const App = () => {
           <Link to="/addQuery" className="sidebar-link">
             Add Query
           </Link>
-          {/* <Link to="/futureDistribution" className="sidebar-link">
-            Future Distribution
-          </Link> */}
           <div className="sidebar-csv-download">
             <CsvDownload fileName="agent_answers.csv" disabled={!csvUploaded} />
           </div>
@@ -164,10 +160,6 @@ const App = () => {
                 />
               }
             />
-            {/* <Route
-              path="/futureDistribution"
-              element={<FutureDistribution csvUploaded={csvUploaded} />}
-            /> */}
           </Routes>
         </div>
       </div>
