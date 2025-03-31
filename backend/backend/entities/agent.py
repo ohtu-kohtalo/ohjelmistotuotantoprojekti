@@ -57,7 +57,7 @@ class Agent:
     def delete_future_info_and_questions(self):
         """Overwrites the `future_info`, `questions` and future `future_questions` attributes
         with empty dictionaries. Returns `None`."""
-        self.__future_info = {"Anwers": {}}
+        self.__future_info = {"Answers": {}}
         self.questions = {}
         self.future_questions = {}
 
