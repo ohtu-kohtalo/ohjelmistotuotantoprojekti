@@ -57,7 +57,7 @@
 
 .likert-chart-container-plot-area {
   width: 90%; /* Ensure full container width */
-  min-height: 45vh; /* Ensure a minimum visible height */
+  min-height: 50vh; /* Ensure a minimum visible height */
   max-height: 75vh; /* Prevent it from expanding infinitely */
   background-color: #1e1e1e;
   border-radius: 12px;
@@ -110,6 +110,11 @@
   flex-direction: column;
   position: relative;
   margin-top: -15vh;
+}
+
+.future-scenario-text-container {
+  width: 100%;
+  text-align: center;
 }
 
 .likert-chart-title {

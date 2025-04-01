@@ -9,9 +9,10 @@ import AddQuery from "./pages/AddQuery";
 import CsvDownload from "./components/CsvDownload";
 
 const App = () => {
-  // Initial state for distributions
+  // Initial state for distributions + scenario
   const [distribution, setDistribution] = useState([]);
   const [futureDistribution, setFutureDistribution] = useState([]);
+  const [submittedScenario, setSubmittedScenario] = useState("");
 
   // Initial states for response and error handling
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -49,13 +50,13 @@ const App = () => {
         setAgentCreation(agentsData); // ✅ Set agent data into state
         showMessage(
           "success",
-          "Agents successfully created from backend CSV! ✅",
+          "Agents successfully created from backend CSV! ✅"
         );
       } catch (error) {
         console.error("Error creating agents:", error);
         showMessage(
           "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
+          "⚠️ Could not create agents from initial backend CSV-file"
         );
       }
     };
@@ -173,6 +174,8 @@ const App = () => {
                     setFutureDistribution([]);
                   }}
                   setCsvUploaded={setCsvUploaded}
+                  submittedScenario={submittedScenario}
+                  setSubmittedScenario={setSubmittedScenario}
                 />
               }
             />

@@ -6,21 +6,26 @@ import LikertChartContainer from "../components/LikertChartContainer";
 /**
  * AddQuery Component
  *
- * This component provides functionality for uploading a CSV file containing questions
- * and submitting a potential future scenario for agents. It includes input validation, error handling,
- * and temporary feedback messages for user interactions.
+ * This component allows users to:
+ * - Upload a CSV file containing questions
+ * - Submit a future scenario for agents
+ * - View Likert-scale visualizations and basic stats
  *
- * @param {Object} props - The page props:
+ * The `submittedScenario` is shared from a higher-level component (e.g., App)
+ * to persist across route changes but reset on full page refresh.
  *
- * @param {Function} props.handleCsvSubmit - Callback function to handle CSV file submission.
- * @param {boolean} props.isLoading - Indicates whether a loading state is active.
- * @param {Function} props.showMessage - Function to display messages (success or error) to the user.
- * @param {Array} props.response - Data used to render Likert charts. *
- * @param {Array} props.futureResponse - Future scenario data from the backend.
- * @param {Function} props.resetResponse - Clears the chart data.
- * @param {Function} props.setCsvUploaded - Notifies App-level state of CSV submission.
+ * @param {Object} props
+ * @param {Function} props.handleCsvSubmit - Callback for CSV submission.
+ * @param {boolean} props.isLoading - Whether loading state is active.
+ * @param {Function} props.showMessage - Function to show toast messages.
+ * @param {Array} props.response - Current Likert data.
+ * @param {Array} props.futureResponse - Future scenario Likert data.
+ * @param {Function} props.resetResponse - Clears Likert chart state.
+ * @param {Function} props.setCsvUploaded - Notifies that CSV was uploaded.
+ * @param {string} props.submittedScenario - The submitted scenario text (shared state).
+ * @param {Function} props.setSubmittedScenario - Setter for submittedScenario.
  *
- * @returns {JSX.Element} The rendered AddQuery component.
+ * @returns {JSX.Element}
  */
 const AddQuery = ({
   handleCsvSubmit,
@@ -30,17 +35,17 @@ const AddQuery = ({
   futureResponse,
   resetResponse,
   setCsvUploaded,
+  submittedScenario, // ✅ Passed down to persist across routes
+  setSubmittedScenario, // ✅ Setter passed down from parent (App)
 }) => {
   const [csvLoaded, setCsvLoaded] = useState(false);
-  const [futureScenario, setFutureScenario] = useState("");
+  const [futureScenario, setFutureScenario] = useState(""); // For input field
   const [tempMessage, setTempMessage] = useState("");
   const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
   const tempMessageTimeout = useRef(null);
 
   /**
-   * Shows a temporary message for a defined duration, and ensures no overlap.
-   * @param {string | JSX.Element} message - The message to display.
-   * @param {number} duration - Duration in ms.
+   * Displays a temporary success/error message.
    */
   const showTempMessage = (message, duration = 3000) => {
     setTempMessage(message);
@@ -50,45 +55,28 @@ const AddQuery = ({
     }, duration);
   };
 
-  /**
-   * Handles successful CSV upload.
-   * Displays a success message to the user and sets the CSV loaded state to true.
-   *
-   * @param {string} message - The success message to display.
-   */
   const handleCsvSuccess = (message) => {
     showMessage("success", message);
     setCsvLoaded(true);
   };
 
-  /**
-   * Handles errors during CSV upload.
-   * Displays an error message to the user and sets the CSV loaded state to false.
-   *
-   * @param {string} errorMessage - The error message to display.
-   */
   const handleCsvError = (errorMessage) => {
     showMessage("error", errorMessage);
     setCsvLoaded(false);
   };
 
   /**
-   * Submits the future scenario input to the backend for processing.
-   *
-   * - Checks if the input scenario is at least 5 characters long.
-   * - Shows a temporary message indicating submission has started.
-   * - Sends a POST request to the backend endpoint `/receive_future_scenario`.
-   * - Logs the submitted scenario and backend response.
-   * - Displays a success or error message based on the result.
-   * - Always resets loading state after completion.
+   * Submits the future scenario to the backend and updates shared state.
    */
   const handleFutureSubmit = async () => {
     if (futureScenario.length >= 5) {
+      resetResponse(); // Clear existing chart data before new scenario
       const helperFutureScenario = futureScenario;
 
       showTempMessage("Scenario submitted 📨");
       setFutureScenarioLoading(true);
-      setFutureScenario("");
+      setSubmittedScenario(futureScenario); // ✅ Shared state update
+      setFutureScenario(""); // Clear input field
 
       try {
         const BACKEND_URL =
@@ -96,9 +84,7 @@ const AddQuery = ({
         const response = await fetch(`${BACKEND_URL}/receive_future_scenario`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            scenario: helperFutureScenario,
-          }),
+          body: JSON.stringify({ scenario: helperFutureScenario }),
         });
 
         console.log("Submitted Future Scenario:", helperFutureScenario);
@@ -110,12 +96,12 @@ const AddQuery = ({
         const data = await response.json();
         console.log("Future scenario return data:", data);
 
-        showTempMessage("Scenario deployed succesfully ✅");
+        showTempMessage("Scenario deployed successfully ✅");
         handleReset();
       } catch (error) {
         console.error("Future scenario submission error:", error);
         showTempMessage(
-          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>,
+          <span style={{ color: "red" }}>⚠️ Error deploying scenario!</span>
         );
       } finally {
         setFutureScenarioLoading(false);
@@ -123,6 +109,9 @@ const AddQuery = ({
     }
   };
 
+  /**
+   * Resets form-related state and clears uploaded file state.
+   */
   const handleReset = () => {
     setCsvLoaded(false);
     setCsvUploaded(false);
@@ -132,12 +121,14 @@ const AddQuery = ({
 
   return (
     <div className="card active">
-      {/* Move LikertChartContainer to the top */}
+      {/* Chart section */}
       <LikertChartContainer
         chartsData={response || []}
         futureData={futureResponse || []}
+        submittedScenario={submittedScenario || ""}
       />
 
+      {/* CSV & Scenario Input Section */}
       <div className="query-input-container">
         {/* CSV Upload Section */}
         <div className="csv-upload-section">
@@ -158,6 +149,7 @@ const AddQuery = ({
             Reset
           </button>
         </div>
+
         {/* Future Scenario Input */}
         <div className="future-scenario-input-container">
           <h1 id="futureScenarioTitle">Future Scenario</h1>
@@ -176,6 +168,7 @@ const AddQuery = ({
           >
             Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
           </button>
+
           {/* Temporary Message Display */}
           {tempMessage && (
             <div
@@ -192,14 +185,12 @@ const AddQuery = ({
         </div>
       </div>
 
-      {/* For future scenario loading */}
+      {/* Overlay Loading Indicators */}
       {futureScenarioLoading && (
         <div className="loading-overlay">
           <LoadingIndicator />
         </div>
       )}
-
-      {/* Loading Indicator (Appears on Top) (For CSV-uploading)*/}
       {isLoading && (
         <div className="loading-overlay">
           <LoadingIndicator />

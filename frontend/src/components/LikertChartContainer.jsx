@@ -11,7 +11,11 @@ import Statistics from "./StatisticsContainer";
  * - chartsData: Array of objects representing each question's current agent data.
  * - futureData: Array of objects representing future scenario data for each question.
  */
-const LikertChartContainer = ({ chartsData, futureData }) => {
+const LikertChartContainer = ({
+  chartsData,
+  futureData,
+  submittedScenario,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Tracks which chart/question is currently displayed
 
   // If no data is provided, show a placeholder message
@@ -33,7 +37,7 @@ const LikertChartContainer = ({ chartsData, futureData }) => {
   // Move to the previous chart/question, wrapping around if at the beginning
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
@@ -46,6 +50,13 @@ const LikertChartContainer = ({ chartsData, futureData }) => {
         question={chartsData[currentIndex].question}
       />
 
+      {submittedScenario.length > 0 && (
+        <div className="future-scenario-text-container">
+          <p className="future-scenario-text">
+            Future scenario: {submittedScenario}
+          </p>
+        </div>
+      )}
       {/* Renders statistics like median, mode, and variation ratio */}
       <div className="Statistics">
         <Statistics

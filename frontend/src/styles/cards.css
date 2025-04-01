@@ -5,7 +5,7 @@
   display: none; /* Initially hide the card */
   flex-direction: column; /* Arrange child elements in a column */
   width: 95%; /* Set the width of the card to 95% of its container */
-  height: 90%; /* Set the height of the card to 90% of its container */
+  height: 92%; /* Set the height of the card to 90% of its container */
   overflow: hidden; /* Hide any overflow content */
 }
 
