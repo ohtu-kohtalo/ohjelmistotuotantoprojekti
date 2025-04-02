@@ -1,106 +1,161 @@
 import unittest
-from unittest.mock import Mock
 from backend.services.get_data import GetData
 
 
 class TestGetData(unittest.TestCase):
-    """Tests for the class GetData"""
+    """Tests for the class GetData."""
 
     def setUp(self):
+        """Set up sample agents for testing."""
+        self.get_data = GetData()
+        self.agents = [
+            MockAgent(
+                {"Meat production should be reduced.": [1]},
+                {"Meat production should be reduced.": [2]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [2]},
+                {"Meat production should be reduced.": [1]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [3]},
+                {"Meat production should be reduced.": [4]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [4]},
+                {"Meat production should be reduced.": [4]},
+            ),
+            MockAgent(
+                {"Meat production should be reduced.": [4]},
+                {"Meat production should be reduced.": [5]},
+            ),
+        ]
 
-        def side_effect_questions(arg):
-            """Return values for mock_survey, when method questions is called."""
-            responses = {
-                "Q1": {
-                    "question": "gender",
-                    "answer_choices": {"1": "female", "2": "male", "3": "other"},
+    def test_get_answer_distributions(self):
+        """Test get_answer_distributions gives correct distributions for one question."""
+        distributions = self.get_data.get_answer_distributions(0, self.agents)
+        excepted = [
+            {
+                "question": "Meat production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 1},
+                    {"label": "Disagree", "value": 1},
+                    {"label": "Neutral", "value": 1},
+                    {"label": "Agree", "value": 2},
+                    {"label": "Strongly Agree", "value": 0},
+                ],
+                "statistics": {"median": 3, "mode": 4, "variation ratio": 0.6},
+            },
+        ]
+        self.assertEqual(excepted, distributions)
+
+    def test_get_answer_distributions_two_questions(self):
+        """Test get_answer_distributions gives distributions for two answers."""
+        # Add a new agent to the beginning of the agents list
+        self.agents.insert(
+            0,
+            MockAgent(
+                {
+                    "Meat production should be reduced.": [1],
+                    "Vegetable production should be reduced.": [5],
                 },
-                "Q2": {
-                    "question": "when",
-                    "answer_choices": {
-                        "1": "now",
-                    },
+                {
+                    "Meat production should be reduced.": [2],
+                    "Vegetable production should be reduced.": [4],
                 },
-                "Q3": {
-                    "question": "politics",
-                    "answer_choices": {"1": "liberal", "4": "conservative"},
+            ),
+        )
+        distributions = self.get_data.get_answer_distributions(0, self.agents)
+        excepted = [
+            {
+                "question": "Meat production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 2},
+                    {"label": "Disagree", "value": 1},
+                    {"label": "Neutral", "value": 1},
+                    {"label": "Agree", "value": 2},
+                    {"label": "Strongly Agree", "value": 0},
+                ],
+                "statistics": {
+                    "median": 2.5,
+                    "mode": 1,
+                    "variation ratio": 0.6666666666666667,
                 },
-            }
-            return responses.get(arg)
+            },
+            {
+                "question": "Vegetable production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 0},
+                    {"label": "Disagree", "value": 0},
+                    {"label": "Neutral", "value": 0},
+                    {"label": "Agree", "value": 0},
+                    {"label": "Strongly Agree", "value": 1},
+                ],
+                "statistics": {"median": 5, "mode": 5, "variation ratio": 0.0},
+            },
+        ]
+        self.assertEqual(excepted, distributions)
 
-        mock_survey = Mock()
-        mock_survey.question.side_effect = side_effect_questions
-
-        mock_agent1 = Mock()
-        mock_agent1.get_all_answers.return_value = {"Q1": "1", "Q2": "1"}
-
-        mock_agent2 = Mock()
-        mock_agent2.get_all_answers.return_value = {"Q1": "2", "Q3": "4"}
-
-        mock_agent_pool = Mock()
-        mock_agent_pool.agents = Mock(return_value=[mock_agent1, mock_agent2])
-        self.get_data = GetData(mock_survey, mock_agent_pool)
-
-        self.distribution = {
-            "Q1": {"1": "100", "2": "200", "3": "300"},
-            "Q2": {" ": "20", "1": "222"},
-            "Q3": {"1": "40", "2": "100", "3": "80", "4": "30"},
-        }
-
-        mock_agent_pool.all_distributions.return_value = self.distribution
-
-    def test_make_distributions_readable(self):
-        """Test the method make_distributions_readable."""
-        should_be = {
-            "gender": {"female": "100", "male": "200", "other": "300"},
-            "when": {"Tieto puuttuu": "20", "now": "222"},
-            "politics": {"liberal": "40", "2": "100", "3": "80", "conservative": "30"},
-        }
-        dist = self.get_data.make_distributions_readable(self.distribution)
-        self.assertEqual(should_be, dist)
-
-    def test_get_all_distributions(self):
-        """Test the method get_all_distributions."""
-        expected_output = {
-            "gender": {"female": "100", "male": "200", "other": "300"},
-            "when": {"Tieto puuttuu": "20", "now": "222"},
-            "politics": {"liberal": "40", "2": "100", "3": "80", "conservative": "30"},
-        }
-        actual_output = self.get_data.get_all_distributions()
-        self.assertEqual(actual_output, expected_output)
-
-    def test_add_question_and_answer_to_prompt(self):
-        should_be = (
-            "\nKysymys: gender"
-            "\nVastausvaihtoehdot: "
-            "\n1 female"
-            "\n2 male"
-            "\n3 other"
-            "\nVastaus: male"
+    def test_get_answer_distributions_future(self):
+        """Test get_answer_distributions gives distributions for future agents."""
+        # Add a new agent to the beginning of the agents list
+        self.agents.insert(
+            0,
+            MockAgent(
+                {
+                    "Meat production should be reduced.": [1],
+                    "Vegetable production should be reduced.": [5],
+                },
+                {
+                    "Meat production should be reduced.": [2],
+                    "Vegetable production should be reduced.": [4],
+                },
+            ),
         )
-        prompt = self.get_data.add_question_and_answer_to_prompt("Q1", "2")
-        self.assertEqual(should_be, prompt)
+        distributions = self.get_data.get_answer_distributions(0, self.agents, True)
+        print(distributions)
+        excepted = [
+            {
+                "question": "Meat production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 1},
+                    {"label": "Disagree", "value": 2},
+                    {"label": "Neutral", "value": 0},
+                    {"label": "Agree", "value": 2},
+                    {"label": "Strongly Agree", "value": 1},
+                ],
+                "statistics": {
+                    "median": 3.0,
+                    "mode": 2,
+                    "variation ratio": 0.6666666666666667,
+                },
+            },
+            {
+                "question": "Vegetable production should be reduced.",
+                "data": [
+                    {"label": "Strongly Disagree", "value": 0},
+                    {"label": "Disagree", "value": 0},
+                    {"label": "Neutral", "value": 0},
+                    {"label": "Agree", "value": 1},
+                    {"label": "Strongly Agree", "value": 0},
+                ],
+                "statistics": {"median": 4, "mode": 4, "variation ratio": 0.0},
+            },
+        ]
+        self.assertEqual(excepted, distributions)
 
-    def test_add_texts_to_beginning_and_end(self):
-        beginning = (
-            "Minulla on kyselytietoja henkilöistä. Näytän sinulle nyt yhden "
-            "henkilön tiedot. Olen listannut alle kysymykset, "
-            "vastausvaihtoehdot ja henkilön antaman vastauksen.\n"
-        )
-        middle = "MIDDLE PART\n"
-        end = (
-            "\n\nEsitän sinulle nyt kysymyksen ja haluan että vastaat "
-            "kysymykseen, niin kuin olettaisit kuvaillun henkilön vastaavan. Anna vain "
-            "vastaus kysymykseen äläkä mitään muuta. Kysymys on: QUESTION"
-        )
-        excepted = beginning + middle + end
-        actual = self.get_data.add_texts_to_beginning_and_end(
-            "MIDDLE PART\n", "QUESTION"
-        )
-        self.assertEqual(excepted, actual)
 
-    def test_get_prompts(self):
-        """Test the method get_prompts."""
-        question = "Mitä mieltä olet politiikasta?"
-        prompts = self.get_data.get_prompts(question)
-        self.assertEqual(len(prompts), 2)
+class MockAgent:
+    """A class to mock Agent-objects"""
+
+    def __init__(self, questions: dict, future_questions: dict):
+        """Creates an agent.
+
+        Args:
+            __info (dict): information about the agent, e.g. age and gender, answers to questions
+            questions (dict): Questions by the user and answers to them by an LLM
+        """
+        # An example of questions:
+        # {'Meat production should be reduced.': 2}
+        self.questions = questions
+        self.future_questions = future_questions

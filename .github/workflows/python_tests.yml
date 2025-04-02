@@ -1,0 +1,34 @@
+name: Run Python unit tests
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Poetry
+        working-directory: backend
+        run: pip install poetry
+      - name: Install dependencies
+        working-directory: backend
+        run: poetry install --no-root
+      - name: Run tests
+        working-directory: backend
+        run: poetry run pytest --cov --cov-branch --cov-report=xml
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ohtu-kohtalo/ohjelmistotuotantoprojekti

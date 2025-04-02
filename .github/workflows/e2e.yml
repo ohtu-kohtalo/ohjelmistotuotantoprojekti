@@ -1,0 +1,79 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: '2.1.1'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.14'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: poetry install
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Create backend .env file
+        env:
+          OPENAI_API_KEY: abc123
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p backend/backend
+          cat <<EOF > backend/backend/.env
+          LLM_PROVIDER=gemini
+          OPENAI_API_KEY=$OPENAI_API_KEY
+          GEMINI_API_KEY=$GEMINI_API_KEY
+          CSV_FILE_PATH=../data/TESTDATA.csv
+          EOF
+
+      - name: Start services and run playwright tests
+        run: |
+          # Start the backend service in background
+          (cd backend/backend && poetry run invoke start) &
+          BACKEND_PID=$!
+            
+          # Start the frontend service in background
+          (cd frontend && npm run dev) &
+          FRONTEND_PID=$!
+            
+          # Wait for frontend and backend
+          npx wait-on http://localhost:5173 http://localhost:5500
+            
+          # Install OS-level dependencies (playwright)
+          npx playwright install-deps
+
+          cd frontend
+            
+          # Download playwright chromium
+          npx playwright install chromium
+          
+          cd e2e
+            
+          # Run Playwright tests
+          npx playwright test
+            
+          # Kill background services
+          kill $BACKEND_PID $FRONTEND_PID

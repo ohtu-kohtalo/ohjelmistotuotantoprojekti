@@ -4,7 +4,8 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 
 ![Prettier](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/black.yml/badge.svg)
 ![Black](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/prettier.yml/badge.svg)
-![Unit tests](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/tests.yml/badge.svg)
+![Python tests](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/python_tests.yml/badge.svg)
+![End-to-end tests](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/e2e.yml/badge.svg)
 [![codecov](https://codecov.io/gh/ohtu-kohtalo/ohjelmistotuotantoprojekti/graph/badge.svg?token=IXPDGIWJ57)](https://codecov.io/gh/ohtu-kohtalo/ohjelmistotuotantoprojekti)
 
 ## Table of Contents
@@ -19,7 +20,8 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 - **Poetry 2.0.0 or higher**
 - **Node.js and npm**
 - [**A Gemini API key**](https://ai.google.dev/gemini-api/docs/api-key)
-- **A CSV data file that contains information about agents**
+- [**A OpenAI API key**](https://openai.com/api/)
+- **A CSV data file**
 
 ## Installation
 
@@ -66,20 +68,20 @@ You need to put a CSV data file in the backend/data/ directory. The application 
 2. Add the following lines into the `.env` file:
 
    ```env
+   LLM_PROVIDER=<gemini / openai>
    GEMINI_API_KEY=<your-api-key-here>
+   OPENAI_API_KEY=<your-api-key-here>
    CSV_FILE_PATH=data/<file-name-here>
-   QUESTIONS_FILE_PATH=data/question_texts.csv
-   ANSWERS_FILE_PATH=data/answer_choices.csv
    ```
 
-   Just replace `<your-api-key-here>` and `<file-name-here>` with your actual API key and file name. The `QUESTIONS_FILE_PATH` and `ANSWERS_FILE_PATH` can remain as they are.
+   Just replace `<your-api-key-here>` and `<file-name-here>` with your actual API key and file name.
 
 ## Usage
 
 1. Start the backend server in the backend/backend folder:
 
 ```bash
-poetry run python app.py
+poetry run invoke start
 ```
 
 2. Start the frontend application in the frontend folder:

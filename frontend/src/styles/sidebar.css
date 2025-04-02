@@ -1,0 +1,25 @@
+/* Sidebar container styling */
+.sidebar {
+  background-color: #111; /* Dark background color */
+  width: 10%; /* Sidebar width */
+  display: flex; /* Flexbox layout */
+  flex-direction: column; /* Stack items vertically */
+  padding: 20px; /* Inner spacing */
+  gap: 15px; /* Space between items */
+}
+
+/* Sidebar link styling */
+.sidebar .sidebar-link {
+  background-color: #111; /* Match sidebar background */
+  color: #e0e0e0; /* Light text color */
+  font-size: 1rem; /* Standard font size */
+  text-decoration: none; /* Remove underline */
+  padding: 10px; /* Inner spacing */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: transform 0.2s; /* Smooth scaling transition */
+}
+
+/* Sidebar link hover effect */
+.sidebar .sidebar-link:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover */
+}

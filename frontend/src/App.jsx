@@ -1,187 +1,188 @@
 import React, { useRef, useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router";
 import "./index.css";
-import Title from "./components/Title";
-import QueryForm from "./components/QueryForm";
-import ChatContainer from "./components/ChatContainer";
 import ErrorMessage from "./components/ErrorMessage";
-import LoadingIndicator from "./components/LoadingIndicator";
-import PlotContainer from "./components/PlotContainer";
+import SuccessMessage from "./components/SuccessMessage";
+import HelpPage from "./pages/HelpPage";
+import InitialDistribution from "./pages/InitialDistribution";
+import AddQuery from "./pages/AddQuery";
+import CsvDownload from "./components/CsvDownload";
 
 const App = () => {
-  // Initial states for user input
-  const [company, setCompany] = useState("");
-  // const [industry, setIndustry] = useState("");
-  const [agentCount, setAgentCount] = useState("");
+  // Initial state for distributions + scenario
+  const [distribution, setDistribution] = useState([]);
+  const [futureDistribution, setFutureDistribution] = useState([]);
+  const [submittedScenario, setSubmittedScenario] = useState("");
 
   // Initial states for response and error handling
-  const [response, setResponse] = useState([]);
-  const [error, setError] = useState("");
-  const errorTimeoutRef = useRef(null);
+  const [message, setMessage] = useState({ type: "", text: "" });
   const [isLoading, setIsLoading] = useState(false);
+  const messageTimeoutRef = useRef(null);
 
-  // Initial state for aquired distributions data
-  const [distributions, setDistributions] = useState(null); // Distributions of agents
+  // Initial state for agents
+  const [agents, setAgentCreation] = useState([]);
+
+  // State for checking whether csv has been uploaded
+  const [csvUploaded, setCsvUploaded] = useState(false);
 
   useEffect(() => {
     /**
-     * Fetches distributions data from the backend.
+     * Asynchronously creates agents by fetching data from the backend.
      *
-     * This function makes an asynchronous request to the backend URL specified in the environment
-     * variables or defaults to "http://127.0.0.1:5500" if not specified. It handles the response
-     * by checking if the request was successful, parsing the JSON data, and updating the state
-     * with the received data. If an error occurs during the fetch operation, it logs the error
-     * and displays an error message to the user.
+     * This function attempts to initiate a create-agent route on the backend side.
+     * Upon successful fetch, it logs the status message and displays success message to user.
      *
      * @async
-     * @function fetchDistributions
-     * @throws Will throw an error if the response is not ok.
-     * @returns {Dictionary} The distributions data received from the backend:
-     * QUESTION: {ANSWER: COUNT}
-     * ----------------------------
-     * Q17B: {null: 4},
-     * Q17C: {null: 4},
-     * T2 : {1: 1, 3: 1, 5: 1, 6: 1},
-     * ...
-     * bv1: {2: 2, 8: 1, 10: 1}
-     * ----------------------------
+     * @function createAgents
+     * @returns {Promise<void>} A promise that resolves when the agents are created.
+     * @throws Will throw an error if the fetch request fails.
      */
-    const fetchDistributions = async () => {
+    const createAgents = async () => {
       try {
         const BACKEND_URL =
           import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
         const response = await fetch(`${BACKEND_URL}/`);
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
-        const data = await response.json();
-        console.log("Distributions received!", data);
-        setDistributions(data);
+        const agentsData = await response.json(); // ✅ Expect actual agent data now
+        console.log("Agents created!", agentsData);
+
+        setAgentCreation(agentsData); // ✅ Set agent data into state
+        showMessage(
+          "success",
+          "Agents successfully created from backend CSV! ✅",
+        );
       } catch (error) {
-        console.error("Error fetching distributions:", error);
-        showError("⚠️ Could not retrieve data from backend");
+        console.error("Error creating agents:", error);
+        showMessage(
+          "error",
+          "⚠️ Could not create agents from initial backend CSV-file",
+        );
       }
     };
 
-    fetchDistributions();
+    createAgents();
   }, []);
 
   /**
-   * Handles the form submission event.
-   * Prevents the default form submission behavior, checks if the query is not empty,
-   * and sets the messages state with the user's query and a mock bot response.
-   * If an error occurs, sets the messages state with an error message.
+   * Handles the submission of a CSV file containing questions to the backend.
    *
-   * @param {Event} event - The form submission event.
-   * @returns {void}
+   * This function sends the provided questions to the backend as a JSON payload,
+   * waits for the response, and updates the state accordingly.
+   *
+   * @param {Array} csvQuestions - An array of questions extracted from the CSV file.
+   * @returns {Promise<void>} - A promise that resolves once the submission is processed.
    */
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!company.trim()) {
-      showError("⚠️ Cannot submit an empty company name");
-      return;
-    }
-
-    // if (!industry.trim()) {
-    //   showError("⚠️ Industry field cannot be empty");
-    //   return;
-    // }
-
+  const handleCsvSubmit = async (csvQuestions) => {
     setIsLoading(true);
-
     try {
       const BACKEND_URL =
         import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
-      const response = await fetch(`${BACKEND_URL}/create_agent`, {
+      const response = await fetch(`${BACKEND_URL}/receive_user_csv`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          company: company,
-          // industry: industry,
-          agent_count: agentCount,
+          questions: csvQuestions,
         }),
       });
 
       if (!response.ok) {
-        const errorMessage = `⚠️ Error: ${response.status} - ${response.statusText}`;
-        showError(errorMessage);
-        throw new Error(errorMessage);
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
 
+      showMessage("success", "CSV submitted successfully! 📂👍");
       const data = await response.json();
-      setResponse([
-        {
-          type: "query",
-          text: company,
-          // industry: industry,
-          agentCount: agentCount,
-        },
-        { type: "bot", text: data.message || "No response message received." },
-      ]);
+
+      console.log("[DEBUG] Reached here #1");
+
+      setDistribution(data.distributions);
+      setFutureDistribution(data.future_distributions);
+
+      if (data.future_distributions.length > 0) {
+        console.log("[DEBUG] Reached here #2, with futureDistribution!");
+      }
+
+      setCsvUploaded(true);
     } catch (error) {
-      console.error("Fetch error:", error);
-      showError("⚠️ Could not retrieve data from backend");
-      setResponse([
-        {
-          type: "query",
-          text: company,
-          // industry: industry,
-          agentCount: agentCount,
-        },
-        {
-          type: "bot",
-          text: "An error occurred while fetching the response:",
-          error_status: "Error code: " + error.message,
-        },
-      ]);
+      console.error("CSV submission error:", error);
+      showMessage("error", "⚠️ Could not submit CSV data");
+      setCsvUploaded(false);
     } finally {
       setIsLoading(false);
-      resetForm();
     }
   };
 
   // Helper function to display error messages
-  const showError = (message) => {
-    setError(message);
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
 
     // Clear any existing timeout before setting a new one
-    if (errorTimeoutRef.current) {
-      clearTimeout(errorTimeoutRef.current);
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current);
     }
 
-    errorTimeoutRef.current = setTimeout(() => {
-      setError("");
-      errorTimeoutRef.current = null; // Reset ref after clearing error
+    messageTimeoutRef.current = setTimeout(() => {
+      setMessage({ type: "", text: "" });
+      messageTimeoutRef.current = null; // Reset ref after clearing error
     }, 5000);
   };
 
-  // Helper function to reset form fields
-  const resetForm = () => {
-    setCompany("");
-    // setIndustry("");
-    setAgentCount("");
-  };
-
-  // Title = title, error for error message,
-  // isLoading for showing a loading state,
-  // QueryForm for handling query submits,
-  // ChatContainer for showing responses of queries
   return (
-    <div className="app-container">
-      <Title text="Future Customer: A Simulator and Prediction Tool" />
-      {error && <ErrorMessage message={error} />}
-      <PlotContainer agentData={distributions} />
-      <QueryForm
-        company={company}
-        setCompany={setCompany}
-        // industry={industry}
-        // setIndustry={setIndustry}
-        agentCount={agentCount}
-        setAgentCount={setAgentCount}
-        handleSubmit={handleSubmit}
-      />
-      {isLoading && <LoadingIndicator />}
-      <ChatContainer response={response} />
-    </div>
+    <BrowserRouter>
+      {/* Render messages above the app-container so they aren’t affected by its hover effect */}
+      {message && (
+        <>
+          {message.type === "error" && <ErrorMessage message={message.text} />}
+          {message.type === "success" && (
+            <SuccessMessage message={message.text} />
+          )}
+        </>
+      )}
+      <div className="app-container">
+        <div className="sidebar">
+          <Link to="/" className="sidebar-link">
+            Help Page
+          </Link>
+          <Link to="/initialDistribution" className="sidebar-link">
+            Initial Distribution
+          </Link>
+          <Link to="/addQuery" className="sidebar-link">
+            Add Query
+          </Link>
+          <div className="sidebar-csv-download">
+            <CsvDownload fileName="agent_answers.zip" disabled={!csvUploaded} />
+          </div>
+        </div>
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<HelpPage />} />
+            <Route
+              path="/initialDistribution"
+              element={<InitialDistribution data={agents} />}
+            />
+            <Route
+              path="/addQuery"
+              element={
+                <AddQuery
+                  handleCsvSubmit={handleCsvSubmit}
+                  isLoading={isLoading}
+                  response={distribution}
+                  futureResponse={futureDistribution}
+                  showMessage={showMessage}
+                  resetResponse={() => {
+                    setDistribution([]);
+                    setFutureDistribution([]);
+                  }}
+                  setCsvUploaded={setCsvUploaded}
+                  submittedScenario={submittedScenario}
+                  setSubmittedScenario={setSubmittedScenario}
+                />
+              }
+            />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
   );
 };
 

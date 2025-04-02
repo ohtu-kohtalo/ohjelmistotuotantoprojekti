@@ -1,0 +1,46 @@
+/* Main app container */
+.app-container {
+  background-color: rgba(
+    37,
+    33,
+    33,
+    0.95
+  ); /* Dark theme with slight transparency */
+  border-radius: 12px; /* Smooth rounded edges */
+  width: 60%;
+  height: 85vh;
+  display: flex;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); /* Soft shadow */
+  overflow: hidden; /* Prevents content from overflowing */
+  transition:
+    transform 0.6s,
+    box-shadow 0.3s;
+}
+
+/* Hover effect for app container */
+.app-container:hover {
+  transform: scale(1.05); /* Slightly enlarge the container */
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.9); /* Darker and larger shadow */
+}
+
+/* Content area inside the app container */
+.content {
+  background-color: #1e1e1e; /* Dark background color */
+  flex: 1; /* Flex-grow to fill available space */
+  width: 75%; /* Set width to 75% */
+  display: flex; /* Use flexbox layout */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+  padding: 20px; /* Padding around the content */
+}
+
+.error-message,
+.success-message {
+  position: fixed;
+  top: 2%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Ensures these messages appear above other elements */
+  color: black;
+  font-weight: bold;
+}

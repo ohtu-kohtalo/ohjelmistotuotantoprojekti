@@ -1,103 +1,175 @@
+from statistics import mode, median
+
+
 class GetData:
-    """This class provides methods to get data about agents.
+    """
+    GetData class provides methods to manipulate agents answer data.
+    """
 
-    Attributes:
-        survey (SurveyQuestions):
-            A SurveyQuestions object that has the questions and answer choices.
-        agent_pool (AgentPool):
-            An AgentPool object that has the agents and their answers to questions."""
+    def get_all_distributions(self, agents: list, index=0):
+        """
+        Returns both current and future distributions for a list of agents.
 
-    def __init__(self, survey, agent_pool):
-        self.survey = survey
-        self.agent_pool = agent_pool
+        Args:
+            agents (list): List of Agent objects
+            index (int): Which index of responses to use (default 0)
 
-    def get_all_distributions(self):
-        """Returns the answer distributions of all questions. The question names and
-        answer choices are converted to a readable form."""
-        distributions = self.agent_pool.all_distributions()
-        distributions = self.make_distributions_readable(distributions)
+        Returns:
+            Tuple: (current_distributions, future_distributions)
+        """
+        current = self.get_answer_distributions(index, agents)
+
+        if agents and agents[0].future_questions:
+            future = self.get_answer_distributions(index, agents, future=True)
+        else:
+            future = []
+
+        return current, future
+
+    def get_answer_distributions(self, index, agents: list, future=False) -> list:
+        """Return the answer distributions
+
+        Args:
+            index (int): Index number
+            agents (list): A list of agents
+            future (boolean): True if future agents, false if not
+
+        Returns:
+            distributions (list): A list of dictionaries.
+        """
+        distributions = []
+        saved_questions = set()
+        agent = agents[0]
+        questions = agent.future_questions if future else agent.questions
+
+        for question, _ in questions.items():
+            if question not in saved_questions:
+                saved_questions.add(question)
+                dist = self.get_single_answer_distribution(
+                    question, index, agents, future=future
+                )
+                distributions.append(dist)
+
+        distributions = self._convert_to_frontend_form(distributions)
         return distributions
 
-    def make_distributions_readable(self, distributions):
-        """Converts the question names and answer choices to a readable form.
+    def get_single_answer_distribution(
+        self, question, index, agents: list, future=False
+    ) -> list:
+        """Returns answer distribution for a given question in dictionary form"""
+        distribution = {
+            "question": question,
+            "answers": {
+                "Strongly disagree": 0,
+                "Disagree": 0,
+                "Neutral": 0,
+                "Agree": 0,
+                "Strongly agree": 0,
+            },
+            "statistics": {"median": 0, "mode": 0, "variation ratio": 0},
+        }
+        # Add an agent's answer to the distribution
+        for agent in agents:
+            answers_dict = agent.future_questions if future else agent.questions
 
-        Returns:
-            dict: The distributions in a dictionary."""
-        new_dist = {}
-        for index, answers in distributions.items():
+            for q, answer in answers_dict.items():
+                if q == question:
+                    if str(answer[index]) == "1":
+                        distribution["answers"]["Strongly disagree"] += 1
+                    if str(answer[index]) == "2":
+                        distribution["answers"]["Disagree"] += 1
+                    if str(answer[index]) == "3":
+                        distribution["answers"]["Neutral"] += 1
+                    if str(answer[index]) == "4":
+                        distribution["answers"]["Agree"] += 1
+                    if str(answer[index]) == "5":
+                        distribution["answers"]["Strongly agree"] += 1
+        # Add distribution statistics to the distribution
+        distribution = add_statistics(distribution)
+        return distribution
 
-            question_dict = self.survey.question(index)
-            question_text = question_dict["question"]
-            answer_choices = question_dict["answer_choices"]
+    def _convert_to_frontend_form(self, distributions: list) -> list:
+        """Helper function for get_answer_distributions. This function converts the
+        distributions to the form, that can be sent to frontend"""
+        new_distributions = []
 
-            new_answers = {}
-            for number, number_of_answers in answers.items():
-                if number == " ":
-                    new_answers["Tieto puuttuu"] = number_of_answers
-                else:
-                    try:
-                        new_answers[answer_choices[number]] = number_of_answers
-                    except KeyError:
-                        new_answers[number] = number_of_answers
+        for dist in distributions:
+            new_dist = {}
+            new_dist["question"] = dist["question"]
+            new_dist["data"] = [
+                {
+                    "label": "Strongly Disagree",
+                    "value": dist["answers"]["Strongly disagree"],
+                },
+                {"label": "Disagree", "value": dist["answers"]["Disagree"]},
+                {"label": "Neutral", "value": dist["answers"]["Neutral"]},
+                {"label": "Agree", "value": dist["answers"]["Agree"]},
+                {
+                    "label": "Strongly Agree",
+                    "value": dist["answers"]["Strongly agree"],
+                },
+            ]
+            new_dist["statistics"] = dist["statistics"]
+            new_distributions.append(new_dist)
 
-            new_dist[question_text] = new_answers
+        return new_distributions
 
-        return new_dist
 
-    def get_prompts(self, question: str) -> list[str]:
-        """Creates one prompt for each agent. The prompt asks the LLM to answer the
-        question based on the information given about the agent.
+def add_statistics(data):
+    """Adds statistics to the distribution. Statistics include median, mode and
+    variation ratio
 
-        Returns:
-            list: The prompts in text form in a list."""
+    Args:
+        data:
+            The distribution.
 
-        prompts = []
-        for agent in self.agent_pool.agents():
-            prompt = ""
-            answers = agent.get_all_answers()
-            for question_id, answer in answers.items():
-                prompt += self.add_question_and_answer_to_prompt(question_id, answer)
+    Returns:
+        distributions:
+            The distribution with the statistics added.
+    """
 
-            prompt = self.add_texts_to_beginning_and_end(prompt, question)
-            prompts.append(prompt)
+    list_data = convert_dictionary_values_to_list(data)
+    data["statistics"]["mode"] = calculate_mode(list_data)
+    data["statistics"]["median"] = calculate_median(list_data)
+    data["statistics"]["variation ratio"] = calculate_variation_ratio(list_data)
+    return data
 
-        return prompts
 
-    def list_answer_choices(self, question_dict: dict) -> str:
-        """Convert the answer choices to a numbered list."""
-        choice_list = ""
-        for number, choice in question_dict["answer_choices"].items():
-            choice_list += f"\n{number} {choice}"
+def convert_dictionary_values_to_list(data):
+    """Converts distribution dictionary values to a list"""
+    answers = data["answers"]
+    values = []
+    for answer, count in answers.items():
+        answer = map_likert_str_to_numbers(answer)
+        values.extend([answer] * count)
+    return values
 
-        return choice_list
 
-    def answer_to_text(self, answer: str, question_dict: dict) -> str:
-        """Convert the answer from a number to text."""
-        return question_dict["answer_choices"][answer]
+def map_likert_str_to_numbers(data):
+    """Maps likert-scale str to numbers"""
+    answer_map = {
+        "Strongly disagree": 1,
+        "Disagree": 2,
+        "Neutral": 3,
+        "Agree": 4,
+        "Strongly agree": 5,
+    }
+    return answer_map[data]
 
-    def add_question_and_answer_to_prompt(self, question_id: str, answer: str):
-        """Lists the question, answer_choices and the agent's answer and returns them in
-        a string."""
-        prompt = ""
-        question_dict = self.survey.question(question_id)
-        answer_choices = self.list_answer_choices(question_dict)
-        answer_in_text = self.answer_to_text(answer, question_dict)
 
-        prompt += f"\nKysymys: {question_dict["question"]}"
-        prompt += f"\nVastausvaihtoehdot: {answer_choices}"
-        prompt += f"\nVastaus: {answer_in_text}"
-        return prompt
+def calculate_mode(data):
+    """Returns mode for given list of data"""
+    return mode(data)
 
-    def add_texts_to_beginning_and_end(self, prompt: str, question: str) -> str:
-        """Add texts that describe what the LLM should do with the agent."""
-        beginning = (
-            "Minulla on kyselytietoja henkilöistä. Näytän sinulle nyt yhden "
-            "henkilön tiedot. Olen listannut alle kysymykset, "
-            "vastausvaihtoehdot ja henkilön antaman vastauksen.\n"
-        )
-        end = (
-            "\n\nEsitän sinulle nyt kysymyksen ja haluan että vastaat "
-            "kysymykseen, niin kuin olettaisit kuvaillun henkilön vastaavan. Anna vain "
-            f"vastaus kysymykseen äläkä mitään muuta. Kysymys on: {question}"
-        )
-        return beginning + prompt + end
+
+def calculate_median(data):
+    """Returns median for given list of data"""
+    return median(data)
+
+
+def calculate_variation_ratio(data):
+    """Returns variation ratio for given list of data"""
+    moodi = calculate_mode(data)
+    mode_observations = data.count(moodi)
+    total_observations = len(data)
+    return 1 - (mode_observations / total_observations)

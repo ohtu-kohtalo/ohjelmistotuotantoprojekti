@@ -1,0 +1,40 @@
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; /* Creates space between text and spinner */
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white; /* Ensures visibility */
+  background-color: #1a1a1a; /* Solid dark background */
+  padding: 15px 20px;
+  border-radius: 8px; /* Smooth edges */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
+  position: fixed; /* Keep it centered in viewport */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100; /* Keep it above everything */
+}
+
+/* Styles for the spinning element after the loading indicator text */
+.loading-indicator::after {
+  content: "";
+  display: block;
+  border: 4px solid rgba(255, 255, 255, 0.8); /* Fully visible border */
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 0.8s linear infinite; /* Faster rotation */
+}
+
+/* Keyframes for the spinning animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); /* Start at 0 degrees */
+  }
+  100% {
+    transform: rotate(360deg); /* End at 360 degrees */
+  }
+}
