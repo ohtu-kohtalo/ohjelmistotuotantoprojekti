@@ -37,7 +37,7 @@ const LikertChartContainer = ({
   // Move to the previous chart/question, wrapping around if at the beginning
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
@@ -52,9 +52,7 @@ const LikertChartContainer = ({
 
       {submittedScenario.length > 0 && (
         <div className="future-scenario-text-container">
-          <p className="future-scenario-text">
-            Future scenario: {submittedScenario}
-          </p>
+          <p className="future-scenario-text"></p>
         </div>
       )}
       {/* Renders statistics like median, mode, and variation ratio */}
