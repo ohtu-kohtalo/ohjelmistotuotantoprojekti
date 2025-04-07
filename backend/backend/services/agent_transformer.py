@@ -1,4 +1,5 @@
 from ..llm_config import get_llm_connection
+from token_count import TokenCount
 
 
 class AgentTransformer:
@@ -118,6 +119,12 @@ anything else.
             bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
+        length_in_tokens = self.count_token_length(future_scenario)
+        print(f"Length of future scenario: {length_in_tokens} tokens", flush=True)
+        if length_in_tokens > 10000:
+            raise RuntimeError(
+                f"Future scenario was too long. It was {length_in_tokens} tokens."
+            )
         if future_scenario == "default":
             future_scenario = self.FUTURE_SCENARIO
 
@@ -342,3 +349,15 @@ anything else.
         for i, agent in enumerate(agents):
             # In new_latent_variables the agents are numbered beginning from 1.
             agent.save_new_future_latent_variables(new_latent_variables[i + 1])
+
+    def count_token_length(self, text: str) -> int:
+        """Calculates the number of tokens in a given text.
+
+        Args:
+            text (str): Some text.
+
+        Returns:
+            int: The number of tokens"""
+        tc = TokenCount(model_name="gpt-4o")
+        tokens = tc.num_tokens_from_string(text)
+        return tokens
