@@ -51,8 +51,17 @@ def create_agents():
 
         df = pd.read_csv(csv_file)
 
-        # Select random 50 rows
-        df = df.sample(50)
+        # Select rows
+        df = df.head(10)
+
+        # df = df.iloc[0:200]
+        # df = df.iloc[200:400]
+        # df = df.iloc[400:600]
+        # df = df.iloc[600:800]
+        # df = df.iloc[800:]
+
+        print("\nData Frame of the selected agents:\n", df, flush=True)
+        # print("\niloc\n", df.iloc[0:5], flush=True)
 
         # Convert integer columns to strings
         int_cols = df.select_dtypes(include=["int"]).columns
@@ -146,7 +155,7 @@ def receive_user_csv():
     global agents
 
     data = request.get_json()
-    print(data, flush=True)
+    # print(data, flush=True)
 
     if not data:
         print("No data provided")
@@ -161,18 +170,25 @@ def receive_user_csv():
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
     questions = extract_questions_from_csv(data)
+    # print(f"\nquestions:\n{questions}", flush=True)
 
     if not isinstance(questions, list):
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
 
-    responses = llm_handler.get_agents_responses(agents, questions)
+    i = 1
+    for question in questions:
+        print(f"Asking question {i}: {question}", flush=True)
+        i += 1
+        responses = llm_handler.get_agents_responses(agents, [question])
+    print("\nAll questions asked\nGetting distributions...", flush=True)
 
     get_data = GetData()
     current_distributions, future_distributions = get_data.get_all_distributions(agents)
-    print("[DEBUG] Current distributions:", current_distributions, flush=True)
-    print("[DEBUG] Future distributions:", future_distributions, flush=True)
+    # print("[DEBUG] Current distributions:", current_distributions, flush=True)
+    # print("[DEBUG] Future distributions:", future_distributions, flush=True)
 
+    print("\nReturning distributions. Good bye.\n", flush=True)
     return jsonify(
         {
             "status": "success",

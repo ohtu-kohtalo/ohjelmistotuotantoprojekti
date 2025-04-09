@@ -119,20 +119,27 @@ anything else.
             bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
-        length_in_tokens = self.count_token_length(future_scenario)
-        print(f"Length of future scenario: {length_in_tokens} tokens", flush=True)
-        if length_in_tokens > 10000:
-            raise RuntimeError(
-                f"Future scenario was too long. It was {length_in_tokens} tokens."
-            )
+        # print("\nfuture scenario\n", future_scenario, flush=True)
         if future_scenario == "default":
             future_scenario = self.FUTURE_SCENARIO
+
+        length_in_tokens = self.count_token_length(future_scenario)
+        if length_in_tokens > 10000:
+            raise RuntimeError(
+                f"Future scenario was too long. It was {length_in_tokens} tokens. Maximum is 10000."
+            )
+        print(f"\nLength of the future scenario: {length_in_tokens} tokens", flush=True)
 
         # Get the latent variables in a list
         latent_variables = self._get_latent_variables(agents[0])
 
         prompt = self.create_prompt(agents, future_scenario, latent_variables)
-        print("\nPrompt:\n", prompt, flush=True)
+        # print("\nPrompt:\n", prompt, flush=True)
+
+        print(
+            f"Length of the prompt: {self.count_token_length(prompt)} tokens",
+            flush=True,
+        )
 
         try:
             response = self.__llm.get_response(prompt)
