@@ -188,20 +188,77 @@
 
 // export default App;
 
-// Uncomment the code below to test if TailwindCSS is working
+// The code below is transition to TailwindCSS
 
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router';
-import IndexPage from './pages/IndexPage';
-import './index.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
+import IndexPage from "./pages/IndexPage";
+import "./index.css";
 
 const App = () => {
+  const [hovering, setHovering] = useState(false);
+
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<IndexPage />} />
-        {/* Add other routes here */}
-      </Routes>
+      {/* Main */}
+      <div className="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
+        {/* Global Hover Modal */}
+        <div
+          className="fixed top-4 right-4 z-50"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          {/* Icon Button */}
+          <div
+            role="button"
+            aria-label="Help"
+            tabIndex={0}
+            className="bg-gray-800 hover:bg-gray-700 p-3 rounded-full shadow-lg cursor-pointer outline-none"
+          >
+            <span className="text-xl font-bold">?</span>
+          </div>
+
+          {/* Floating Info Panel */}
+          {hovering && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="help-modal-title"
+              className="absolute right-0 mt-3 w-[90vw] max-w-screen-lg bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <h2 id="help-modal-title" className="text-2xl font-semibold">
+                  About Future Customer: A Simulator and Prediction Tool
+                </h2>
+                <button
+                  onClick={() => setHovering(false)}
+                  aria-label="Close Help"
+                  className="text-white text-xl font-bold hover:text-red-400"
+                >
+                  ×
+                </button>
+              </div>
+              <p className="text-sm leading-relaxed">
+                Future Customer is a simulator and prediction tool designed to
+                help businesses understand and predict customer behavior. It
+                uses LLM to analyze customer data and provide insights that can
+                help businesses make more informed decisions.
+              </p>
+            </div>
+          )}
+        </div>
+        {/* Global Hover Modal End */}
+
+        {/* Page Content */}
+        <div>
+          <Routes>
+            <Route path="/" element={<IndexPage />} />
+            {/* Add more routes here */}
+          </Routes>
+        </div>
+        {/* Page Content End */}
+      </div>
+      {/* Main End */}
     </Router>
   );
 };
