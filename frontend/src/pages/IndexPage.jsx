@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 const IndexPage = () => {
-  const [agentCount, setAgentCount] = useState("");
   const [agents, setAgents] = useState([]);
+  const [agentCount, setAgentCount] = useState("");
+  // const [agentsCreated, setAgentsCreated] = useState(false); TODO!
 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -18,7 +19,7 @@ const IndexPage = () => {
     }
 
     setError("");
-    setLoading(true); // Set loading state to true
+    setLoading(true);
     setAgentCount(""); // Clear input field
 
     try {
@@ -31,29 +32,27 @@ const IndexPage = () => {
       const agentsData = await response.json();
       console.log("Agents created!", agentsData);
       setAgents(agentsData); // Optional if you want to store or show
+      setSuccessMessage(`${agentsData.length} agents created successfully! ✅`);
     } catch (error) {
       console.error("[DEBUG] Error creating agents:", error);
       setError("⚠️ Could not create agents from initial backend CSV-file");
     } finally {
       setTimeout(() => {
         setLoading(false);
-        setSuccessMessage("✅ Agents successfully created");
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000); // Hide success message after 3s
-      }, 3000); // Spinner duration
+      }, 2000);
     }
   };
 
-  // Clear error after 3 seconds
+  // Clear message after 5-2 = 3 seconds
   useEffect(() => {
-    if (error) {
+    if (error || successMessage) {
       const timer = setTimeout(() => {
         setError("");
-      }, 3000);
+        setSuccessMessage("");
+      }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [error]);
+  }, [error, successMessage]);
 
   return (
     <div className="min-h-screen w-full bg-gray-900 text-white flex flex-col px-4">
@@ -98,8 +97,8 @@ const IndexPage = () => {
               )}
             </div>
           )}
-
           {/* Error Message & Loading Indicator End */}
+
           {/* Agent Count Input Field */}
           <input
             type="number"
@@ -119,9 +118,9 @@ const IndexPage = () => {
             disabled={!isValid || loading}
             className={`${
               isValid && !loading
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-gray-700 cursor-not-allowed"
-            } text-white font-semibold py-2 px-6 rounded-xl shadow-md flex items-center space-x-2 transition-all duration-300 ease-in-out`}
+                ? "bg-blue-600 hover:bg-blue-700  hover:scale-105 active:scale-95 transition-transform duration-800 ease-in-out cursor-pointer"
+                : "bg-gray-700 scale-95 transition-transform duration-800 ease-in-out cursor-not-allowed"
+            } text-white font-semibold py-2 px-6 rounded-xl shadow-md flex items-center space-x-2`}
           >
             <span>Submit</span>
             <span className="text-lg" aria-hidden="true">
