@@ -154,9 +154,10 @@ anything else.
                 response, len(agents), latent_variables
             )
         except Exception as exc:
-            raise RuntimeError(
-                "Something went wrong while parsing the LLM's answer"
-            ) from exc
+            msg = "Something went wrong while parsing the LLM's answer. "
+            msg += "Here are the first 200 characters of the LLM's response:\n"
+            msg += f"{response[0:200]}"
+            raise RuntimeError(msg) from exc
 
         # Delete old questions and the latent variables based on the previous future scenario
         self._delete_old_variables_and_questions(agents)

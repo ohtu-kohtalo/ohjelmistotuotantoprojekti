@@ -52,7 +52,7 @@ def create_agents():
         df = pd.read_csv(csv_file)
 
         # Select rows
-        df = df.head(10)
+        df = df.head(5)
 
         # df = df.iloc[0:200]
         # df = df.iloc[200:400]
@@ -60,7 +60,7 @@ def create_agents():
         # df = df.iloc[600:800]
         # df = df.iloc[800:]
 
-        print("\nData Frame of the selected agents:\n", df, flush=True)
+        print(f"\nData Frame of the selected agents:\n{df}", flush=True)
         # print("\niloc\n", df.iloc[0:5], flush=True)
 
         # Convert integer columns to strings
