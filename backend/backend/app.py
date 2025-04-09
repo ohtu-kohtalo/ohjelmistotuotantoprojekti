@@ -46,13 +46,18 @@ def create_agents():
     """
 
     try:
+
+        # Get the number of agents requested from the query parameters
+        requested = request.args.get("agents", default=50, type=int)
+        agent_count = min(max(requested, 1), 100)  # enforce 1–100 bounds
+
         # Declare the list of agents to be a global variable, so that other functions can access it
         global agents
 
         df = pd.read_csv(csv_file)
 
         # Select random 50 rows
-        df = df.sample(50)
+        df = df.sample(agent_count)
 
         # Convert integer columns to strings
         int_cols = df.select_dtypes(include=["int"]).columns

@@ -2,19 +2,46 @@ import React, { useState, useEffect } from "react";
 
 const IndexPage = () => {
   const [agentCount, setAgentCount] = useState("");
+  const [agents, setAgents] = useState([]);
+
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const count = parseInt(agentCount, 10);
-  const isValid = !isNaN(count) && count >= 1 && count <= 100;
+  const isValid = !isNaN(count) && count >= 1 && count <= 100; // Dynamically changes depending on input value
 
-  const handleSubmit = () => {
-    const count = parseInt(agentCount, 10);
-    if (isNaN(count) || count < 1 || count > 100) {
-      setError("Please enter a valid number!");
-    } else {
-      setError("");
-      // Proceed with the agent creation logic here
-      console.log(`Creating ${count} agents...`);
+  const handleSubmit = async () => {
+    if (!isValid) {
+      setError("⚠️ Please enter a valid number.");
+      return;
+    }
+
+    setError("");
+    setLoading(true); // Set loading state to true
+    setAgentCount(""); // Clear input field
+
+    try {
+      const BACKEND_URL =
+        import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+
+      const response = await fetch(`${BACKEND_URL}/?agents=${count}`);
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
+
+      const agentsData = await response.json();
+      console.log("Agents created!", agentsData);
+      setAgents(agentsData); // Optional if you want to store or show
+    } catch (error) {
+      console.error("[DEBUG] Error creating agents:", error);
+      setError("⚠️ Could not create agents from initial backend CSV-file");
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+        setSuccessMessage("✅ Agents successfully created");
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000); // Hide success message after 3s
+      }, 3000); // Spinner duration
     }
   };
 
@@ -47,43 +74,61 @@ const IndexPage = () => {
           the top-right corner.
         </p>
 
-        <p className="text-lg mt-24 max-w-2xl mx-auto text-center leading-relaxed">
+        <p className="text-lg mt-12 max-w-2xl mx-auto text-center leading-relaxed">
           Begin by selecting the number of agents you want to create.
         </p>
 
         {/* Error + Input Block */}
         <div className="relative mt-12 flex flex-col items-center space-y-4">
-          {/* Error Message */}
-          {error && (
-            <p className="absolute bottom-25 text-red-400 text-sm">{error}</p>
+          {/* Error Message & Loading Indicator */}
+          {(error || loading || successMessage) && (
+            <div className="absolute bottom-25 flex items-center space-x-2 text-sm">
+              {loading ? (
+                <>
+                  <span className="text-blue-400">
+                    Loading agents
+                    <span className="animate-pulse">...</span>
+                  </span>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                </>
+              ) : error ? (
+                <span className="text-red-400">{error}</span>
+              ) : (
+                <span className="text-green-600">{successMessage}</span>
+              )}
+            </div>
           )}
 
-          {/* Input Field */}
+          {/* Error Message & Loading Indicator End */}
+          {/* Agent Count Input Field */}
           <input
             type="number"
             min={1}
             max={100}
+            disabled={loading}
             value={agentCount}
             onChange={(e) => setAgentCount(e.target.value)}
             className="w-64 px-4 py-2 text-white bg-transparent border border-white rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
             placeholder="Enter a number (1–100)"
           />
+          {/* Agent Count Input Field End */}
 
-          {/* Submit Button */}
+          {/* Agent Count Submit Button */}
           <button
             onClick={handleSubmit}
-            disabled={!isValid}
+            disabled={!isValid || loading}
             className={`${
-              isValid
+              isValid && !loading
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-700 cursor-not-allowed"
-            } text-white font-semibold py-2 px-6 rounded-xl shadow-md flex items-center space-x-2 transition-all duration-800 ease-in-out`}
+            } text-white font-semibold py-2 px-6 rounded-xl shadow-md flex items-center space-x-2 transition-all duration-300 ease-in-out`}
           >
             <span>Submit</span>
             <span className="text-lg" aria-hidden="true">
-              {isValid ? "🔓" : "🔒"}
+              {isValid && !loading ? "🔓" : "🔒"}
             </span>
           </button>
+          {/* Agent Count Submit Button end */}
         </div>
       </header>
     </div>
