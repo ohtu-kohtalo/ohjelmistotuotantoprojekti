@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import AdmZip from "adm-zip";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
@@ -36,14 +37,17 @@ test("Confirm that user can upload and download a csv file", async ({
   ]);
 
   // Validate name of downloaded CSV
-  await expect(download.suggestedFilename()).toBe("agent_answers.csv");
+  await expect(download.suggestedFilename()).toBe("agent_responses.zip");
 
   // Read the content of the CSV
   const downloadedPath = await download.path();
-  const downloadedContent = fs.readFileSync(downloadedPath, "utf8");
+  const zipBuffer = fs.readFileSync(downloadedPath);
+  const zip = new AdmZip(zipBuffer);
+  const csv = zip.getEntry("agent_responses.csv");
+  const downloadedContent = csv.getData().toString("utf8");
 
   // Validate CSV headers
-  expect(downloadedContent).toContain("Agent,q1,q2,q3");
+  expect(downloadedContent).toContain("Agent,Age,Gender,q1,q2,q3");
 
   // Check that CSV has more than one line
   const csvLines = downloadedContent.split(/\r?\n/);
