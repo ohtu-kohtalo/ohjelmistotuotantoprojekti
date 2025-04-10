@@ -213,7 +213,7 @@ const App = () => {
             role="button"
             aria-label="Help"
             tabIndex={0}
-            className="bg-gray-800 hover:bg-gray-700 p-3 rounded-full shadow-lg cursor-pointer outline-none"
+            className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-lg cursor-pointer outline-none"
           >
             <span className="text-xl font-bold">?</span>
           </div>

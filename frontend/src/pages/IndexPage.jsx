@@ -3,14 +3,26 @@ import React, { useState, useEffect } from "react";
 const IndexPage = () => {
   const [agents, setAgents] = useState([]);
   const [agentCount, setAgentCount] = useState("");
-  // const [agentsCreated, setAgentsCreated] = useState(false); TODO!
+  const [agentsCreated, setAgentsCreated] = useState(false);
 
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showButtonHelp, setShowButtonHelp] = useState(false);
 
   const count = parseInt(agentCount, 10);
-  const isValid = !isNaN(count) && count >= 1 && count <= 100; // Dynamically changes depending on input value
+  const isValid = !isNaN(count) && count >= 1 && count <= 100;
+
+  // Reset function to clear all states
+  const handleReset = () => {
+    setAgents([]);
+    setAgentCount("");
+    setAgentsCreated(false);
+    setShowButtonHelp(false);
+    setError("");
+    setSuccessMessage("");
+    setLoading(false);
+  };
 
   const handleSubmit = async () => {
     if (!isValid) {
@@ -20,7 +32,7 @@ const IndexPage = () => {
 
     setError("");
     setLoading(true);
-    setAgentCount(""); // Clear input field
+    setAgentCount("");
 
     try {
       const BACKEND_URL =
@@ -31,8 +43,9 @@ const IndexPage = () => {
 
       const agentsData = await response.json();
       console.log("Agents created!", agentsData);
-      setAgents(agentsData); // Optional if you want to store or show
+      setAgents(agentsData);
       setSuccessMessage(`${agentsData.length} agents created successfully! ✅`);
+      setAgentsCreated(true);
     } catch (error) {
       console.error("[DEBUG] Error creating agents:", error);
       setError("⚠️ Could not create agents from initial backend CSV-file");
@@ -43,7 +56,6 @@ const IndexPage = () => {
     }
   };
 
-  // Clear message after 5-2 = 3 seconds
   useEffect(() => {
     if (error || successMessage) {
       const timer = setTimeout(() => {
@@ -56,78 +68,174 @@ const IndexPage = () => {
 
   return (
     <div className="min-h-screen w-full bg-gray-900 text-white flex flex-col px-4">
-      {/* Fixed top title */}
       <header className="w-full text-center pt-22 px-4">
-        <h1 className="text-4xl font-bold">
-          Future Customer: A Simulator and Prediction Tool
-        </h1>
+        {/* 🔒 Top Section: dims & locks after agents are created */}
+        <div
+          className={`${agentsCreated ? "opacity-30 pointer-events-none" : ""} transition-opacity duration-300`}
+        >
+          <h1 className="text-4xl font-bold">
+            Future Customer: A Simulator and Prediction Tool
+          </h1>
 
-        <p className="text-lg mt-20 max-w-2xl mx-auto text-center leading-relaxed">
-          Welcome to our application!
-          <br />
-          <br />
-          This application enables you to simulate and predict customer
-          behavior.
-          <br />
-          For additional information, hover over the <strong>?</strong> icon in
-          the top-right corner.
-        </p>
+          <p className="text-lg mt-20 max-w-2xl mx-auto text-center leading-relaxed">
+            Welcome to our application!
+            <br />
+            <br />
+            This application enables you to simulate and predict customer
+            behavior.
+            <br />
+            For additional information, hover over the <strong>?</strong> icon
+            in the top-right corner.
+          </p>
 
-        <p className="text-lg mt-12 max-w-2xl mx-auto text-center leading-relaxed">
-          Begin by selecting the number of agents you want to create.
-        </p>
+          <p className="text-lg mt-12 max-w-2xl mx-auto text-center leading-relaxed">
+            Begin by selecting the number of agents you want to create.
+          </p>
 
-        {/* Error + Input Block */}
-        <div className="relative mt-12 flex flex-col items-center space-y-4">
-          {/* Error Message & Loading Indicator */}
-          {(error || loading || successMessage) && (
-            <div className="absolute bottom-25 flex items-center space-x-2 text-sm">
-              {loading ? (
-                <>
-                  <span className="text-blue-400">
-                    Loading agents
-                    <span className="animate-pulse">...</span>
+          <div className="relative mt-12 flex flex-col items-center space-y-4">
+            {(error || loading || successMessage) && (
+              <div className="absolute -top-6 flex items-center space-x-2 text-sm">
+                {loading ? (
+                  <>
+                    <span className="text-blue-400">
+                      Loading agents<span className="animate-pulse">...</span>
+                    </span>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </>
+                ) : error ? (
+                  <span className="text-red-400">{error}</span>
+                ) : (
+                  <span className="text-green-600 animate-pulse">
+                    {successMessage}
                   </span>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                </>
-              ) : error ? (
-                <span className="text-red-400">{error}</span>
-              ) : (
-                <span className="text-green-600">{successMessage}</span>
-              )}
+                )}
+              </div>
+            )}
+
+            <input
+              type="number"
+              min={1}
+              max={100}
+              disabled={loading}
+              value={agentCount}
+              onChange={(e) => setAgentCount(e.target.value)}
+              className="w-64 px-4 py-2 text-white bg-transparent border border-white rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
+              placeholder="Enter a number (1–100)"
+            />
+
+            <button
+              onClick={handleSubmit}
+              disabled={!isValid || loading}
+              className={`${
+                isValid && !loading
+                  ? "bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-transform duration-800 ease-in-out cursor-pointer"
+                  : "bg-gray-700 scale-95 transition-transform duration-800 ease-in-out cursor-not-allowed"
+              } text-white font-semibold py-2 px-6 rounded-xl shadow-md flex items-center space-x-2`}
+            >
+              <span>Submit</span>
+              <span className="text-lg" aria-hidden="true">
+                {isValid && !loading ? "🔓" : "🔒"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Divider Line */}
+        <hr className="w-full border-t border-white/30 mt-16" />
+
+        {/* Present, Reset, and Future Buttons Section */}
+        <div
+          className={`mt-12 relative ${
+            !agentsCreated ? "opacity-30 pointer-events-none" : "opacity-100"
+          } transition-opacity duration-1000`}
+        >
+          {/* Reset Icon Button */}
+          <div className="flex justify-center -mt-6 mb-4">
+            <button
+              onClick={handleReset}
+              aria-label="Reset"
+              className="bg-red-800 hover:bg-red-600 hover:scale-105 cursor-pointer text-white py-1 px-2 rounded-full shadow-md transition"
+            >
+              ⟲ Reset
+            </button>
+          </div>
+
+          {/* Present & Future Buttons */}
+          <div className="flex flex-wrap justify-between gap-4 items-center w-full px-4 sm:px-[10%] md:px-[20%]">
+            <button className="bg-blue-500 hover:bg-blue-600 hover:scale-105 cursor-pointer text-white font-semibold py-2 px-4 rounded-lg shadow-md transition">
+              📊 Present
+            </button>
+            <button className="bg-purple-500 hover:bg-purple-700 hover:scale-105 cursor-pointer text-white font-semibold py-2 px-4 rounded-lg shadow-md transition">
+              Future 📈
+            </button>
+          </div>
+
+          <div className="relative flex justify-center mt-6 z-40 w-full">
+            {/* Bottom-Centered Help Icon with Floating Modal */}
+            <div className="relative flex justify-center mt-6 z-40">
+              {/* Hover Target is only the icon */}
+              <div
+                onMouseEnter={() => setShowButtonHelp(true)}
+                onMouseLeave={() => setShowButtonHelp(false)}
+                className="relative z-50"
+              >
+                {/* Icon Button */}
+                <div
+                  role="button"
+                  aria-label="Explain Button Area"
+                  tabIndex={0}
+                  className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-lg cursor-pointer outline-none"
+                >
+                  <span className="text-xl font-bold text-white">?</span>
+                </div>
+                {/* Floating Modal */}
+                {showButtonHelp && (
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="button-help-title"
+                    className="absolute bottom-[3.5rem] left-1/2 -translate-x-1/2 w-[95vw] sm:w-[90vw] max-w-screen-md bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto"
+                  >
+                    <div className="space-y-4 text-sm leading-relaxed">
+                      <h2
+                        id="button-help-title"
+                        className="text-xl sm:text-2xl font-semibold text-center mb-4"
+                      >
+                        What Do These Buttons Do?
+                      </h2>
+                      <div className="flex items-start">
+                        <span className="w-28 shrink-0 font-semibold">
+                          📊 Present
+                        </span>
+                        <span className="text-left">
+                          View current agent distributions like age, gender, and
+                          answers to your questions.
+                        </span>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="w-28 shrink-0 font-semibold">
+                          🔮 Future
+                        </span>
+                        <span className="text-left">
+                          Simulate future agent responses to your questions
+                          based on a defined scenario.
+                        </span>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="w-28 shrink-0 font-semibold">
+                          ⟲ Reset
+                        </span>
+                        <span className="text-left">
+                          Clears current agents and unlocks the top section to
+                          start over.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-          {/* Error Message & Loading Indicator End */}
-
-          {/* Agent Count Input Field */}
-          <input
-            type="number"
-            min={1}
-            max={100}
-            disabled={loading}
-            value={agentCount}
-            onChange={(e) => setAgentCount(e.target.value)}
-            className="w-64 px-4 py-2 text-white bg-transparent border border-white rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
-            placeholder="Enter a number (1–100)"
-          />
-          {/* Agent Count Input Field End */}
-
-          {/* Agent Count Submit Button */}
-          <button
-            onClick={handleSubmit}
-            disabled={!isValid || loading}
-            className={`${
-              isValid && !loading
-                ? "bg-blue-600 hover:bg-blue-700  hover:scale-105 active:scale-95 transition-transform duration-800 ease-in-out cursor-pointer"
-                : "bg-gray-700 scale-95 transition-transform duration-800 ease-in-out cursor-not-allowed"
-            } text-white font-semibold py-2 px-6 rounded-xl shadow-md flex items-center space-x-2`}
-          >
-            <span>Submit</span>
-            <span className="text-lg" aria-hidden="true">
-              {isValid && !loading ? "🔓" : "🔒"}
-            </span>
-          </button>
-          {/* Agent Count Submit Button end */}
+          </div>
         </div>
       </header>
     </div>
