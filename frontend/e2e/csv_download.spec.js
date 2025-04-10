@@ -45,7 +45,6 @@ test("Confirm that user can upload and download a csv file", async ({
   const zip = new AdmZip(zipBuffer);
   const csv = zip.getEntry("agent_responses.csv");
   const downloadedContent = csv.getData().toString("utf8");
-  
 
   // Validate CSV headers
   expect(downloadedContent).toContain("Agent,Age,Gender,q1,q2,q3");
