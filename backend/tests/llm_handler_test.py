@@ -1,4 +1,5 @@
 import pytest
+import builtins
 from backend.services.llm_handler import LlmHandler
 
 
@@ -38,12 +39,42 @@ class MockLLM:
         ]
 
 
+class MockLLMString:
+    def get_parallel_responses(self, prompts):
+        return "Agent 1: 3, 4\nAgent 2: 2, 5## Answer Agent 1: 4, 5\nAgent 2: 3, 4"
+
+
 class MockTransformer:
     def __init__(self, future_exists=False):
         self.future_exists = future_exists
 
     def future_variables_exist(self, agents):
         return self.future_exists
+
+
+class MockLLMBadResponse:
+    def get_parallel_responses(self, prompts):
+        return ["Only one response"]
+
+
+class MockLLMBadString:
+    def get_parallel_responses(self, prompts):
+        return "Agent 1: 3, 4"
+
+
+class MockLLMValid:
+    def get_parallel_responses(self, prompts):
+        return "Agent 1: 3, 4\nAgent 2: 2, 5## Answer Agent 1: 4, 5\nAgent 2: 3, 4"
+
+
+class MockLLMEmpty:
+    def get_response(self, prompt):
+        return ""
+
+
+class MockStr(str):
+    def split(self, sep=None, maxsplit=-1):
+        return ["element"]
 
 
 # Fixtures
@@ -102,6 +133,13 @@ def test_add_questions_and_instructions(llm_handler):
     assert f"There are {len(questions)} statements" in prompt
 
 
+def test_add_questions_and_instructions_single(llm_handler):
+    questions = ["Q1"]
+    prompt = llm_handler.add_questions_and_instructions(questions)
+    assert "The statement to be answered by each agent on a Likert scale:" in prompt
+    assert f"There are {len(questions)} statements" in prompt
+
+
 def test_create_prompt(llm_handler, fake_agents):
     questions = ["Q1", "Q2"]
     prompt = llm_handler.create_prompt(fake_agents, questions, future=False)
@@ -129,6 +167,31 @@ def test_parse_line_failure(llm_handler):
     assert result is None
 
 
+def test_parse_line_invalid_format_using_fakestr(llm_handler):
+    questions = ["Q1", "Q2"]
+
+    line = MockStr("Agent 1: dummy")
+    result = llm_handler.parse_line(line, 0, questions)
+    assert result is None
+
+
+def test_parse_line_conversion_failure(monkeypatch, llm_handler):
+    questions = ["Q1", "Q2"]
+    line = "Agent 1: 3, 4"
+    original_int = builtins.int
+
+    def fake_int(x):
+        raise ValueError("error")
+
+    monkeypatch.setattr(builtins, "int", fake_int)
+
+    result = llm_handler.parse_line(line, 0, questions)
+    assert result is None
+
+    # Restore original int
+    monkeypatch.setattr(builtins, "int", original_int)
+
+
 def test_process_lines(llm_handler, fake_agents):
     questions = ["Q1", "Q2"]
     lines = ["Agent 1: 3, 4", "Agent 2: 2, 5"]
@@ -142,6 +205,29 @@ def test_process_lines(llm_handler, fake_agents):
             assert ans == {"Q1": 2, "Q2": 5}
 
 
+def test_process_lines_insufficient_agents(llm_handler):
+    questions = ["Q1", "Q2"]
+
+    agent = MockAgent({"Q1": 1, "Q2": 2})
+    agents = [agent]
+    lines = ["Agent 1: 3, 4", "Agent 2: 2, 5"]
+    responses = llm_handler.process_lines(lines, agents, questions)
+
+    assert len(responses) == 1
+    assert responses[agent] == {"Q1": 3, "Q2": 4}
+
+
+def test_process_lines_skip_empty_response(llm_handler, fake_agents):
+    questions = ["Q1", "Q2"]
+
+    lines = ["Agent 1: 3, 4", "Agent 2: invalid"]
+    responses = llm_handler.process_lines(lines, fake_agents, questions)
+
+    assert len(responses) == 1
+    assert fake_agents[0] in responses
+    assert responses[fake_agents[0]] == {"Q1": 3, "Q2": 4}
+
+
 def test_save_responses_to_agents(llm_handler, fake_agents):
     responses = {fake_agents[0]: {"Q1": 3, "Q2": 4}, fake_agents[1]: {"Q1": 2, "Q2": 5}}
 
@@ -150,6 +236,21 @@ def test_save_responses_to_agents(llm_handler, fake_agents):
     llm_handler.save_responses_to_agents(responses, future=False)
     assert fake_agents[0].questions == {"Q1": [3], "Q2": [4]}
     assert fake_agents[1].questions == {"Q1": [2], "Q2": [5]}
+
+
+def test_save_responses_append_existing(llm_handler, fake_agents):
+    fake_agents[0].questions = {"Q1": [1]}
+    fake_agents[1].questions = {}
+
+    responses = {
+        fake_agents[0]: {"Q1": 2},
+        fake_agents[1]: {"Q1": 3},
+    }
+
+    llm_handler.save_responses_to_agents(responses, future=False)
+
+    assert fake_agents[0].questions["Q1"] == [1, 2]
+    assert fake_agents[1].questions["Q1"] == [3]
 
 
 # get_agent_responses()
@@ -182,3 +283,82 @@ def test_get_agents_responses_with_future(llm_handler, fake_agents):
 
     assert fake_agents[0].future_questions == {"Q1": [4], "Q2": [5]}
     assert fake_agents[1].future_questions == {"Q1": [3], "Q2": [4]}
+
+
+def test_get_agents_responses_string_response(llm_handler, fake_agents):
+    llm_handler.transformer = MockTransformer(future_exists=True)
+    llm_handler.llm = MockLLMString()
+
+    questions = ["Q1", "Q2"]
+    responses = llm_handler.get_agents_responses(fake_agents, questions)
+
+    assert responses is not None
+    assert "original" in responses
+    assert "future" in responses
+
+    original = responses["original"]
+    future = responses["future"]
+
+    assert original[fake_agents[0]] == {"Q1": 3, "Q2": 4}
+    assert original[fake_agents[1]] == {"Q1": 2, "Q2": 5}
+    assert future[fake_agents[0]] == {"Q1": 4, "Q2": 5}
+    assert future[fake_agents[1]] == {"Q1": 3, "Q2": 4}
+
+
+def test_get_agents_responses_bad_response_list(llm_handler, fake_agents):
+    llm_handler.transformer = MockTransformer(future_exists=True)
+
+    llm_handler.llm = MockLLMBadResponse()
+    questions = ["Q1", "Q2"]
+    responses = llm_handler.get_agents_responses(fake_agents, questions)
+    assert responses is None
+
+
+def test_get_agents_responses_bad_response_string(llm_handler, fake_agents):
+    llm_handler.transformer = MockTransformer(future_exists=True)
+
+    llm_handler.llm = MockLLMBadString()
+    questions = ["Q1", "Q2"]
+    responses = llm_handler.get_agents_responses(fake_agents, questions)
+    assert responses is None
+
+
+def test_get_agents_responses_failed_parsing(llm_handler, fake_agents):
+    llm_handler.transformer = MockTransformer(future_exists=True)
+
+    llm_handler.llm = MockLLMValid()
+
+    original_parse_responses = llm_handler.parse_responses
+
+    def fake_parse_responses(response, agents, questions):
+        if "4, 5" in response:
+            return None
+        return original_parse_responses(response, agents, questions)
+
+    llm_handler.parse_responses = fake_parse_responses
+
+    questions = ["Q1", "Q2"]
+    responses = llm_handler.get_agents_responses(fake_agents, questions)
+    assert responses is None
+
+
+def test_get_agents_responses_no_parse(llm_handler, fake_agents):
+    llm_handler.transformer = MockTransformer(future_exists=False)
+    llm_handler.parse_responses = lambda response, agents, questions: None
+
+    questions = ["Q1", "Q2"]
+
+    responses = llm_handler.get_agents_responses(fake_agents, questions)
+
+    assert responses is None
+
+
+def test_get_agents_responses_empty_response(llm_handler, fake_agents):
+    llm_handler.transformer = MockTransformer(future_exists=False)
+
+    llm_handler.llm = MockLLMEmpty()
+
+    questions = ["Q1", "Q2"]
+    responses = llm_handler.get_agents_responses(fake_agents, questions)
+
+    assert responses is None
