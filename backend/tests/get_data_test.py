@@ -113,6 +113,7 @@ class TestGetData(unittest.TestCase):
             ),
         )
         distributions = self.get_data.get_answer_distributions(0, self.agents, True)
+        current, future = self.get_data.get_all_distributions(self.agents, index=0)
         print(distributions)
         excepted = [
             {
@@ -143,6 +144,30 @@ class TestGetData(unittest.TestCase):
             },
         ]
         self.assertEqual(excepted, distributions)
+        self.assertEqual(future, excepted)
+
+    def test_get_all_distributions_no_future(self):
+        """Test get_all_distributions returns only current distributions with no future_questions"""
+        agents = [
+            MockAgent({"Meat production should be reduced.": [1]}, {}),
+            MockAgent({"Meat production should be reduced.": [2]}, {}),
+        ]
+        current, future = self.get_data.get_all_distributions(agents, index=0)
+
+        self.assertTrue(len(current) > 0)
+        self.assertEqual(future, [])
+
+    def test_get_answer_distributions_saved_questions_duplicates(self):
+        """Test that get_answer_distributions only creates a distribution once with duplicate questions"""
+        agent = MockAgent({"Question 1": [3]}, {})
+        agent.questions = MockQuestions()
+        agents = [agent]
+
+        distributions = self.get_data.get_answer_distributions(0, agents)
+
+        self.assertEqual(len(distributions), 1)
+
+        self.assertEqual(distributions[0]["question"], "Question 1")
 
 
 class MockAgent:
@@ -159,3 +184,9 @@ class MockAgent:
         # {'Meat production should be reduced.': 2}
         self.questions = questions
         self.future_questions = future_questions
+
+
+class MockQuestions:
+    def items(self):
+        yield ("Question 1", [3])
+        yield ("Question 1", [3])
