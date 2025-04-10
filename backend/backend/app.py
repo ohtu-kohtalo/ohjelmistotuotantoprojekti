@@ -353,6 +353,7 @@ def download_agent_response_csv():
     # Create HTTP response with zip payload
     output = make_response(zip_buffer.read())
     output.headers["Content-Disposition"] = "attachment; filename=agent_responses.zip"
+    output.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
     output.headers["Content-Type"] = "application/zip"
     return output
 
