@@ -32,6 +32,7 @@ const IndexPage = () => {
 
     setError("");
     setLoading(true);
+    // Reset input field
     setAgentCount("");
 
     try {
@@ -45,11 +46,12 @@ const IndexPage = () => {
       console.log("Agents created!", agentsData);
       setAgents(agentsData);
       setSuccessMessage(`${agentsData.length} agents created successfully! ✅`);
-      setAgentsCreated(true);
     } catch (error) {
       console.error("[DEBUG] Error creating agents:", error);
       setError("⚠️ Could not create agents from initial backend CSV-file");
     } finally {
+      // Makes loading indicator spin for atleast 2 seconds
+      // This is in order to prevent the loading indicator from disappearing too quickly
       setTimeout(() => {
         setLoading(false);
       }, 2000);
@@ -60,7 +62,14 @@ const IndexPage = () => {
     if (error || successMessage) {
       const timer = setTimeout(() => {
         setError("");
-        setSuccessMessage("");
+
+        // Agents are considered "created" only after successMessage disappears
+        // This is to prevent the top section from being dimmed before the success message disappears
+        // And to provide a better user experience overall
+        if (successMessage) {
+          setAgentsCreated(true);
+          setSuccessMessage("");
+        }
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -94,7 +103,7 @@ const IndexPage = () => {
 
           <div className="relative mt-12 flex flex-col items-center space-y-4">
             {(error || loading || successMessage) && (
-              <div className="absolute -top-6 flex items-center space-x-2 text-sm">
+              <div className="absolute -top-9 flex items-center space-x-2 text-sm">
                 {loading ? (
                   <>
                     <span className="text-blue-400">
@@ -105,9 +114,7 @@ const IndexPage = () => {
                 ) : error ? (
                   <span className="text-red-400">{error}</span>
                 ) : (
-                  <span className="text-green-600 animate-pulse">
-                    {successMessage}
-                  </span>
+                  <span className="text-green-400">{successMessage}</span>
                 )}
               </div>
             )}
@@ -154,23 +161,39 @@ const IndexPage = () => {
             <button
               onClick={handleReset}
               aria-label="Reset"
-              className="bg-red-800 hover:bg-red-600 hover:scale-105 cursor-pointer text-white py-1 px-2 rounded-full shadow-md transition"
+              className={`${
+                agentsCreated
+                  ? "bg-red-800 hover:bg-red-600 scale-100"
+                  : "bg-gray-700 text-gray-400 scale-90"
+              } hover:scale-105 cursor-pointer transition transform duration-1000 ease-in-out text-white py-1 px-2 rounded-full shadow-md`}
             >
               ⟲ Reset
             </button>
           </div>
 
           {/* Present & Future Buttons */}
-          <div className="flex flex-wrap justify-between gap-4 items-center w-full px-4 sm:px-[10%] md:px-[20%]">
-            <button className="bg-blue-500 hover:bg-blue-600 hover:scale-105 cursor-pointer text-white font-semibold py-2 px-4 rounded-lg shadow-md transition">
+          <div className="w-full max-w-4xl mx-auto flex flex-wrap justify-between gap-4 items-center px-4">
+            <button
+              className={`${
+                agentsCreated
+                  ? "bg-blue-500 hover:bg-blue-600 scale-100"
+                  : "bg-gray-700 text-gray-400 scale-90"
+              } hover:scale-105 cursor-pointer transition transform duration-1000 ease-in-out text-white font-semibold py-2 px-4 rounded-lg shadow-md`}
+            >
               📊 Present
             </button>
-            <button className="bg-purple-500 hover:bg-purple-700 hover:scale-105 cursor-pointer text-white font-semibold py-2 px-4 rounded-lg shadow-md transition">
+            <button
+              className={`${
+                agentsCreated
+                  ? "bg-purple-500 hover:bg-purple-700 scale-100"
+                  : "bg-gray-700 text-gray-400 scale-90"
+              } hover:scale-105 cursor-pointer transition transform duration-1000 ease-in-out text-white font-semibold py-2 px-4 rounded-lg shadow-md`}
+            >
               Future 📈
             </button>
           </div>
 
-          <div className="relative flex justify-center mt-6 z-40 w-full">
+          <div className="relative flex justify-center mt-2 z-40 w-full">
             {/* Bottom-Centered Help Icon with Floating Modal */}
             <div className="relative flex justify-center mt-6 z-40">
               {/* Hover Target is only the icon */}
@@ -214,7 +237,7 @@ const IndexPage = () => {
                       </div>
                       <div className="flex items-start">
                         <span className="w-28 shrink-0 font-semibold">
-                          🔮 Future
+                          📈 Future
                         </span>
                         <span className="text-left">
                           Simulate future agent responses to your questions
