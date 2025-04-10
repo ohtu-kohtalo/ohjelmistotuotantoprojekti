@@ -236,8 +236,9 @@ def receive_future_scenario():
 @app.route("/download_agent_response_csv", methods=["POST"])
 def download_agent_response_csv():
     """
-    Endpoint to generate and download a CSV files containing current and future agent responses.
-    The CSVs will have one row per agent, where the first column is the agent identifier,
+    Endpoint to generate and download a CSV files containing current and future agent responses
+    along with the agent's age and gender.
+    The CSVs will have one row per agent, where the first columns are the agent identifier, age, gender,
     and subsequent columns correspond to each question.
 
     AGE AND GENDER TODO
@@ -275,7 +276,7 @@ def download_agent_response_csv():
             return jsonify({"error": "No questions available from agents"}), 400
 
     # Create headers
-    header_current = ["Agent"] + list(questions_payload.keys())
+    header_current = ["Agent", "Age", "Gender"] + list(questions_payload.keys())
     # In-memory CSV
     si_current = io.StringIO()
     writer_current = csv.writer(si_current)
@@ -283,14 +284,15 @@ def download_agent_response_csv():
 
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
-        row = [f"Agent {i}"]
+        agent_info = agent.get_agent_info()
+        row = [f"Agent {i}", agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "questions"):
-            for question in header_current[1:]:
+            for question in header_current[3:]:
                 value = agent.questions.get(question, "")
                 row.append(value)
         else:
             # Replace empty questions with empty strings
-            row.extend(["" for _ in header_current[1:]])
+            row.extend(["" for _ in header_current[3:]])
         writer_current.writerow(row)
     # Retrieve CSV content
     csv_content_current = si_current.getvalue()
@@ -327,14 +329,15 @@ def download_agent_response_csv():
 
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
-        row = [f"Agent {i}"]
+        agent_info = agent.get_agent_info()
+        row = [f"Agent {i}", agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "future_questions"):
-            for question in header_future[1:]:
+            for question in header_future[3:]:
                 value = agent.future_questions.get(question, "")
                 row.append(value)
         else:
             # Replace empty questions with empty strings
-            row.extend(["" for _ in header_future[1:]])
+            row.extend(["" for _ in header_future[3:]])
         writer_future.writerow(row)
     # Retrieve CSV content
     csv_content_future = si_future.getvalue()
