@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "adm-zip": "^0.5.16",
     "d3": "^7.9.0",
     "dotenv": "^16.4.7",
     "esbuild": ">=0.25.0",
