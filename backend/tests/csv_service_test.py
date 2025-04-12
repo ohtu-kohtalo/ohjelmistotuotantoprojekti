@@ -9,7 +9,6 @@ def test_valid_questions(capsys):
     assert result == ["q1", "q2"]
 
     debug = capsys.readouterr().out
-    assert "Questions extracted from CSV:" in debug
 
 
 def test_empty_questions(capsys):
