@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const IndexPage = () => {
   const [agents, setAgents] = useState([]);
@@ -177,7 +177,7 @@ const IndexPage = () => {
           {/* Present & Future Buttons */}
           <div className="w-full max-w-4xl mx-auto flex flex-wrap justify-between gap-4 items-center px-4">
             <button
-              onClick={() => navigate("/present")}
+              onClick={() => navigate("/present", {state: { agents } })}
               className={`${
                 agentsCreated
                   ? "bg-blue-500 hover:bg-blue-600 scale-100"

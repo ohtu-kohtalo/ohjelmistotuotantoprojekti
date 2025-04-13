@@ -67,46 +67,56 @@ const InitialDistribution = ({ data = [] }) => {
   };
 
   return (
-    <div id="initialDistribution" className="card active">
-      <h3 className="card-header">Initial demographic distributions</h3>
-      <div className="plot-area">
-        <div className="variable-buttons">
-          <button
-            className={`variable-button ${selectedX === "age" ? "active" : ""}`}
-            onClick={() => setSelectedX("age")}
-          >
-            Age
-          </button>
-          <button
-            className={`variable-button ${selectedX === "gender" ? "active" : ""}`}
-            onClick={() => setSelectedX("gender")}
-          >
-            Gender
-          </button>
-        </div>
-        <div className="initial-distribution-chart-container">
-          {cleanAgentData.length === 0 ? (
-            <p>[Graph placeholder]</p>
-          ) : (
-            chartType === "bar" && (
+    <div
+      id="initialDistribution"
+      className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 mx-auto"
+    >
+      <h3 className="text-2xl font-semibold mb-4">Initial demographic distributions</h3>
+
+      <div className="flex gap-4 mb-6">
+        <button
+          className={`variable-button px-4 py-2 rounded ${
+            selectedX === "age" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"
+          }`}
+          onClick={() => setSelectedX("age")}
+        >
+          Age
+        </button>
+        <button
+          className={`variable-button px-4 py-2 rounded ${
+            selectedX === "gender" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"
+          }`}
+          onClick={() => setSelectedX("gender")}
+        >
+          Gender
+        </button>
+      </div>
+
+      <div className="w-full mb-6">
+        {cleanAgentData.length === 0 ? (
+          <div className="w-full min-h-[300px] bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center">
+            <p className="text-gray-400 text-lg">[Graph placeholder]</p>
+          </div>
+        ) : (
+          chartType === "bar" && (
+            <div className="w-full overflow-x-auto">
               <StackedBarChart data={cleanAgentData} xAxis={selectedX} />
-            )
-          )}
-        </div>
-        <div className="summary-container">
-          <h4>Data Summary</h4>
-          <p>
-            <strong>Total Entries:</strong> {cleanAgentData.length}
-          </p>
-          <p>
-            <strong>Average Age:</strong>{" "}
-            {calculateAverage(cleanAgentData, "age")}
-          </p>
-          <p>
-            <strong>Gender Distribution:</strong>{" "}
-            {getGenderDistribution(cleanAgentData)}
-          </p>
-        </div>
+            </div>
+          )
+        )}
+      </div>
+
+      <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+        <h4 className="text-xl font-semibold mb-2">Data Summary</h4>
+        <p>
+          <strong>Total Entries:</strong> {cleanAgentData.length}
+        </p>
+        <p>
+          <strong>Average Age:</strong> {calculateAverage(cleanAgentData, "age")}
+        </p>
+        <p>
+          <strong>Gender Distribution:</strong> {getGenderDistribution(cleanAgentData)}
+        </p>
       </div>
     </div>
   );

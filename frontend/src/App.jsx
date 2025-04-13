@@ -190,10 +190,10 @@
 
 // The code below is transition to TailwindCSS
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import IndexPage from "./pages/IndexPage";
-import AddQuery from "./pages/AddQuery";
+import PresentPage from "./pages/PresentPage";
 import "./index.css";
 
 const App = () => {
@@ -254,7 +254,7 @@ const App = () => {
         <div>
           <Routes>
             <Route path="/" element={<IndexPage />} />
-            <Route path="/present" element={<AddQuery />} />
+            <Route path="/present" element={<PresentPage />} />
             {/* Add more routes here */}
           </Routes>
         </div>
