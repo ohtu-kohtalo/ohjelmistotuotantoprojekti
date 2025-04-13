@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import CsvUpload from "../components/CsvUpload";
 import LoadingIndicator from "../components/LoadingIndicator";
 import LikertChartContainer from "../components/LikertChartContainer";
-import InitialDistribution from "./InitialDistribution";
+import InitialDistribution from "../components/InitialDistribution";
 
 /**
  * PresentPage Component

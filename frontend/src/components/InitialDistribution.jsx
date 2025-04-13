@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import StackedBarChart from "../components/StackedBarChart";
+import StackedBarChart from "./StackedBarChart";
 
 /**
  * Component for displaying initial demographic distributions in a card layout.
