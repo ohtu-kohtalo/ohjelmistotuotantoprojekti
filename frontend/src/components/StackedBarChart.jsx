@@ -122,8 +122,8 @@ const StackedBarChart = ({ data, xAxis }) => {
 
     xAxisElement.selectAll("text")
       .attr("fill", "white")
-      .attr("font-size", "12px")
-      .attr("font-weight", "bold");
+      .classed("text-base", true);
+
 
     // X axis label (centered, 14px, bold, white)
     xAxisElement
@@ -131,7 +131,7 @@ const StackedBarChart = ({ data, xAxis }) => {
       .attr("x", width / 2)
       .attr("y", 50)
       .attr("text-anchor", "middle")
-      .attr("font-size", "14px")
+      .classed("text-lg", true)
       .attr("font-weight", "bold")
       .attr("fill", "white")
       .text(xAxis);
@@ -145,13 +145,13 @@ const StackedBarChart = ({ data, xAxis }) => {
 
     yAxisElement.selectAll("text").attr("fill", "white");
 
-    // Y axis label (rotated, centered, 20px, bold, white)
+    // Y axis label (rotated, centered, 18px, bold, white)
     yAxisElement
       .append("text")
       .attr("x", -height / 2)
       .attr("y", -45)
       .attr("text-anchor", "middle")
-      .attr("font-size", "14px")
+      .classed("text-lg", true)
       .attr("font-weight", "bold")
       .attr("fill", "white")
       .attr("transform", "rotate(-90)")
@@ -202,19 +202,6 @@ const StackedBarChart = ({ data, xAxis }) => {
           .attr("stroke-width", "1px")
           .attr("fill", colorScale(d.category));
       });
-
-    svg
-      .selectAll("text.bar-label")
-      .data(avgData)
-      .enter()
-      .append("text")
-      .attr("x", (d) => xScale(d.category) + xScale.bandwidth() / 2)
-      .attr("y", (d) => yScale(d.count) - 10)
-      .attr("text-anchor", "middle")
-      .attr("fill", "white")
-      .attr("font-size", "12px")
-      .attr("class", "bar-label")
-      .text((d) => d.count);
   }, [data, xAxis, dimensions]);
 
   return (
