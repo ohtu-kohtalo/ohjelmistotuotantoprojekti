@@ -1,8 +1,3 @@
-/* Uncomment the import below and comment out the ./styles/css-files to test if Tailwind-CSS is working */
-
-@import "tailwindcss";
-
-/*
 @import "./styles/base.css";
 @import "./styles/layout.css";
 @import "./styles/buttons.css";
@@ -11,6 +6,6 @@
 @import "./styles/pages.css";
 @import "./styles/charts.css";
 @import "./styles/forms.css";
-@import "./styles/animations.css"; */
+@import "./styles/animations.css";
 
 /* BASE-CSS FILE */

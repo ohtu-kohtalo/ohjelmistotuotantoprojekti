@@ -119,27 +119,20 @@ anything else.
             bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
-        # print("\nfuture scenario\n", future_scenario, flush=True)
-        if future_scenario == "default":
-            future_scenario = self.FUTURE_SCENARIO
-
         length_in_tokens = self.count_token_length(future_scenario)
+        print(f"Length of future scenario: {length_in_tokens} tokens", flush=True)
         if length_in_tokens > 10000:
             raise RuntimeError(
-                f"Future scenario was too long. It was {length_in_tokens} tokens. Maximum is 10000."
+                f"Future scenario was too long. It was {length_in_tokens} tokens."
             )
-        print(f"\nLength of the future scenario: {length_in_tokens} tokens", flush=True)
+        if future_scenario == "default":
+            future_scenario = self.FUTURE_SCENARIO
 
         # Get the latent variables in a list
         latent_variables = self._get_latent_variables(agents[0])
 
         prompt = self.create_prompt(agents, future_scenario, latent_variables)
-        # print("\nPrompt:\n", prompt, flush=True)
-
-        print(
-            f"Length of the prompt: {self.count_token_length(prompt)} tokens",
-            flush=True,
-        )
+        print("\nPrompt:\n", prompt, flush=True)
 
         try:
             response = self.__llm.get_response(prompt)
@@ -154,10 +147,9 @@ anything else.
                 response, len(agents), latent_variables
             )
         except Exception as exc:
-            msg = "Something went wrong while parsing the LLM's answer. "
-            msg += "Here are the first 200 characters of the LLM's response:\n"
-            msg += f"{response[0:200]}"
-            raise RuntimeError(msg) from exc
+            raise RuntimeError(
+                "Something went wrong while parsing the LLM's answer"
+            ) from exc
 
         # Delete old questions and the latent variables based on the previous future scenario
         self._delete_old_variables_and_questions(agents)

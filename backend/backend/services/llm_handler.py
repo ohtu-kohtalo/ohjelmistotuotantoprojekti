@@ -167,8 +167,7 @@ class LlmHandler:
                 self.create_prompt(agents, questions, future=True),
             ]
             responses = self.llm.get_parallel_responses(prompts)
-            # print("[DEBUG] Content of responses:", responses)
-            # print(f"Lenght of responses {len(responses)} ")
+            print("[DEBUG] Content of responses:", responses)
 
             # If response is a single string, split it manually into two parts
             if isinstance(responses, str):
@@ -221,7 +220,7 @@ class LlmHandler:
             return None
 
         lines = response.strip().split("\n")
-        # print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
+        print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
         return self.process_lines(lines, agents, questions)
 
     def process_lines(self, lines, agents, questions):
@@ -285,11 +284,11 @@ class LlmHandler:
                 else:
                     target[question].append(answer)
 
-            # print(
-            #     f"[DEBUG] Agent {i+1} {'future_' if future else ''}questions updated:",
-            #     target,
-            #     flush=True,
-            # )
+            print(
+                f"[DEBUG] Agent {i+1} {'future_' if future else ''}questions updated:",
+                target,
+                flush=True,
+            )
             new_agent_responses[f"Agent_{i+1}"] = responses
 
         return new_agent_responses

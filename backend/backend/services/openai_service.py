@@ -38,10 +38,7 @@ class OpenAI:
             )
 
             results = future.result()
-            # print(f"results in get_parallel_responses:\n{results}")
 
-            # What is the point of _format_response.
-            # Why not return the respones in the list `results`.
             return self._format_response(results)
         except Exception as e:
             return f"OpenAI Error: {e}"
