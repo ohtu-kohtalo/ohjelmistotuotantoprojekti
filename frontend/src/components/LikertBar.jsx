@@ -1,15 +1,31 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 const LikertBar = ({ data, futureData, question }) => {
   const svgRef = useRef();
+  const wrapperRef = useRef();
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (!data || data.length === 0) return;
+    const observer = new ResizeObserver((entries) => {
+      if (!entries || entries.length === 0) return;
+      const { width } = entries[0].contentRect;
+      setDimensions({ width, height: 400});
+    });
 
-    const width = 600;
-    const height = 350;
-    const margin = { top: 40, right: 80, bottom: 80, left: 30 };
+    if (wrapperRef.current) observer.observe(wrapperRef.current);
+
+    return () => {
+      if (wrapperRef.current) observer.unobserve(wrapperRef.current);
+    };
+  
+  }, []);
+
+  useEffect(() => {
+    if (!data || data.length === 0 || dimensions.width === 0) return;
+
+    const { width, height } = dimensions;
+    const margin = { top: 80, right: 80, bottom: 30, left: 30 };
 
     d3.select(svgRef.current).selectAll("*").remove();
 
@@ -23,10 +39,10 @@ const LikertBar = ({ data, futureData, question }) => {
 
     // Create SVG element
     const svg = d3
-      .select(svgRef.current)
-      .attr("width", width)
-      .attr("height", height)
-      .attr("class", "likert-bar-chart");
+    .select(svgRef.current)
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .classed("rounded-xl", true);
 
     // Define scales
     const xScale = d3
@@ -69,8 +85,8 @@ const LikertBar = ({ data, futureData, question }) => {
           .tickFormat(""),
       )
       .selectAll("line")
-      .attr("stroke", "#ddd")
-      .attr("stroke-dasharray", "3,3");
+      .attr("stroke", "#444")
+      .attr("stroke-dasharray", "4,4");
 
     // Add X axis with white tick labels
     const xAxisElement = svg
@@ -78,6 +94,10 @@ const LikertBar = ({ data, futureData, question }) => {
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(xScale))
       .attr("class", "axis");
+
+    xAxisElement.selectAll("text")
+      .attr("fill", "white")
+      .classed("text-base", true);
 
     // Add Y axis with white tick labels
     const yAxisElement = svg
@@ -92,8 +112,7 @@ const LikertBar = ({ data, futureData, question }) => {
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
+      .attr("class", "bg-slate-900 text-white text-sm px-3 py-2 rounded shadow-md absolute z-50")
       .style("visibility", "hidden");
 
     if (futureData && futureData.length > 0) {
@@ -227,6 +246,10 @@ const LikertBar = ({ data, futureData, question }) => {
         .attr("width", xScale.bandwidth())
         .attr("height", (d) => height - margin.bottom - yScale(d.value))
         .attr("fill", (d) => colorScale(d.label))
+        .attr("stroke", "#333")
+        .attr("stroke-width", "1px")
+        .attr("opacity", 0.9)
+        .style("cursor", "pointer")
         .on("mouseover", function (event, d) {
           d3.select(this)
             .transition()
@@ -258,7 +281,7 @@ const LikertBar = ({ data, futureData, question }) => {
     // Add chart title
     svg
       .append("text")
-      .attr("class", "likert-chart-title")
+      .attr("class", "text-xl font-semibold mb-4")
       .attr("x", width / 2)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
@@ -269,11 +292,11 @@ const LikertBar = ({ data, futureData, question }) => {
     return () => {
       tooltip.remove();
     };
-  }, [data, futureData, question]);
+  }, [data, futureData, question, dimensions]);
 
   return (
-    <div className="likert-bar-chart-container">
-      <svg ref={svgRef}></svg>
+    <div className="w-full overflow-x-auto" ref={wrapperRef}>
+      <svg ref={svgRef} className="w-full h-[400px]" />
     </div>
   );
 };

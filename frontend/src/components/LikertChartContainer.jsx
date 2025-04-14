@@ -11,18 +11,17 @@ import Statistics from "./StatisticsContainer";
  * - chartsData: Array of objects representing each question's current agent data.
  * - futureData: Array of objects representing future scenario data for each question.
  */
+
 const LikertChartContainer = ({
-  chartsData,
-  futureData,
-  submittedScenario,
+  chartsData = mockChartsData,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Tracks which chart/question is currently displayed
 
   // If no data is provided, show a placeholder message
   if (!chartsData || chartsData.length === 0) {
     return (
-      <div className="likert-chart-container-plot-area">
-        <p className="no-data-placeholder">[Graph placeholder]</p>
+      <div className="w-full min-h-[80vh] p-4 bg-gray-800 border-2 border-gray-600 rounded-lg shadow-lg">
+        <p className="text-center text-gray-400 text-lg mt-8">[Upload a CSV file to see Likert Scale charts]</p>
       </div>
     );
   }
@@ -42,42 +41,46 @@ const LikertChartContainer = ({
   };
 
   return (
-    <div className="likert-chart-container-plot-area">
+    <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 mx-auto h-full min-h-[500px]">
       {/* Renders the Likert bar chart for current data and optional future data */}
-      <LikertBar
-        data={chartsData[currentIndex].data}
-        futureData={futureData[currentIndex]?.data}
-        question={chartsData[currentIndex].question}
-      />
-
-      {submittedScenario.length > 0 && (
-        <div className="future-scenario-text-container">
-          <p className="future-scenario-text"></p>
-        </div>
-      )}
-      {/* Renders statistics like median, mode, and variation ratio */}
-      <div className="Statistics">
-        <Statistics
-          median={stats.median}
-          mode={stats.mode}
-          variationRatio={stats["variation ratio"]}
+      <div className="w-full mb-6 overflow-x-auto">
+        <LikertBar
+          data={chartsData[currentIndex].data}
+          question={chartsData[currentIndex].question}
         />
       </div>
 
       {/* Navigation buttons for cycling through charts */}
-      <div className="likert-button-container">
-        <button onClick={handlePrev} className="likert-button">
+      <div className="flex justify-center space-x-4 mt-8">
+        <button
+        onClick={handlePrev}
+        className="text-white text-2xl"
+        >
           ⬅
         </button>
-        <button onClick={handleNext} className="likert-button">
+        <button onClick={handleNext}
+        className="text-white text-2xl"
+        >
           ➡
         </button>
       </div>
 
       {/* Info text showing the current chart number out of total */}
-      <p className="likert-chart-info">
+      <p className="text-center text-gray-300 mt-4">
         Chart {currentIndex + 1} / {chartsData.length}
       </p>
+
+      {/* Renders statistics like median, mode, and variation ratio */}
+      <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 mt-8">
+        <h4 className="text-xl font-semibold mb-2">Statistics</h4>
+        <div className="Statistics">
+          <Statistics
+            median={stats.median}
+            mode={stats.mode}
+            variationRatio={stats["variation ratio"]}
+          />
+        </div>
+      </div>
     </div>
   );
 };
