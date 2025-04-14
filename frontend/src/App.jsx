@@ -190,7 +190,7 @@
 
 // The code below is transition to TailwindCSS
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import IndexPage from "./pages/IndexPage";
 import PresentPage from "./pages/PresentPage";
@@ -201,66 +201,87 @@ const App = () => {
 
   return (
     <Router>
-      {/* Main */}
       <div className="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
-        {/* Global Hover Modal */}
-        <div
-          className="fixed top-4 right-4 z-50"
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-        >
-          {/* Icon Button */}
-          <div
-            role="button"
-            aria-label="Help"
-            tabIndex={0}
-            className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-lg cursor-pointer outline-none"
-          >
-            <span className="text-xl font-bold">?</span>
-          </div>
-
-          {/* Floating Info Panel */}
-          {hovering && (
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="help-modal-title"
-              className="absolute right-0 mt-3 w-[90vw] max-w-screen-lg bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto"
+        {/* Fixed Header */}
+        <header className="fixed w-full h-16 bg-gray-900 flex items-center justify-between px-4 sm:px-8 z-50">
+          {/* Logo */}
+          <div className="flex items-center space-x-2">
+            <a
+              href="https://www.vttresearch.com/fi"
+              target="_blank"
+              // This is a security measure
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2"
             >
-              <div className="flex justify-between items-start mb-4">
-                <h2 id="help-modal-title" className="text-2xl font-semibold">
-                  About Future Customer: A Simulator and Prediction Tool
-                </h2>
-                <button
-                  onClick={() => setHovering(false)}
-                  aria-label="Close Help"
-                  className="text-white text-xl font-bold hover:text-red-400"
-                >
-                  ×
-                </button>
-              </div>
-              <p className="text-sm leading-relaxed">
-                Future Customer is a simulator and prediction tool designed to
-                help businesses understand and predict customer behavior. It
-                uses LLM to analyze customer data and provide insights that can
-                help businesses make more informed decisions.
-              </p>
-            </div>
-          )}
-        </div>
-        {/* Global Hover Modal End */}
+              <img
+                src="/src/assets/vtt_logo.png"
+                alt="VTT Logo"
+                className="h-10 w-auto object-contain"
+              />
+            </a>
+          </div>
+          {/* Logo End */}
 
-        {/* Page Content */}
+          {/* Help Icon */}
+          <div
+            className="relative"
+            onMouseEnter={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+          >
+            <div
+              role="button"
+              aria-label="Help"
+              tabIndex={0}
+              className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-lg cursor-pointer outline-none text-xl font-bold"
+            >
+              ?
+            </div>
+            {/* Help Icon End*/}
+
+            {/* Floating Modal */}
+            {hovering && (
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="help-modal-title"
+                className="absolute right-0 mt-3 w-[90vw] max-w-screen-lg bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto z-50"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h2 id="help-modal-title" className="text-2xl font-semibold">
+                    About Future Customer: A Simulator and Prediction Tool
+                  </h2>
+                  <button
+                    onClick={() => setHovering(false)}
+                    aria-label="Close Help"
+                    className="text-white text-xl font-bold hover:text-red-400"
+                  >
+                    ×
+                  </button>
+                </div>
+                <p className="text-sm leading-relaxed">
+                  This is a software development project for VTT by a team of
+                  students at Helsinki University. The program can be used to
+                  help predict consumer behaviour by creating agents based on
+                  historical data and simulating their answers with LLMs. Users
+                  can query agents and receive Likert scale chart responses, or
+                  export results as CSV.
+                </p>
+              </div>
+            )}
+            {/* Floating Modal End*/}
+          </div>
+        </header>
+        {/* Header End */}
+
+        {/* Main Content */}
         <div>
           <Routes>
             <Route path="/" element={<IndexPage />} />
             <Route path="/present" element={<PresentPage />} />
-            {/* Add more routes here */}
           </Routes>
         </div>
-        {/* Page Content End */}
       </div>
-      {/* Main End */}
+      {/* Main Content End */}
     </Router>
   );
 };
