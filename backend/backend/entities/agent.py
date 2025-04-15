@@ -11,7 +11,7 @@ class Agent:
 
     _id_counter = 0  # Class variable to keep track of the last assigned ID
 
-    def __init__(self, info: dict):
+    def __init__(self, info: dict) -> None:
         """Creates an agent with automatically assigned ID.
 
         Args:
@@ -54,14 +54,14 @@ class Agent:
         """Returns all of the questions and answers."""
         return self.__info
 
-    def delete_future_info_and_questions(self):
+    def delete_future_info_and_questions(self) -> None:
         """Overwrites the `future_info`, `questions` and future `future_questions` attributes
         with empty dictionaries. Returns `None`."""
         self.__future_info = {"Answers": {}}
         self.questions = {}
         self.future_questions = {}
 
-    def save_new_future_latent_variables(self, new_variables: dict):
+    def save_new_future_latent_variables(self, new_variables: dict) -> None:
         """Save new future latent variables into the __future_into argument.
 
         Args:

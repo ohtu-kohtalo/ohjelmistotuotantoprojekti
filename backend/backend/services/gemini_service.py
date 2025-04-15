@@ -1,5 +1,6 @@
 import asyncio
 import threading
+from typing import List
 
 
 class Gemini:
@@ -10,13 +11,13 @@ class Gemini:
         ai_model: API for Gemini.
     """
 
-    def __init__(self, ai_model):
+    def __init__(self, ai_model) -> None:
         self.__ai_model = ai_model
         self.loop = asyncio.new_event_loop()  # Create a persistent event loop
         self.thread = threading.Thread(target=self._start_event_loop, daemon=True)
         self.thread.start()  # Start the loop in a separate thread
 
-    def _start_event_loop(self):
+    def _start_event_loop(self) -> None:
         """Runs the event loop in a separate thread."""
         asyncio.set_event_loop(self.loop)
         self.loop.run_forever()  # Keep the loop running
@@ -30,7 +31,7 @@ class Gemini:
         response = self.__ai_model.generate_content(prompt)
         return response.text
 
-    def get_parallel_responses(self, prompts: list[str]) -> str:
+    def get_parallel_responses(self, prompts: List[str]) -> str:
         """Send multiple prompts to Gemini in parallel.
 
         Args:
@@ -53,19 +54,19 @@ class Gemini:
 
         return response
 
-    async def _create_responses(self, prompts):
+    async def _create_responses(self, prompts: List[str]) -> List[str]:
         """Create the asyncio tasks and run them concurrently."""
         tasks = [self._generate_answer(prompt) for prompt in prompts]
         results = await asyncio.gather(*tasks)
 
         return results
 
-    async def _generate_answer(self, prompt):
+    async def _generate_answer(self, prompt) -> str:
         """Send a single text prompt to the API and return the response."""
         response = await self.__ai_model.generate_content_async(prompt)
         return response.text
 
-    def _format_response(self, responses: list[str]) -> str:
+    def _format_response(self, responses: List[str]) -> str:
         """Turns the response to markdown text and returns it."""
         text = ""
         for response in responses:

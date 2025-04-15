@@ -1,5 +1,6 @@
 from ..llm_config import get_llm_connection
 from token_count import TokenCount
+from typing import List, Dict, Any
 
 
 class AgentTransformer:
@@ -98,7 +99,7 @@ Give the new latent values for all of the respondents like in the previous examp
 anything else.
 """
 
-    def __init__(self, llm=get_llm_connection()):
+    def __init__(self, llm=get_llm_connection()) -> None:
         """Initializes the LLM connection.
 
         Args:
@@ -180,7 +181,7 @@ anything else.
 
         return prompt
 
-    def _get_latent_variables(self, agent) -> list:
+    def _get_latent_variables(self, agent) -> List[str]:
         """
         Takes an agent as an argument, searches its latent variables and returns the latent
         variable names in a list.
@@ -198,7 +199,7 @@ anything else.
 
         return latent_variables
 
-    def _add_agent_variable_values(self, agents, latent_variables):
+    def _add_agent_variable_values(self, agents, latent_variables) -> str:
         """
         Lists the latent variable values of the agents.
 
@@ -228,7 +229,7 @@ anything else.
 
     def _parse_response(
         self, response: str, number_of_agents: int, latent_variables: list
-    ) -> dict:
+    ) -> Dict[int, Dict[str, Any]]:
         """Parses the future transformation response by the LLM and stores the new latent variables
         into a dictionary.
 
@@ -326,20 +327,20 @@ anything else.
 
         return only_empty_strings
 
-    def future_variables_exist(self, agents):
+    def future_variables_exist(self, agents) -> bool:
         """Checks if the first agent in the list has future latent variable values already set."""
         if agents:
             return bool(agents[0].get_agent_future_info().get("Answers"))
         return False
 
-    def _delete_old_variables_and_questions(self, agents: list):
+    def _delete_old_variables_and_questions(self, agents: list) -> None:
         """Deletes the all questions, anwers and future latent variables from the Agent-objects.
         Only the original latent variables and demographic information are left intact.
         """
         for agent in agents:
             agent.delete_future_info_and_questions()
 
-    def _save_new_variables_to_agents(self, new_latent_variables, agents):
+    def _save_new_variables_to_agents(self, new_latent_variables, agents) -> None:
         """Saves the created latent variables into the Agent-objects.
 
         Args:
