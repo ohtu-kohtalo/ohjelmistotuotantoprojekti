@@ -2,9 +2,10 @@ import os
 import google.generativeai as genai
 from .services.gemini_service import Gemini
 from .services.openai_service import OpenAI
+from typing import Union
 
 
-def get_llm_connection():
+def get_llm_connection() -> Union[Gemini, OpenAI]:
     llm_provider = os.getenv("LLM_PROVIDER")
 
     if llm_provider == "gemini":

@@ -3,8 +3,9 @@ import io
 import csv
 import zipfile
 import pandas as pd
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
+from typing import Tuple
 
 from .key_config import (
     CSV_FILE_PATH,
@@ -30,7 +31,7 @@ agents = []
 
 
 @app.route("/", methods=["GET"])
-def create_agents():
+def create_agents() -> Tuple[Response, int]:
     """
     Creates 50 agents based on the CSV-data in backend.
 
@@ -117,7 +118,7 @@ def create_agents():
 
 
 @app.route("/receive_user_csv", methods=["POST"])
-def receive_user_csv():
+def receive_user_csv() -> Tuple[Response, int]:
     """Receives the user's questions and returns answer distributions and statistics
     for those questions.
 
@@ -195,7 +196,7 @@ def receive_user_csv():
 
 
 @app.route("/receive_future_scenario", methods=["POST"])
-def receive_future_scenario():
+def receive_future_scenario() -> Tuple[Response, int]:
     """Receives the user's future scenario. Transforms the agents to the future and
     saves the new agent variables into the agent object
 
@@ -246,7 +247,7 @@ def receive_future_scenario():
 
 
 @app.route("/download_agent_response_csv", methods=["POST"])
-def download_agent_response_csv():
+def download_agent_response_csv() -> Response:
     """
     Endpoint to generate and download a CSV files containing current and future agent responses
     along with the agent's age and gender.
@@ -371,7 +372,7 @@ def download_agent_response_csv():
 
 
 @app.route("/health", methods=["GET"])
-def health_check():
+def health_check() -> Tuple[str, int]:
     return "OK", 200
 
 
