@@ -11,7 +11,7 @@ aclient = GritAsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
 class OpenAI:
-    def __init__(self, openai_api_key=None, model="gpt-4o") -> None:
+    def __init__(self, openai_api_key: str = None, model: str = "gpt-4o") -> None:
         self.openai_api_key = openai_api_key or OPENAI_API_KEY
         self.model = model
 
@@ -23,7 +23,7 @@ class OpenAI:
         asyncio.set_event_loop(self.loop)
         self.loop.run_forever()
 
-    def get_response(self, prompt) -> str:
+    def get_response(self, prompt: str) -> str:
         try:
             completion = client.chat.completions.create(
                 model=self.model, messages=[{"role": "user", "content": prompt}]
@@ -32,7 +32,7 @@ class OpenAI:
         except Exception as e:
             return f"OpenAI Error: {e}"
 
-    def get_parallel_responses(self, prompts) -> str:
+    def get_parallel_responses(self, prompts: List[str]) -> str:
         try:
             future = asyncio.run_coroutine_threadsafe(
                 self._create_responses(prompts), self.loop
@@ -47,18 +47,18 @@ class OpenAI:
         except Exception as e:
             return f"OpenAI Error: {e}"
 
-    async def _create_responses(self, prompts) -> List[str]:
+    async def _create_responses(self, prompts: List[str]) -> List[str]:
         tasks = [self._generate_answer(prompt) for prompt in prompts]
         results = await asyncio.gather(*tasks)
         return results
 
-    async def _generate_answer(self, prompt) -> str:
+    async def _generate_answer(self, prompt: str) -> str:
         completion = await aclient.chat.completions.create(
             model=self.model, messages=[{"role": "user", "content": prompt}]
         )
         return completion.choices[0].message.content
 
-    def _format_response(self, responses) -> str:
+    def _format_response(self, responses: List[str]) -> str:
         text = ""
         for response in responses:
             text += "## Answer\n\n"

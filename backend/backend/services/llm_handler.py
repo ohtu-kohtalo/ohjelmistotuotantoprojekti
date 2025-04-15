@@ -1,7 +1,7 @@
 from ..llm_config import get_llm_connection
 from ..entities.agent import Agent
 from ..services.agent_transformer import AgentTransformer
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 
 class LlmHandler:
@@ -11,7 +11,7 @@ class LlmHandler:
 
         self.transformer = AgentTransformer()
 
-    def create_prompt(self, agents, questions, future=False) -> str:
+    def create_prompt(self, agents: List[Agent], questions: List[str], future: bool = False) -> str:
         """
         Creates a prompt for all agents and all questions.
 
@@ -71,7 +71,7 @@ class LlmHandler:
 
         return latent_variables
 
-    def add_latent_variables_to_prompt(self, latent_variables) -> str:
+    def add_latent_variables_to_prompt(self, latent_variables: List[str]) -> str:
         """
         Adds the list of latent variables to the prompt.
 
@@ -86,7 +86,7 @@ class LlmHandler:
             prompt += f"- {var_name}\n"
         return prompt
 
-    def add_agents_info(self, agents, latent_variables, future=False) -> str:
+    def add_agents_info(self, agents: List[Agent], latent_variables: List[str], future: bool = False) -> str:
         """
         Adds the agent-specific data to the prompt, including their latent variable values.
 
@@ -111,7 +111,7 @@ class LlmHandler:
             prompt += "\n"
         return prompt
 
-    def add_questions_and_instructions(self, questions) -> str:
+    def add_questions_and_instructions(self, questions: List[str]) -> str:
         """
         Adds the questions and response format instructions to the prompt.
 
@@ -156,7 +156,9 @@ class LlmHandler:
         )
         return prompt
 
-    def get_agents_responses(self, agents, questions) -> Dict[str, Dict[Any, Dict[str, int]]]:
+    def get_agents_responses(
+        self, agents: List[Agent], questions: List[str]
+    ) -> Optional[Dict[str, Dict[Any, Dict[str, int]]]]:
         """Retrieves and processes responses from a language model."""
 
         future_variables_exists = self.transformer.future_variables_exist(agents)
@@ -215,7 +217,9 @@ class LlmHandler:
             self.save_responses_to_agents(parsed, future=False)
             return {"original": parsed}
 
-    def parse_responses(self, response, agents, questions) -> Dict[Agent, Dict[str, int]]:
+    def parse_responses(
+        self, response: str, agents: List[Agent], questions: List[str]
+    ) -> Optional[Dict[Agent, Dict[str, int]]]:
         """Extracts and parses the responses from the LLM into structured data."""
         if not response:
             print("[ERROR] LLM returned an empty response!", flush=True)
@@ -225,7 +229,7 @@ class LlmHandler:
         # print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
         return self.process_lines(lines, agents, questions)
 
-    def process_lines(self, lines, agents, questions) -> Dict[Agent, Dict[str, int]]:
+    def process_lines(self, lines: List[str], agents: List[Agent], questions: List[str]) -> Dict[Agent, Dict[str, int]]:
         """Processes each line of the LLM's response, assigning each parsed line to the corresponding agent."""
         agent_responses = {}
         for i, line in enumerate(lines):
@@ -240,7 +244,7 @@ class LlmHandler:
                 agent_responses[agents[i]] = agent_response
         return agent_responses
 
-    def parse_line(self, line, index, questions) -> Dict[str, int]:
+    def parse_line(self, line: str, index: int, questions: List[str]) -> Dict[str, int]:
         """Parses an individual line from the LLM response and constructs a dictionary of answers."""
         if not line.startswith(f"Agent {index+1}:"):
             return None
@@ -264,7 +268,9 @@ class LlmHandler:
             )
             return None
 
-    def save_responses_to_agents(self, agent_responses, future=False) -> Dict[str, Dict[str, int]]:
+    def save_responses_to_agents(
+        self, agent_responses: Dict[Agent, Dict[str, int]], future: bool = False
+    ) -> Dict[str, Dict[str, int]]:
         """
         Stores the responses in each agent's `questions` or `future_questions` dictionary.
 

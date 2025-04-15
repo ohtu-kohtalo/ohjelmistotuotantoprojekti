@@ -1,6 +1,6 @@
 import asyncio
 import threading
-from typing import List
+from typing import List, Any
 
 
 class Gemini:
@@ -11,7 +11,7 @@ class Gemini:
         ai_model: API for Gemini.
     """
 
-    def __init__(self, ai_model) -> None:
+    def __init__(self, ai_model: Any) -> None:
         self.__ai_model = ai_model
         self.loop = asyncio.new_event_loop()  # Create a persistent event loop
         self.thread = threading.Thread(target=self._start_event_loop, daemon=True)
@@ -61,7 +61,7 @@ class Gemini:
 
         return results
 
-    async def _generate_answer(self, prompt) -> str:
+    async def _generate_answer(self, prompt: str) -> str:
         """Send a single text prompt to the API and return the response."""
         response = await self.__ai_model.generate_content_async(prompt)
         return response.text
