@@ -15,7 +15,7 @@ const IndexPage = () => {
   const isValid = !isNaN(count) && count >= 1 && count <= 100;
 
   const navigate = useNavigate();
-  
+
   // Reset function to clear all states
   const handleReset = () => {
     setAgents([]);
@@ -177,7 +177,7 @@ const IndexPage = () => {
           {/* Present & Future Buttons */}
           <div className="w-full max-w-4xl mx-auto flex flex-wrap justify-between gap-4 items-center px-4">
             <button
-              onClick={() => navigate("/present", {state: { agents } })}
+              onClick={() => navigate("/present", { state: { agents } })}
               className={`${
                 agentsCreated
                   ? "bg-blue-500 hover:bg-blue-600 scale-100"
@@ -187,6 +187,7 @@ const IndexPage = () => {
               📊 Present
             </button>
             <button
+              onClick={() => navigate("/future", { state: { agents } })}
               className={`${
                 agentsCreated
                   ? "bg-purple-500 hover:bg-purple-700 scale-100"
