@@ -199,6 +199,68 @@ import "./index.css";
 const App = () => {
   const [hovering, setHovering] = useState(false);
 
+  // Initial states for response and error handling
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
+
+  // Initial state for distribution
+  const [distribution, setDistribution] = useState([]);
+  
+  // State for checking whether csv has been uploaded
+  const [csvUploaded, setCsvUploaded] = useState(false);
+
+  /**
+   * Handles the submission of a CSV file containing questions to the backend.
+   *
+   * This function sends the provided questions to the backend as a JSON payload,
+   * waits for the response, and updates the state accordingly.
+   *
+   * @param {Array} csvQuestions - An array of questions extracted from the CSV file.
+   * @returns {Promise<void>} - A promise that resolves once the submission is processed.
+   */
+  const handleCsvSubmit = async (csvQuestions) => {
+    setIsLoading(true);
+    try {
+      const BACKEND_URL =
+        import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+      const response = await fetch(`${BACKEND_URL}/receive_user_csv`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questions: csvQuestions,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+
+      showMessage("success", "CSV submitted successfully! 📂👍");
+      const data = await response.json();
+
+      console.log("[DEBUG] Reached here #1");
+
+      setDistribution(data.distributions);
+
+      if (data.distributions.length > 0) {
+        console.log("[DEBUG] Reached here #2, with Distribution!");
+      }
+
+      setCsvUploaded(true);
+    } catch (error) {
+      console.error("CSV submission error:", error);
+      showMessage("error", "⚠️ Could not submit CSV data");
+      setCsvUploaded(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Helper function to display error messages
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
+  };
+
   return (
     <Router>
       <div className="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
@@ -277,7 +339,14 @@ const App = () => {
         <div>
           <Routes>
             <Route path="/" element={<IndexPage />} />
-            <Route path="/present" element={<PresentPage />} />
+            <Route path="/present" element={
+              <PresentPage
+              handleCsvSubmit={handleCsvSubmit}
+              isLoading={isLoading}
+              response={distribution}
+              setCsvUploaded={setCsvUploaded}
+              showMessage={showMessage}
+            />} />
           </Routes>
         </div>
       </div>

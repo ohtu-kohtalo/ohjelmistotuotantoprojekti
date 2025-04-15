@@ -12,9 +12,7 @@ import Statistics from "./StatisticsContainer";
  * - futureData: Array of objects representing future scenario data for each question.
  */
 
-const LikertChartContainer = ({
-  chartsData = mockChartsData,
-}) => {
+const LikertChartContainer = ({chartsData}) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Tracks which chart/question is currently displayed
 
   // If no data is provided, show a placeholder message
