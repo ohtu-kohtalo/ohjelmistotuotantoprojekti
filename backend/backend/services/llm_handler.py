@@ -11,7 +11,9 @@ class LlmHandler:
 
         self.transformer = AgentTransformer()
 
-    def create_prompt(self, agents: List[Agent], questions: List[str], future: bool = False) -> str:
+    def create_prompt(
+        self, agents: List[Agent], questions: List[str], future: bool = False
+    ) -> str:
         """
         Creates a prompt for all agents and all questions.
 
@@ -86,7 +88,9 @@ class LlmHandler:
             prompt += f"- {var_name}\n"
         return prompt
 
-    def add_agents_info(self, agents: List[Agent], latent_variables: List[str], future: bool = False) -> str:
+    def add_agents_info(
+        self, agents: List[Agent], latent_variables: List[str], future: bool = False
+    ) -> str:
         """
         Adds the agent-specific data to the prompt, including their latent variable values.
 
@@ -228,7 +232,9 @@ class LlmHandler:
         print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
         return self.process_lines(lines, agents, questions)
 
-    def process_lines(self, lines: List[str], agents: List[Agent], questions: List[str]) -> Dict[Agent, Dict[str, int]]:
+    def process_lines(
+        self, lines: List[str], agents: List[Agent], questions: List[str]
+    ) -> Dict[Agent, Dict[str, int]]:
         """Processes each line of the LLM's response, assigning each parsed line to the corresponding agent."""
         agent_responses = {}
         for i, line in enumerate(lines):
