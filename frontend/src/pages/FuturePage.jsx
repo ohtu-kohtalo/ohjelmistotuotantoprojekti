@@ -1,21 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import InitialDistribution from "../components/InitialDistribution";
 import LikertChartContainer from "../components/LikertChartContainer";
+import CsvUpload from "../components/CsvUpload";
 
-const FuturePage = () => {
+const FuturePage = ({
+  handleCsvSubmit,
+  isLoading,
+  showMessage,
+  response,
+  futureResponse,
+  resetResponse,
+  setCsvUploaded,
+  submittedScenario, // ✅ Passed down to persist across routes
+  setSubmittedScenario, // ✅ Setter passed down from parent (App)
+}) => {
   const [showHelp, setShowHelp] = useState(false);
+  const [csvLoaded, setCsvLoaded] = useState(false);
+  const [futureScenario, setFutureScenario] = useState(""); // For input field
+  const [tempMessage, setTempMessage] = useState("");
+  const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
+  const tempMessageTimeout = useRef(null);
+  const location = useLocation();
+  const agents = location.state?.agents ?? [];
   // Using mockData for now!
   // const { agents } = location.state || {};
 
-  // MOCK DATA:
-  const mockAgents = [
-    { age: 25, gender: "Male" },
-    { age: 22, gender: "Female" },
-    { age: 21, gender: "Male" },
-    { age: 19, gender: "Female" },
-    { age: 17, gender: "Male" },
-  ];
+  const handleCsvSuccess = (message) => {
+    showMessage("success", message);
+    setCsvLoaded(true);
+  };
+
+  const handleCsvError = (errorMessage) => {
+    showMessage("error", errorMessage);
+    setCsvLoaded(false);
+  };
 
   return (
     <div className="min-h-screen w-full bg-gray-900 text-white px-4 py-8 flex flex-col items-center space-y-12">
@@ -31,7 +50,7 @@ const FuturePage = () => {
           <h2 className="text-lg font-medium mb-4 text-gray-300 text-center">
             Demographic Distribution
           </h2>
-          <InitialDistribution data={mockAgents} />
+          <InitialDistribution data={agents} />
         </div>
 
         {/* Likert Chart */}
@@ -39,16 +58,25 @@ const FuturePage = () => {
           <h2 className="text-lg font-medium mb-4 text-gray-300 text-center">
             Answers to Future Scenario
           </h2>
-          <LikertChartContainer chartsData={[]} />
+          <LikertChartContainer
+            chartsData={response || []}
+            futureData={futureResponse || []}
+            submittedScenario={submittedScenario || ""}
+          />
         </div>
       </div>
       {/* Chart Section End */}
 
       {/* Upload / Download Controls + ?-Icon */}
       <div className="flex flex-col items-center space-y-4 mt-8">
-        <button className="w-40 bg-gray-800 cursor-pointer hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg shadow-md transition text-center">
+        {/* <button className="w-40 bg-gray-800 cursor-pointer hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg shadow-md transition text-center">
           Upload
-        </button>
+        </button> */}
+        <CsvUpload
+          onCsvError={handleCsvError}
+          onCsvSuccess={handleCsvSuccess}
+          handleCsvSubmit={handleCsvSubmit}
+        />
         <button className="w-40 bg-gray-800 cursor-pointer hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg shadow-md transition text-center">
           Download
         </button>

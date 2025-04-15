@@ -190,7 +190,7 @@
 
 // The code below is transition to TailwindCSS
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import IndexPage from "./pages/IndexPage";
 import PresentPage from "./pages/PresentPage";
@@ -200,12 +200,15 @@ import "./index.css";
 const App = () => {
   const [hovering, setHovering] = useState(false);
 
-  // Initial states for response and error handling
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  // Initial state for distribution
+  // Initial state for distributions + scenario
   const [distribution, setDistribution] = useState([]);
+  const [futureDistribution, setFutureDistribution] = useState([]);
+  const [submittedScenario, setSubmittedScenario] = useState("");
+
+  // Initial states for response and error handling
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const messageTimeoutRef = useRef(null);
   
   // State for checking whether csv has been uploaded
   const [csvUploaded, setCsvUploaded] = useState(false);
@@ -244,7 +247,7 @@ const App = () => {
       setDistribution(data.distributions);
 
       if (data.distributions.length > 0) {
-        console.log("[DEBUG] Reached here #2, with Distribution!");
+        console.log("[DEBUG] Reached here #2, with Future distribution!");
       }
 
       setCsvUploaded(true);
@@ -260,6 +263,16 @@ const App = () => {
   // Helper function to display error messages
   const showMessage = (type, text) => {
     setMessage({ type, text });
+
+    // Clear any existing timeout before setting a new one
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current);
+    }
+
+    messageTimeoutRef.current = setTimeout(() => {
+      setMessage({ type: "", text: "" });
+      messageTimeoutRef.current = null; // Reset ref after clearing error
+    }, 5000);
   };
 
   return (
@@ -347,6 +360,17 @@ const App = () => {
               response={distribution}
               setCsvUploaded={setCsvUploaded}
               showMessage={showMessage}
+            />} />
+            <Route path="/future" element={
+              <FuturePage
+              handleCsvSubmit={handleCsvSubmit}
+              isLoading={isLoading}
+              response={distribution}
+              futureResponse={futureDistribution}
+              showMessage={showMessage}
+              setCsvUploaded={setCsvUploaded}
+              submittedScenario={submittedScenario}
+              setSubmittedScenario={setSubmittedScenario}              
             />} />
           </Routes>
         </div>
