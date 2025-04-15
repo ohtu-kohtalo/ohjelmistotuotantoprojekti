@@ -49,7 +49,7 @@ const PresentPage = ({
 
   return (
     <div>
-    <div className="flex w-full gap-4">
+    <div className="flex w-full gap-4 mt-20">
       {/* Left section for Initial Distribution */}
       <div className="flex-1">
         <InitialDistribution data={agents} />
@@ -58,6 +58,13 @@ const PresentPage = ({
       {/* Right section for LikertChartContainer and CSV Upload */}
       <div className="flex-1">
         <LikertChartContainer chartsData={response || []} />
+        <div className="mt-4">
+      <CsvUpload
+        onCsvError={handleCsvError}
+        onCsvSuccess={handleCsvSuccess}
+        handleCsvSubmit={handleCsvSubmit}
+      />
+    </div>
       </div>
 
       {/* Overlay Loading Indicators */}
@@ -66,17 +73,6 @@ const PresentPage = ({
           <LoadingIndicator />
         </div>
       )}
-    </div>
-    <div className="mt-5">
-      <p className="text-lg mt-12 max-w-2xl mx-auto leading-relaxed">
-        Upload a CSV file with questions on it. Correct format for the file
-        is one question per row in the first column.
-      </p>
-      <CsvUpload
-        onCsvError={handleCsvError}
-        onCsvSuccess={handleCsvSuccess}
-        handleCsvSubmit={handleCsvSubmit}
-      />
     </div>
     </div>
   );

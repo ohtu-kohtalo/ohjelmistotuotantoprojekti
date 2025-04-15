@@ -74,17 +74,27 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
   };
 
   return (
-    <div className="csv-upload-file-container">
-      <div className="csv-upload-file">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".csv"
-          id="csvFileInput"
-          onChange={handleFileChange}
-        />
-      </div>
-    </div>
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        id="csvFileInput"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+      <button
+        onClick={handleButtonClick}
+        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 transition-colors rounded-md font-medium"
+      >
+        Choose CSV File
+      </button>
+      {fileName && (
+        <p className="mt-2 text-sm text-gray-400">
+          Selected file: <span className="font-medium">{fileName}</span>
+        </p>
+      )}
+    </>
   );
 };
 

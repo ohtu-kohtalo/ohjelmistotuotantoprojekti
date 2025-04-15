@@ -21,7 +21,8 @@ const LikertChartContainer = ({
   if (!chartsData || chartsData.length === 0) {
     return (
       <div className="w-full min-h-[80vh] p-4 bg-gray-800 border-2 border-gray-600 rounded-lg shadow-lg">
-        <p className="text-center text-gray-400 text-lg mt-8">[Upload a CSV file to see Likert Scale charts]</p>
+        <p className="text-center text-gray-400 text-lg mt-8">Choose and upload a CSV file with questions on it to see Likert Scale charts.<br />
+          Correct format for the file is one question per row in the first column.</p>
       </div>
     );
   }
