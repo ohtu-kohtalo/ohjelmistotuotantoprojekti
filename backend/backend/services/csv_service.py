@@ -1,5 +1,6 @@
 from typing import List
 
+
 def extract_questions_from_csv(data) -> List[str]:
     """
     Extracts and returns questions from the uploaded CSV data.

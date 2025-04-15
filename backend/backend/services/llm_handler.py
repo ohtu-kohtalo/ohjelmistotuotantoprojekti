@@ -156,7 +156,9 @@ class LlmHandler:
         )
         return prompt
 
-    def get_agents_responses(self, agents, questions) -> Dict[str, Dict[Any, Dict[str, int]]]:
+    def get_agents_responses(
+        self, agents, questions
+    ) -> Dict[str, Dict[Any, Dict[str, int]]]:
         """Retrieves and processes responses from a language model."""
 
         future_variables_exists = self.transformer.future_variables_exist(agents)
@@ -214,7 +216,9 @@ class LlmHandler:
             self.save_responses_to_agents(parsed, future=False)
             return {"original": parsed}
 
-    def parse_responses(self, response, agents, questions) -> Dict[Agent, Dict[str, int]]:
+    def parse_responses(
+        self, response, agents, questions
+    ) -> Dict[Agent, Dict[str, int]]:
         """Extracts and parses the responses from the LLM into structured data."""
         if not response:
             print("[ERROR] LLM returned an empty response!", flush=True)
@@ -263,7 +267,9 @@ class LlmHandler:
             )
             return None
 
-    def save_responses_to_agents(self, agent_responses, future=False) -> Dict[str, Dict[str, int]]:
+    def save_responses_to_agents(
+        self, agent_responses, future=False
+    ) -> Dict[str, Dict[str, int]]:
         """
         Stores the responses in each agent's `questions` or `future_questions` dictionary.
 

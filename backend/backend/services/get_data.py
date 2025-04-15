@@ -7,7 +7,9 @@ class GetData:
     GetData class provides methods to manipulate agents answer data.
     """
 
-    def get_all_distributions(self, agents: list, index=0) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    def get_all_distributions(
+        self, agents: list, index=0
+    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
         Returns both current and future distributions for a list of agents.
 
@@ -27,7 +29,9 @@ class GetData:
 
         return current, future
 
-    def get_answer_distributions(self, index, agents: list, future=False) -> List[Dict[str, Any]]:
+    def get_answer_distributions(
+        self, index, agents: list, future=False
+    ) -> List[Dict[str, Any]]:
         """Return the answer distributions
 
         Args:
