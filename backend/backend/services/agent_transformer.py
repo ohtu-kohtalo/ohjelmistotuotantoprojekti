@@ -1,6 +1,7 @@
 from ..llm_config import get_llm_connection
 from token_count import TokenCount
 from typing import List, Dict, Any
+from ..entities.agent import Agent
 
 
 class AgentTransformer:
@@ -99,14 +100,14 @@ Give the new latent values for all of the respondents like in the previous examp
 anything else.
 """
 
-    def __init__(self, llm=get_llm_connection()) -> None:
+    def __init__(self, llm: Any = get_llm_connection()) -> None:
         """Initializes the LLM connection.
 
         Args:
             llm: The LLM model. By default uses the model defined in the .env file."""
         self.__llm = llm
 
-    def transform_agents_to_future(self, agents: list, future_scenario: str) -> bool:
+    def transform_agents_to_future(self, agents: List[Agent], future_scenario: str) -> bool:
         """Transforms agents to future. Takes a future scenario and a list of agent-objects as
         arguments. Then asks an LLM to create new info variables for the agents based on the future
         scenario and the original info variables of the agents. The new info varibles are then
@@ -159,7 +160,7 @@ anything else.
         return True
 
     def create_prompt(
-        self, agents: list, future_scenario: str, latent_variables: list
+        self, agents: List[Agent], future_scenario: str, latent_variables: List[str]
     ) -> str:
         """Creates a prompt that will ask the LLM to transform the agents into the future.
 
@@ -181,7 +182,7 @@ anything else.
 
         return prompt
 
-    def _get_latent_variables(self, agent) -> List[str]:
+    def _get_latent_variables(self, agent: Agent) -> List[str]:
         """
         Takes an agent as an argument, searches its latent variables and returns the latent
         variable names in a list.
@@ -199,7 +200,7 @@ anything else.
 
         return latent_variables
 
-    def _add_agent_variable_values(self, agents, latent_variables) -> str:
+    def _add_agent_variable_values(self, agents: List[Agent], latent_variables: List[str]) -> str:
         """
         Lists the latent variable values of the agents.
 
@@ -228,7 +229,7 @@ anything else.
         return prompt
 
     def _parse_response(
-        self, response: str, number_of_agents: int, latent_variables: list
+        self, response: str, number_of_agents: int, latent_variables: List[str]
     ) -> Dict[int, Dict[str, Any]]:
         """Parses the future transformation response by the LLM and stores the new latent variables
         into a dictionary.
@@ -316,7 +317,7 @@ anything else.
 
         return new_latent_values
 
-    def _only_empty_strings_in_a_list(self, list_to_check: list) -> bool:
+    def _only_empty_strings_in_a_list(self, list_to_check: List[str]) -> bool:
         """Checks whether a list contains only empty string. Returns True if it does and False
         otherwise."""
         only_empty_strings = True
@@ -327,20 +328,20 @@ anything else.
 
         return only_empty_strings
 
-    def future_variables_exist(self, agents) -> bool:
+    def future_variables_exist(self, agents: List[Agent]) -> bool:
         """Checks if the first agent in the list has future latent variable values already set."""
         if agents:
             return bool(agents[0].get_agent_future_info().get("Answers"))
         return False
 
-    def _delete_old_variables_and_questions(self, agents: list) -> None:
+    def _delete_old_variables_and_questions(self, agents: List[Agent]) -> None:
         """Deletes the all questions, anwers and future latent variables from the Agent-objects.
         Only the original latent variables and demographic information are left intact.
         """
         for agent in agents:
             agent.delete_future_info_and_questions()
 
-    def _save_new_variables_to_agents(self, new_latent_variables, agents) -> None:
+    def _save_new_variables_to_agents(self, new_latent_variables: Dict[int, Dict[str, Any]], agents: List[Agent]) -> None:
         """Saves the created latent variables into the Agent-objects.
 
         Args:

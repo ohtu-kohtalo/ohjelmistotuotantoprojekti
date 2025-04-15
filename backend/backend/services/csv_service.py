@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Dict, Any
 
 
-def extract_questions_from_csv(data) -> List[str]:
+def extract_questions_from_csv(data: Dict[str, Any]) -> List[str]:
     """
     Extracts and returns questions from the uploaded CSV data.
 
