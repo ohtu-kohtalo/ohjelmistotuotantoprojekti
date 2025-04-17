@@ -71,7 +71,7 @@ const InitialDistribution = ({ data = [] }) => {
       id="initialDistribution"
       className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 w-full"
     >
-      <h3 className="text-2xl font-semibold mb-4">
+      <h3 className="text-2xl font-semibold mb-4 text-center">
         Initial demographic distributions
       </h3>
 
@@ -112,17 +112,21 @@ const InitialDistribution = ({ data = [] }) => {
         )}
       </div>
 
-      <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-        <h4 className="text-xl font-semibold mb-2">Data Summary</h4>
+      <div className="mt-6 ml-[60px] w-fit text-gray-200 text-sm sm:text-base leading-relaxed space-y-1">
+        <h4 className="text-xl sm:text-xl md:text-2xl  lg:text-3xl font-semibold tracking-tight mb-3 underline">
+          Summary
+        </h4>
+
         <p>
-          <strong>Total Entries:</strong> {cleanAgentData.length}
+          <strong>Total Entries:</strong>&nbsp;
+          {cleanAgentData.length}
         </p>
         <p>
-          <strong>Average Age:</strong>{" "}
+          <strong>Average Age:</strong>&nbsp;
           {calculateAverage(cleanAgentData, "age")}
         </p>
         <p>
-          <strong>Gender Distribution:</strong>{" "}
+          <strong>Gender Distribution:</strong>&nbsp;
           {getGenderDistribution(cleanAgentData)}
         </p>
       </div>

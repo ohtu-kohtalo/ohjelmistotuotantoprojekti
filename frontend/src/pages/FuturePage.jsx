@@ -63,7 +63,7 @@ const FuturePage = ({
                     px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center space-y-12"
     >
       {/* Title */}
-      <h1 className="text-lg sm:text-xl font-semibold text-white-400 mt-12">
+      <h1 className="text-lg sm:text-xl font-semibold text-white-400">
         Future View
       </h1>
 

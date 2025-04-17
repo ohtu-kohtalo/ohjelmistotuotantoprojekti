@@ -3,15 +3,16 @@ import * as d3 from "d3";
 
 /**
  * Responsive bar‑count chart.
- * Width follows parent; height = 0.6×width, clamped to [320px, 0.8×vh].
- * Tooltip uses .tooltip-fixed util so it never alters document height.
+ * Width follows parent; height = 0.6×width, clamped to [320px,0.8×vh].
+ * Tooltip is positioned from the hovered bar’s bounding box, so it always
+ * appears directly above that bar, regardless of where the cursor sits inside.
  */
 const StackedBarChart = ({ data = [], xAxis = "age" }) => {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const [dims, setDims] = useState({ width: 0, height: 0 });
 
-  /* Resize‑observer */
+  /* ——— Resize observer ——— */
   useEffect(() => {
     const ro = new ResizeObserver(([entry]) => {
       const w = entry.contentRect.width;
@@ -24,23 +25,22 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
     return () => ro.disconnect();
   }, []);
 
-  /* Draw / update */
+  /* ——— Draw / update ——— */
   useEffect(() => {
     if (!data.length || !dims.width) return;
 
     const { width, height } = dims;
     const margin = { top: 50, right: 30, bottom: 100, left: 60 };
 
-    /* SVG */
+    /* Purge previous svg content */
     const svg = d3
       .select(svgRef.current)
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet")
       .classed("rounded-xl", true);
-
     svg.selectAll("*").remove();
 
-    /* Data grouping */
+    /* —— Data grouping —— */
     let cats = [],
       grouped = {};
     if (xAxis === "age") {
@@ -62,7 +62,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       count: grouped[c].length,
     }));
 
-    /* Scales */
+    /* —— Scales —— */
     const x = d3
       .scaleBand()
       .domain(cats)
@@ -91,7 +91,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
         "#7BDFF2",
       ]);
 
-    /* Grid */
+    /* —— Grid —— */
     svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
@@ -105,7 +105,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr("stroke", "#444")
       .attr("stroke-dasharray", "4,4");
 
-    /* Axes */
+    /* —— Axes —— */
     const xAxisG = svg
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -134,16 +134,20 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr("transform", "rotate(-90)")
       .text("Respondents");
 
-    /* Tooltip */
+    /* —— Tooltip (deduplicated, Tailwind utilities) —— */
+    d3.select("body").selectAll(".chart-tooltip").remove();
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "tooltip-fixed")
+      .attr(
+        "class",
+        "chart-tooltip fixed z-50 pointer-events-none rounded-md " +
+          "bg-black/90 text-white px-3 py-2 text-sm leading-tight"
+      )
       .style("visibility", "hidden")
-      .style("top", "-9999px")
-      .style("left", "-9999px");
+      .style("transform", "translate(-50%, -100%)"); // centre bottom → bar centre
 
-    /* Bars */
+    /* —— Bars —— */
     svg
       .selectAll("rect")
       .data(summary)
@@ -156,24 +160,29 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr("fill", (d) => colour(d.category))
       .attr("stroke", "#333")
       .attr("stroke-width", 1)
-      .on("mouseover", function (event, d) {
+      .on("mouseenter", function (event, d) {
         d3.select(this).attr("stroke-width", 2);
+
+        // Calculate bar position in viewport coordinates
+        const rect = this.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const topY = rect.top; // top edge of the bar
+
         tooltip
           .html(`<strong>${d.category}</strong><br/>Count: ${d.count}`)
           .style("visibility", "visible")
-          .style("top", `${event.pageY - 10}px`)
-          .style("left", `${event.pageX + 10}px`);
+          .style("left", `${centerX}px`)
+          .style("top", `${topY}px`);
       })
-      .on("mousemove", (event) =>
+      .on("mousemove", function () {
+        // Re‑compute in case the page is scrolling while hovering
+        const rect = this.getBoundingClientRect();
         tooltip
-          .style("top", `${event.pageY - 10}px`)
-          .style("left", `${event.pageX + 10}px`)
-      )
-      .on("mouseout", function () {
-        tooltip
-          .style("visibility", "hidden")
-          .style("top", "-9999px")
-          .style("left", "-9999px");
+          .style("left", `${rect.left + rect.width / 2}px`)
+          .style("top", `${rect.top}px`);
+      })
+      .on("mouseleave", function () {
+        tooltip.style("visibility", "hidden");
         d3.select(this).attr("stroke-width", 1);
       });
 
@@ -181,7 +190,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
   }, [data, xAxis, dims]);
 
   return (
-    <div ref={wrapperRef} className="w-full">
+    <div ref={wrapperRef} className="w-full relative">
       <svg ref={svgRef} className="w-full h-auto select-none" />
     </div>
   );

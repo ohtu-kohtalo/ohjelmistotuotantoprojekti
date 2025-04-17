@@ -79,14 +79,8 @@ const IndexPage = () => {
   }, [error, successMessage]);
 
   return (
-    <div
-      className="min-h-screen w-full bg-gray-900 text-white flex flex-col
-                  px-4 sm:px-6 lg:px-8"
-    >
-      <header
-        className="w-full max-w-screen-xl mx-auto
-                       pt-16 sm:pt-20 lg:pt-24"
-      >
+    <div className="min-h-screen w-full text-white flex flex-col px-4 sm:px-6 lg:px-8">
+      <header className="w-full max-w-screen-xl mx-auto">
         {/* 🔒 Top Section: dims & locks after agents are created */}
         <div
           className={`${agentsCreated ? "opacity-30 pointer-events-none" : ""} transition-opacity duration-300`}
@@ -95,10 +89,7 @@ const IndexPage = () => {
             Future Customer: A Simulator and Prediction Tool
           </h1>
 
-          <p
-            className="text-base sm:text-lg lg:text-xl mt-10 sm:mt-16
-                      max-w-2xl mx-auto text-center leading-relaxed"
-          >
+          <p className="text-base sm:text-lg lg:text-xl mt-10 sm:mt-16 max-w-2xl mx-auto text-center leading-relaxed">
             Welcome to our application!
             <br />
             <br />
@@ -138,10 +129,12 @@ const IndexPage = () => {
               disabled={loading}
               value={agentCount}
               onChange={(e) => setAgentCount(e.target.value)}
-              className="w-64 text-lg font-semibold
-                       px-4 py-2 bg-transparent border border-white
-                       rounded-lg focus:border-blue-500 focus:outline-none
-                       transition-colors duration-200"
+              className="
+              w-64 text-lg font-semibold
+              px-4 py-2 bg-transparent border border-white
+              rounded-lg focus:border-blue-500 focus:outline-none
+              transition-colors duration-200
+              "
               placeholder="Enter a number (1–100)"
             />
 

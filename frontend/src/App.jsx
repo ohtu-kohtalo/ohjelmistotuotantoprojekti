@@ -209,7 +209,7 @@ const App = () => {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [isLoading, setIsLoading] = useState(false);
   const messageTimeoutRef = useRef(null);
-  
+
   // State for checking whether csv has been uploaded
   const [csvUploaded, setCsvUploaded] = useState(false);
 
@@ -350,28 +350,36 @@ const App = () => {
         {/* Header End */}
 
         {/* Main Content */}
-        <div>
+        <div className="pt-16">
           <Routes>
             <Route path="/" element={<IndexPage />} />
-            <Route path="/present" element={
-              <PresentPage
-              handleCsvSubmit={handleCsvSubmit}
-              isLoading={isLoading}
-              response={distribution}
-              setCsvUploaded={setCsvUploaded}
-              showMessage={showMessage}
-            />} />
-            <Route path="/future" element={
-              <FuturePage
-              handleCsvSubmit={handleCsvSubmit}
-              isLoading={isLoading}
-              response={distribution}
-              futureResponse={futureDistribution}
-              showMessage={showMessage}
-              setCsvUploaded={setCsvUploaded}
-              submittedScenario={submittedScenario}
-              setSubmittedScenario={setSubmittedScenario}              
-            />} />
+            <Route
+              path="/present"
+              element={
+                <PresentPage
+                  handleCsvSubmit={handleCsvSubmit}
+                  isLoading={isLoading}
+                  response={distribution}
+                  setCsvUploaded={setCsvUploaded}
+                  showMessage={showMessage}
+                />
+              }
+            />
+            <Route
+              path="/future"
+              element={
+                <FuturePage
+                  handleCsvSubmit={handleCsvSubmit}
+                  isLoading={isLoading}
+                  response={distribution}
+                  futureResponse={futureDistribution}
+                  showMessage={showMessage}
+                  setCsvUploaded={setCsvUploaded}
+                  submittedScenario={submittedScenario}
+                  setSubmittedScenario={setSubmittedScenario}
+                />
+              }
+            />
           </Routes>
         </div>
       </div>
