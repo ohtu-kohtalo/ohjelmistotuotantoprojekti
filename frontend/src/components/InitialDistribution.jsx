@@ -69,14 +69,18 @@ const InitialDistribution = ({ data = [] }) => {
   return (
     <div
       id="initialDistribution"
-      className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 mx-auto"
+      className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 w-full"
     >
-      <h3 className="text-2xl font-semibold mb-4">Initial demographic distributions</h3>
+      <h3 className="text-2xl font-semibold mb-4">
+        Initial demographic distributions
+      </h3>
 
       <div className="flex gap-4 mb-6">
         <button
           className={`variable-button px-4 py-2 rounded ${
-            selectedX === "age" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"
+            selectedX === "age"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-700 text-white"
           }`}
           onClick={() => setSelectedX("age")}
         >
@@ -84,7 +88,9 @@ const InitialDistribution = ({ data = [] }) => {
         </button>
         <button
           className={`variable-button px-4 py-2 rounded ${
-            selectedX === "gender" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"
+            selectedX === "gender"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-700 text-white"
           }`}
           onClick={() => setSelectedX("gender")}
         >
@@ -112,10 +118,12 @@ const InitialDistribution = ({ data = [] }) => {
           <strong>Total Entries:</strong> {cleanAgentData.length}
         </p>
         <p>
-          <strong>Average Age:</strong> {calculateAverage(cleanAgentData, "age")}
+          <strong>Average Age:</strong>{" "}
+          {calculateAverage(cleanAgentData, "age")}
         </p>
         <p>
-          <strong>Gender Distribution:</strong> {getGenderDistribution(cleanAgentData)}
+          <strong>Gender Distribution:</strong>{" "}
+          {getGenderDistribution(cleanAgentData)}
         </p>
       </div>
     </div>

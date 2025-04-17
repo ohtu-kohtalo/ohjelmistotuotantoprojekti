@@ -12,15 +12,20 @@ import Statistics from "./StatisticsContainer";
  * - futureData: Array of objects representing future scenario data for each question.
  */
 
-const LikertChartContainer = ({chartsData}) => {
+const LikertChartContainer = ({ chartsData }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Tracks which chart/question is currently displayed
 
   // If no data is provided, show a placeholder message
   if (!chartsData || chartsData.length === 0) {
     return (
       <div className="w-full min-h-[80vh] p-4 bg-gray-800 border-2 border-gray-600 rounded-lg shadow-lg">
-        <p className="text-center text-gray-400 text-lg mt-8">Choose and upload a CSV file with questions on it to see Likert Scale charts.<br />
-          Correct format for the file is one question per row in the first column.</p>
+        <p className="text-center text-gray-400 text-lg mt-8">
+          Choose and upload a CSV file with questions on it to see Likert Scale
+          charts.
+          <br />
+          Correct format for the file is one question per row in the first
+          column.
+        </p>
       </div>
     );
   }
@@ -35,12 +40,12 @@ const LikertChartContainer = ({chartsData}) => {
   // Move to the previous chart/question, wrapping around if at the beginning
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 
   return (
-    <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 mx-auto h-full min-h-[500px]">
+    <div className="w-full bg-gray-900 border border-gray-700 rounded-2xl shadow-lg p-6 h-full min-h-[500px]">
       {/* Renders the Likert bar chart for current data and optional future data */}
       <div className="w-full mb-6 overflow-x-auto">
         <LikertBar
@@ -51,15 +56,10 @@ const LikertChartContainer = ({chartsData}) => {
 
       {/* Navigation buttons for cycling through charts */}
       <div className="flex justify-center space-x-4 mt-8">
-        <button
-        onClick={handlePrev}
-        className="text-white text-2xl"
-        >
+        <button onClick={handlePrev} className="text-white text-2xl">
           ⬅
         </button>
-        <button onClick={handleNext}
-        className="text-white text-2xl"
-        >
+        <button onClick={handleNext} className="text-white text-2xl">
           ➡
         </button>
       </div>

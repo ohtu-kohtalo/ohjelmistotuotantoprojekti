@@ -79,17 +79,26 @@ const IndexPage = () => {
   }, [error, successMessage]);
 
   return (
-    <div className="min-h-screen w-full bg-gray-900 text-white flex flex-col px-4">
-      <header className="w-full text-center pt-22 px-4">
+    <div
+      className="min-h-screen w-full bg-gray-900 text-white flex flex-col
+                  px-4 sm:px-6 lg:px-8"
+    >
+      <header
+        className="w-full max-w-screen-xl mx-auto
+                       pt-16 sm:pt-20 lg:pt-24"
+      >
         {/* 🔒 Top Section: dims & locks after agents are created */}
         <div
           className={`${agentsCreated ? "opacity-30 pointer-events-none" : ""} transition-opacity duration-300`}
         >
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold text-center">
             Future Customer: A Simulator and Prediction Tool
           </h1>
 
-          <p className="text-lg mt-20 max-w-2xl mx-auto text-center leading-relaxed">
+          <p
+            className="text-base sm:text-lg lg:text-xl mt-10 sm:mt-16
+                      max-w-2xl mx-auto text-center leading-relaxed"
+          >
             Welcome to our application!
             <br />
             <br />
@@ -104,7 +113,7 @@ const IndexPage = () => {
             Begin by selecting the number of agents you want to create.
           </p>
 
-          <div className="relative mt-12 flex flex-col items-center space-y-4">
+          <div className="relative mt-10 sm:mt-12 sm:space-x-4 flex flex-col items-center  space-y-4">
             {(error || loading || successMessage) && (
               <div className="absolute -top-9 flex items-center space-x-2 text-sm">
                 {loading ? (
@@ -129,7 +138,10 @@ const IndexPage = () => {
               disabled={loading}
               value={agentCount}
               onChange={(e) => setAgentCount(e.target.value)}
-              className="w-64 px-4 py-2 text-white bg-transparent border border-white rounded-lg focus:border-blue-500 focus:outline-none transition-colors duration-200"
+              className="w-64 text-lg font-semibold
+                       px-4 py-2 bg-transparent border border-white
+                       rounded-lg focus:border-blue-500 focus:outline-none
+                       transition-colors duration-200"
               placeholder="Enter a number (1–100)"
             />
 
@@ -151,11 +163,11 @@ const IndexPage = () => {
         </div>
 
         {/* Divider Line */}
-        <hr className="w-full border-t border-white/30 mt-16" />
+        <hr className="w-full border-t border-white/30 mt-12 sm:mt-16" />
 
         {/* Present, Reset, and Future Buttons Section */}
         <div
-          className={`mt-12 relative ${
+          className={`mt-10 sm:mt-12 ${
             !agentsCreated ? "opacity-30 pointer-events-none" : "opacity-100"
           } transition-opacity duration-1000`}
         >

@@ -1,302 +1,265 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-const LikertBar = ({ data, futureData, question }) => {
+/**
+ * Dual‑mode bar chart:
+ * – Shows present vs. future if futureData is supplied,
+ *   otherwise a single Likert distribution.
+ * – Fully responsive height (0.6×width, clamped).
+ */
+const LikertBar = ({ data = [], futureData = [], question = "" }) => {
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [dims, setDims] = useState({ width: 0, height: 0 });
 
+  /* Resize observer */
   useEffect(() => {
-    const observer = new ResizeObserver((entries) => {
-      if (!entries || entries.length === 0) return;
-      const { width } = entries[0].contentRect;
-      setDimensions({ width, height: 400});
+    const ro = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      if (!w) return;
+      const rawH = Math.round(w * 0.6);
+      const h = Math.max(320, Math.min(rawH, window.innerHeight * 0.8));
+      setDims({ width: w, height: h });
     });
-
-    if (wrapperRef.current) observer.observe(wrapperRef.current);
-
-    return () => {
-      if (wrapperRef.current) observer.unobserve(wrapperRef.current);
-    };
-  
+    if (wrapperRef.current) ro.observe(wrapperRef.current);
+    return () => ro.disconnect();
   }, []);
 
+  /* Draw chart */
   useEffect(() => {
-    if (!data || data.length === 0 || dimensions.width === 0) return;
+    if (!data.length || !dims.width) return;
 
-    const { width, height } = dimensions;
-    const margin = { top: 80, right: 80, bottom: 30, left: 30 };
+    const { width, height } = dims;
+    const margin = { top: 80, right: 80, bottom: 40, left: 40 };
 
-    d3.select(svgRef.current).selectAll("*").remove();
+    const svg = d3
+      .select(svgRef.current)
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("preserveAspectRatio", "xMidYMid meet")
+      .classed("rounded-xl", true);
 
-    // Calculate the max value from both data and futureData
-    const maxValue = Math.max(
+    svg.selectAll("*").remove();
+
+    /* Determine max for y‑scale */
+    const maxVal = Math.max(
       d3.max(data, (d) => d.value),
-      futureData && futureData.length > 0
-        ? d3.max(futureData, (d) => d.value)
-        : 0,
+      futureData.length ? d3.max(futureData, (d) => d.value) : 0
     );
 
-    // Create SVG element
-    const svg = d3
-    .select(svgRef.current)
-    .attr("viewBox", `0 0 ${width} ${height}`)
-    .attr("preserveAspectRatio", "xMidYMid meet")
-    .classed("rounded-xl", true);
-
-    // Define scales
-    const xScale = d3
+    /* Scales */
+    const x = d3
       .scaleBand()
       .domain(data.map((d) => d.label))
       .range([margin.left, width - margin.right])
       .padding(0.3);
 
-    const yScale = d3
+    const y = d3
       .scaleLinear()
-      .domain([0, maxValue * 1.1])
+      .domain([0, maxVal * 1.1])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    // Define color scheme for current data
-    const colorScale = d3
-      .scaleOrdinal()
-      .domain([
-        "Strongly Disagree",
-        "Disagree",
-        "Neutral",
-        "Agree",
-        "Strongly Agree",
-      ])
-      .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
-
-    // Define colors for current and future data
-    const currentColor = "#4682B4"; // Current data color (blue)
-    const futureColor = "#8A2BE2"; // Future data color (purple)
-
-    // Y gridlines
+    /* Grid */
     svg
       .append("g")
-      .attr("class", "grid")
       .attr("transform", `translate(${margin.left},0)`)
       .call(
         d3
-          .axisLeft(yScale)
+          .axisLeft(y)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#444")
       .attr("stroke-dasharray", "4,4");
 
-    // Add X axis with white tick labels
-    const xAxisElement = svg
+    /* Axes */
+    const xAxisG = svg
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(xScale))
-      .attr("class", "axis");
+      .call(d3.axisBottom(x));
+    xAxisG.selectAll("text").attr("fill", "white");
 
-    xAxisElement.selectAll("text")
-      .attr("fill", "white")
-      .classed("text-base", true);
-
-    // Add Y axis with white tick labels
-    const yAxisElement = svg
+    const yAxisG = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(yScale).tickFormat((d) => (d % 1 === 0 ? d : "")))
-      .attr("class", "axis");
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("d")));
+    yAxisG.selectAll("text").attr("fill", "white");
 
-    yAxisElement.selectAll("text").attr("fill", "white");
-
-    // Create tooltip
+    /* Tooltip */
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "bg-slate-900 text-white text-sm px-3 py-2 rounded shadow-md absolute z-50")
-      .style("visibility", "hidden");
+      .attr("class", "tooltip-fixed")
+      .style("visibility", "hidden")
+      .style("top", "-9999px")
+      .style("left", "-9999px");
 
-    if (futureData && futureData.length > 0) {
-      // Grouped bar chart: if futureData not empty
-      const groupedData = data.map((d) => ({
+    const currentColor = "#4682B4";
+    const futureColor = "#8A2BE2";
+
+    if (futureData.length) {
+      /* -------- Grouped bars (present + future) -------- */
+      const grouped = data.map((d) => ({
         label: d.label,
         current: d.value,
         future: futureData.find((f) => f.label === d.label)?.value || 0,
       }));
 
-      // Create bars for grouped bar chart
-      svg
+      const group = svg
         .selectAll(".bar-group")
-        .data(groupedData)
+        .data(grouped)
         .enter()
         .append("g")
         .attr("class", "bar-group")
-        .attr("transform", (d) => `translate(${xScale(d.label)},0)`)
-        .each(function (d) {
-          const group = d3.select(this);
+        .attr("transform", (d) => `translate(${x(d.label)},0)`);
 
-          group
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", (d) => yScale(d.current))
-            .attr("width", xScale.bandwidth() / 2)
-            .attr("height", (d) => height - margin.bottom - yScale(d.current))
-            .attr("fill", currentColor)
-            .on("mouseover", function (event, d) {
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "2px");
-              tooltip
-                .html(`Current Count: ${d.current}`)
-                .style("visibility", "visible")
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px");
+      /* Present bars */
+      group
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", (d) => y(d.current))
+        .attr("width", x.bandwidth() / 2)
+        .attr("height", (d) => height - margin.bottom - y(d.current))
+        .attr("fill", currentColor)
+        .on("mouseover", (event, d) => {
+          tooltip
+            .html(`Present: ${d.current}`)
+            .style("visibility", "visible")
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mousemove", (event) =>
+          tooltip
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`)
+        )
+        .on("mouseout", () =>
+          tooltip
+            .style("visibility", "hidden")
+            .style("top", "-9999px")
+            .style("left", "-9999px")
+        );
 
-              d3.select(this).attr("fill", d3.rgb(currentColor).darker(0.8));
-            })
-            .on("mousemove", function (event) {
-              tooltip
-                .style("top", `${event.pageY - 10}px`)
-                .style("left", `${event.pageX + 10}px`);
-            })
-            .on("mouseout", function (event, d) {
-              tooltip.style("visibility", "hidden");
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "1px")
-                .attr("fill", currentColor);
-            });
+      /* Future bars */
+      group
+        .append("rect")
+        .attr("x", x.bandwidth() / 2)
+        .attr("y", (d) => y(d.future))
+        .attr("width", x.bandwidth() / 2)
+        .attr("height", (d) => height - margin.bottom - y(d.future))
+        .attr("fill", futureColor)
+        .on("mouseover", (event, d) => {
+          tooltip
+            .html(`Future: ${d.future}`)
+            .style("visibility", "visible")
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`);
+        })
+        .on("mousemove", (event) =>
+          tooltip
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`)
+        )
+        .on("mouseout", () =>
+          tooltip
+            .style("visibility", "hidden")
+            .style("top", "-9999px")
+            .style("left", "-9999px")
+        );
 
-          group
-            .append("rect")
-            .attr("x", xScale.bandwidth() / 2)
-            .attr("y", (d) => yScale(d.future))
-            .attr("width", xScale.bandwidth() / 2)
-            .attr("height", (d) => height - margin.bottom - yScale(d.future))
-            .attr("fill", futureColor)
-            .on("mouseover", function (event, d) {
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "2px");
-              tooltip
-                .html(`Future Count: ${d.future}`)
-                .style("visibility", "visible")
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px");
+      /* Legend */
+      svg
+        .append("circle")
+        .attr("cx", width - margin.right + 20)
+        .attr("cy", margin.top)
+        .attr("r", 8)
+        .style("fill", currentColor);
+      svg
+        .append("text")
+        .attr("x", width - margin.right + 35)
+        .attr("y", margin.top)
+        .attr("alignment-baseline", "middle")
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("Present");
 
-              d3.select(this).attr("fill", d3.rgb(futureColor).darker(0.8));
-            })
-            .on("mousemove", function (event) {
-              tooltip
-                .style("top", `${event.pageY - 10}px`)
-                .style("left", `${event.pageX + 10}px`);
-            })
-            .on("mouseout", function (event, d) {
-              tooltip.style("visibility", "hidden");
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "1px")
-                .attr("fill", futureColor);
-            });
-
-          svg
-            .append("circle")
-            .attr("cx", width - margin.right + 20)
-            .attr("cy", margin.top + 90)
-            .attr("r", 8)
-            .style("fill", currentColor);
-
-          svg
-            .append("text")
-            .attr("x", width - margin.right + 35)
-            .attr("y", margin.top + 90)
-            .text("Present")
-            .style("font-size", "12px")
-            .attr("fill", "white")
-            .attr("alignment-baseline", "middle");
-
-          svg
-            .append("circle")
-            .attr("cx", width - margin.right + 20)
-            .attr("cy", margin.top + 110)
-            .attr("r", 8)
-            .style("fill", futureColor);
-
-          svg
-            .append("text")
-            .attr("x", width - margin.right + 35)
-            .attr("y", margin.top + 110)
-            .text("Future")
-            .style("font-size", "12px")
-            .attr("fill", "white")
-            .attr("alignment-baseline", "middle");
-        });
+      svg
+        .append("circle")
+        .attr("cx", width - margin.right + 20)
+        .attr("cy", margin.top + 20)
+        .attr("r", 8)
+        .style("fill", futureColor);
+      svg
+        .append("text")
+        .attr("x", width - margin.right + 35)
+        .attr("y", margin.top + 20)
+        .attr("alignment-baseline", "middle")
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("Future");
     } else {
-      // Standard bar chart (original behavior)
+      /* -------- Single Likert distribution -------- */
+      const colour = d3
+        .scaleOrdinal()
+        .domain([
+          "Strongly Disagree",
+          "Disagree",
+          "Neutral",
+          "Agree",
+          "Strongly Agree",
+        ])
+        .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
+
       svg
         .selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
-        .attr("x", (d) => xScale(d.label))
-        .attr("y", (d) => yScale(d.value))
-        .attr("width", xScale.bandwidth())
-        .attr("height", (d) => height - margin.bottom - yScale(d.value))
-        .attr("fill", (d) => colorScale(d.label))
+        .attr("x", (d) => x(d.label))
+        .attr("y", (d) => y(d.value))
+        .attr("width", x.bandwidth())
+        .attr("height", (d) => height - margin.bottom - y(d.value))
+        .attr("fill", (d) => colour(d.label))
         .attr("stroke", "#333")
-        .attr("stroke-width", "1px")
-        .attr("opacity", 0.9)
-        .style("cursor", "pointer")
-        .on("mouseover", function (event, d) {
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", "2px");
+        .attr("stroke-width", 1)
+        .on("mouseover", (event, d) => {
           tooltip
             .html(`Count: ${d.value}`)
             .style("visibility", "visible")
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px");
-
-          d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
-        })
-        .on("mousemove", function (event) {
-          tooltip
             .style("top", `${event.pageY - 10}px`)
             .style("left", `${event.pageX + 10}px`);
         })
-        .on("mouseout", function (event, d) {
-          tooltip.style("visibility", "hidden");
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", "1px")
-            .attr("fill", colorScale(d.label));
-        });
+        .on("mousemove", (event) =>
+          tooltip
+            .style("top", `${event.pageY - 10}px`)
+            .style("left", `${event.pageX + 10}px`)
+        )
+        .on("mouseout", () =>
+          tooltip
+            .style("visibility", "hidden")
+            .style("top", "-9999px")
+            .style("left", "-9999px")
+        );
     }
 
-    // Add chart title
+    /* Title */
     svg
       .append("text")
-      .attr("class", "text-xl font-semibold mb-4")
       .attr("x", width / 2)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
       .attr("fill", "white")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
       .text(question);
 
-    // Cleanup: remove tooltip on unmount
-    return () => {
-      tooltip.remove();
-    };
-  }, [data, futureData, question, dimensions]);
+    return () => tooltip.remove();
+  }, [data, futureData, question, dims]);
 
   return (
-    <div className="w-full overflow-x-auto" ref={wrapperRef}>
-      <svg ref={svgRef} className="w-full h-[400px]" />
+    <div ref={wrapperRef} className="w-full">
+      <svg ref={svgRef} className="w-full h-auto select-none" />
     </div>
   );
 };
