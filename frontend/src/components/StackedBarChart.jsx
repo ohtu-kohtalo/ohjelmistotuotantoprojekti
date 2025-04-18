@@ -2,17 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 /**
- * Responsive bar‑count chart.
- * Width follows parent; height = 0.6×width, clamped to [320px,0.8×vh].
- * Tooltip is positioned from the hovered bar’s bounding box, so it always
- * appears directly above that bar, regardless of where the cursor sits inside.
+ * StackedBarChart animated on first mount and whenever xAxis toggles.
  */
 const StackedBarChart = ({ data = [], xAxis = "age" }) => {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const [dims, setDims] = useState({ width: 0, height: 0 });
 
-  /* ——— Resize observer ——— */
+  /** Tracks whether **the current view** (age or gender) has already animated */
+  const hasAnimated = useRef(false);
+
+  /* ——— Reset the flag whenever the view switches ——— */
+  useEffect(() => {
+    hasAnimated.current = false;
+  }, [xAxis]);
+
+  /* ——— Responsive sizing ——— */
   useEffect(() => {
     const ro = new ResizeObserver(([entry]) => {
       const w = entry.contentRect.width;
@@ -40,7 +45,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .classed("rounded-xl", true);
     svg.selectAll("*").remove();
 
-    /* —— Data grouping —— */
+    /* —— Group data —— */
     let cats = [],
       grouped = {};
     if (xAxis === "age") {
@@ -75,21 +80,27 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    const colour = d3
-      .scaleOrdinal()
-      .domain(cats)
-      .range([
-        "#01AFD2",
-        "#FD82B0",
-        "#89E2A4",
-        "#B82EB7",
-        "#F6DC99",
-        "#5B8BF7",
-        "#C678DD",
-        "#80ff80",
-        "#FFFF8F",
-        "#7BDFF2",
-      ]);
+    const colour =
+      xAxis === "gender"
+        ? d3
+            .scaleOrdinal()
+            .domain(cats)
+            .range(["#3b82f6", "#ec4899", "#8b5cf6"])
+        : d3
+            .scaleOrdinal()
+            .domain(cats)
+            .range([
+              "#3b82f6",
+              "#10b981",
+              "#facc15",
+              "#8b5cf6",
+              "#f87171",
+              "#6366f1",
+              "#14b8a6",
+              "#f472b6",
+              "#22c55e",
+              "#f59e0b",
+            ]);
 
     /* —— Grid —— */
     svg
@@ -110,7 +121,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(x));
-    xAxisG.selectAll("text").attr("fill", "white");
+    xAxisG.selectAll("text").attr("fill", "#d1d5db").style("font-size", "12px");
     xAxisG
       .append("text")
       .attr("x", width / 2)
@@ -123,7 +134,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("d")));
-    yAxisG.selectAll("text").attr("fill", "white");
+    yAxisG.selectAll("text").attr("fill", "#d1d5db").style("font-size", "12px");
     yAxisG
       .append("text")
       .attr("x", -height / 2)
@@ -134,7 +145,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr("transform", "rotate(-90)")
       .text("Respondents");
 
-    /* —— Tooltip (deduplicated, Tailwind utilities) —— */
+    /* —— Tooltip —— */
     d3.select("body").selectAll(".chart-tooltip").remove();
     const tooltip = d3
       .select("body")
@@ -142,40 +153,35 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr(
         "class",
         "chart-tooltip fixed z-50 pointer-events-none rounded-md " +
-          "bg-black/90 text-white px-3 py-2 text-sm leading-tight"
+          "bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg"
       )
       .style("visibility", "hidden")
-      .style("transform", "translate(-50%, -100%)"); // centre bottom → bar centre
+      .style("transform", "translate(-50%, -100%)");
 
     /* —— Bars —— */
-    svg
-      .selectAll("rect")
+    const bars = svg
+      .selectAll("rect.bar")
       .data(summary)
       .enter()
       .append("rect")
+      .attr("class", "bar")
       .attr("x", (d) => x(d.category))
-      .attr("y", (d) => y(d.count))
       .attr("width", x.bandwidth())
-      .attr("height", (d) => height - margin.bottom - y(d.count))
+      .attr("rx", 6)
+      .attr("ry", 6)
       .attr("fill", (d) => colour(d.category))
       .attr("stroke", "#333")
       .attr("stroke-width", 1)
       .on("mouseenter", function (event, d) {
         d3.select(this).attr("stroke-width", 2);
-
-        // Calculate bar position in viewport coordinates
         const rect = this.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const topY = rect.top; // top edge of the bar
-
         tooltip
           .html(`<strong>${d.category}</strong><br/>Count: ${d.count}`)
           .style("visibility", "visible")
-          .style("left", `${centerX}px`)
-          .style("top", `${topY}px`);
+          .style("left", `${rect.left + rect.width / 2}px`)
+          .style("top", `${rect.top}px`);
       })
       .on("mousemove", function () {
-        // Re‑compute in case the page is scrolling while hovering
         const rect = this.getBoundingClientRect();
         tooltip
           .style("left", `${rect.left + rect.width / 2}px`)
@@ -185,6 +191,22 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
         tooltip.style("visibility", "hidden");
         d3.select(this).attr("stroke-width", 1);
       });
+
+    /* —— Animate once per view —— */
+    if (!hasAnimated.current) {
+      bars
+        .attr("y", y(0))
+        .attr("height", 0)
+        .transition()
+        .duration(800)
+        .attr("y", (d) => y(d.count))
+        .attr("height", (d) => height - margin.bottom - y(d.count))
+        .on("end", () => (hasAnimated.current = true));
+    } else {
+      bars
+        .attr("y", (d) => y(d.count))
+        .attr("height", (d) => height - margin.bottom - y(d.count));
+    }
 
     return () => tooltip.remove();
   }, [data, xAxis, dims]);
