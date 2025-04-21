@@ -128,6 +128,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr("y", 50)
       .attr("fill", "white")
       .attr("font-weight", "bold")
+      .attr("font-size", "14px")
       .text(xAxis);
 
     const yAxisG = svg
@@ -141,6 +142,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr("y", -45)
       .attr("fill", "white")
       .attr("font-weight", "bold")
+      .attr("font-size", "14px")
       .attr("text-anchor", "middle")
       .attr("transform", "rotate(-90)")
       .text("Respondents");

@@ -75,7 +75,7 @@ const InitialDistribution = ({ data = [] }) => {
         Initial demographic distributions
       </h3>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex justify-center gap-4 mb-6">
         <button
           className={`variable-button px-4 py-2 rounded ${
             selectedX === "age"
@@ -112,11 +112,7 @@ const InitialDistribution = ({ data = [] }) => {
         )}
       </div>
 
-      <div className="mt-6 ml-[60px] w-fit text-gray-200 text-sm sm:text-base leading-relaxed space-y-1">
-        <h4 className="text-xl sm:text-xl md:text-2xl  lg:text-3xl font-semibold tracking-tight mb-3 underline">
-          Summary
-        </h4>
-
+      <div className="ml-4 sm:ml-[40px] md:ml-[60px] w-fit text-gray-200 text-xs sm:text-sm md:text-base leading-relaxed space-y-1">
         <p>
           <strong>Total Entries:</strong>&nbsp;
           {cleanAgentData.length}
