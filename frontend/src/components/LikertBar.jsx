@@ -1,18 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-/**
- * Dual‑mode bar chart:
- * – Shows present vs. future if futureData is supplied,
- *   otherwise a single Likert distribution.
- * – Fully responsive height (0.6×width, clamped).
- */
 const LikertBar = ({ data = [], futureData = [], question = "" }) => {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const [dims, setDims] = useState({ width: 0, height: 0 });
+  const hasAnimated = useRef(false);
+  const prevQuestion = useRef(question); // Track the previous question
 
-  /* Resize observer */
+  // Responsive sizing
   useEffect(() => {
     const ro = new ResizeObserver(([entry]) => {
       const w = entry.contentRect.width;
@@ -25,7 +21,14 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
     return () => ro.disconnect();
   }, []);
 
-  /* Draw chart */
+  // Reset animation ONLY if question changes
+  useEffect(() => {
+    if (question !== prevQuestion.current) {
+      hasAnimated.current = false;
+      prevQuestion.current = question;
+    }
+  }, [question]);
+
   useEffect(() => {
     if (!data.length || !dims.width) return;
 
@@ -40,13 +43,14 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
 
     svg.selectAll("*").remove();
 
-    /* Determine max for y‑scale */
+    // Fade-in animation
+    svg.style("opacity", 0).transition().duration(1000).style("opacity", 1);
+
     const maxVal = Math.max(
       d3.max(data, (d) => d.value),
       futureData.length ? d3.max(futureData, (d) => d.value) : 0
     );
 
-    /* Scales */
     const x = d3
       .scaleBand()
       .domain(data.map((d) => d.label))
@@ -59,7 +63,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    /* Grid */
+    // Grid
     svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
@@ -73,7 +77,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
       .attr("stroke", "#444")
       .attr("stroke-dasharray", "4,4");
 
-    /* Axes */
+    // Axes
     const xAxisG = svg
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -86,20 +90,23 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
       .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("d")));
     yAxisG.selectAll("text").attr("fill", "white");
 
-    /* Tooltip */
+    // Tooltip
+    d3.select("body").selectAll(".chart-tooltip").remove();
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "tooltip-fixed")
+      .attr(
+        "class",
+        "chart-tooltip fixed z-50 pointer-events-none rounded-md bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg"
+      )
       .style("visibility", "hidden")
-      .style("top", "-9999px")
-      .style("left", "-9999px");
+      .style("transform", "translate(-50%, -100%)");
 
     const currentColor = "#4682B4";
     const futureColor = "#8A2BE2";
 
     if (futureData.length) {
-      /* -------- Grouped bars (present + future) -------- */
+      // Grouped bars (Present + Future)
       const grouped = data.map((d) => ({
         label: d.label,
         current: d.value,
@@ -114,61 +121,84 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
         .attr("class", "bar-group")
         .attr("transform", (d) => `translate(${x(d.label)},0)`);
 
-      /* Present bars */
-      group
+      const presentBars = group
         .append("rect")
         .attr("x", 0)
-        .attr("y", (d) => y(d.current))
         .attr("width", x.bandwidth() / 2)
-        .attr("height", (d) => height - margin.bottom - y(d.current))
         .attr("fill", currentColor)
-        .on("mouseover", (event, d) => {
+        .on("mouseenter", function (event, d) {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .html(`Present: ${d.current}`)
+            .html(`<strong>Present:</strong> ${d.current}`)
             .style("visibility", "visible")
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`);
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
         })
-        .on("mousemove", (event) =>
+        .on("mousemove", function () {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`)
-        )
-        .on("mouseout", () =>
-          tooltip
-            .style("visibility", "hidden")
-            .style("top", "-9999px")
-            .style("left", "-9999px")
-        );
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+        })
+        .on("mouseleave", function () {
+          tooltip.style("visibility", "hidden");
+          d3.select(this).attr("stroke", "none");
+        });
 
-      /* Future bars */
-      group
+      const futureBars = group
         .append("rect")
         .attr("x", x.bandwidth() / 2)
-        .attr("y", (d) => y(d.future))
         .attr("width", x.bandwidth() / 2)
-        .attr("height", (d) => height - margin.bottom - y(d.future))
         .attr("fill", futureColor)
-        .on("mouseover", (event, d) => {
+        .on("mouseenter", function (event, d) {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .html(`Future: ${d.future}`)
+            .html(`<strong>Future:</strong> ${d.future}`)
             .style("visibility", "visible")
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`);
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
         })
-        .on("mousemove", (event) =>
+        .on("mousemove", function () {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`)
-        )
-        .on("mouseout", () =>
-          tooltip
-            .style("visibility", "hidden")
-            .style("top", "-9999px")
-            .style("left", "-9999px")
-        );
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+        })
+        .on("mouseleave", function () {
+          tooltip.style("visibility", "hidden");
+          d3.select(this).attr("stroke", "none");
+        });
 
-      /* Legend */
+      // Animate bars
+      if (!hasAnimated.current) {
+        presentBars
+          .attr("y", y(0))
+          .attr("height", 0)
+          .transition()
+          .duration(800)
+          .attr("y", (d) => y(d.current))
+          .attr("height", (d) => height - margin.bottom - y(d.current));
+
+        futureBars
+          .attr("y", y(0))
+          .attr("height", 0)
+          .transition()
+          .duration(800)
+          .attr("y", (d) => y(d.future))
+          .attr("height", (d) => height - margin.bottom - y(d.future))
+          .on("end", () => (hasAnimated.current = true));
+      } else {
+        presentBars
+          .attr("y", (d) => y(d.current))
+          .attr("height", (d) => height - margin.bottom - y(d.current));
+        futureBars
+          .attr("y", (d) => y(d.future))
+          .attr("height", (d) => height - margin.bottom - y(d.future));
+      }
+
+      // Legend
       svg
         .append("circle")
         .attr("cx", width - margin.right + 20)
@@ -199,7 +229,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
         .style("font-size", "12px")
         .text("Future");
     } else {
-      /* -------- Single Likert distribution -------- */
+      // Single Likert distribution
       const colour = d3
         .scaleOrdinal()
         .domain([
@@ -211,39 +241,51 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
         ])
         .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
 
-      svg
+      const bars = svg
         .selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
         .attr("x", (d) => x(d.label))
-        .attr("y", (d) => y(d.value))
         .attr("width", x.bandwidth())
-        .attr("height", (d) => height - margin.bottom - y(d.value))
         .attr("fill", (d) => colour(d.label))
-        .attr("stroke", "#333")
-        .attr("stroke-width", 1)
-        .on("mouseover", (event, d) => {
+        .on("mouseenter", function (event, d) {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .html(`Count: ${d.value}`)
+            .html(`<strong>${d.label}:</strong> ${d.value}`)
             .style("visibility", "visible")
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`);
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
         })
-        .on("mousemove", (event) =>
+        .on("mousemove", function () {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`)
-        )
-        .on("mouseout", () =>
-          tooltip
-            .style("visibility", "hidden")
-            .style("top", "-9999px")
-            .style("left", "-9999px")
-        );
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+        })
+        .on("mouseleave", function () {
+          tooltip.style("visibility", "hidden");
+          d3.select(this).attr("stroke", "none");
+        });
+
+      if (!hasAnimated.current) {
+        bars
+          .attr("y", y(0))
+          .attr("height", 0)
+          .transition()
+          .duration(800)
+          .attr("y", (d) => y(d.value))
+          .attr("height", (d) => height - margin.bottom - y(d.value))
+          .on("end", () => (hasAnimated.current = true));
+      } else {
+        bars
+          .attr("y", (d) => y(d.value))
+          .attr("height", (d) => height - margin.bottom - y(d.value));
+      }
     }
 
-    /* Title */
+    // Chart Title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -258,8 +300,11 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
   }, [data, futureData, question, dims]);
 
   return (
-    <div ref={wrapperRef} className="w-full">
-      <svg ref={svgRef} className="w-full h-auto select-none" />
+    <div ref={wrapperRef} className="w-full relative">
+      <svg
+        ref={svgRef}
+        className="w-full h-auto select-none transition-opacity duration-500"
+      />
     </div>
   );
 };

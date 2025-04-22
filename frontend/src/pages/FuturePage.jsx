@@ -4,6 +4,7 @@ import InitialDistribution from "../components/InitialDistribution";
 import LikertChartContainer from "../components/LikertChartContainer";
 import CsvUpload from "../components/CsvUpload";
 import CsvDownload from "../components/CsvDownload";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 const FuturePage = ({
   handleCsvSubmit,
@@ -21,7 +22,6 @@ const FuturePage = ({
   const [showUploadHelp, setShowUploadHelp] = useState(false);
   const [csvLoaded, setCsvLoaded] = useState(false);
   const [futureScenario, setFutureScenario] = useState("");
-  const [tempMessage, setTempMessage] = useState("");
   const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
   const tempMessageTimeout = useRef(null);
   const location = useLocation();
@@ -37,9 +37,50 @@ const FuturePage = ({
     setCsvLoaded(false);
   };
 
-  const handleSubmitScenario = () => {
-    console.log("Submitted scenario:", futureScenario);
-    setSubmittedScenario(futureScenario);
+  const handleReset = () => {
+    setCsvLoaded(false);
+    setCsvUploaded(false);
+    setFutureScenario("");
+    resetResponse();
+  };
+
+  const handleFutureSubmit = async () => {
+    if (futureScenario.length >= 5) {
+      resetResponse();
+      const helperFutureScenario = futureScenario;
+
+      showMessage("Scenario submitted 📨");
+      setFutureScenarioLoading(true);
+      setSubmittedScenario(futureScenario); // ✅ Shared state update
+      setFutureScenario(""); // Clear input field
+
+      try {
+        const BACKEND_URL =
+          import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
+        const response = await fetch(`${BACKEND_URL}/receive_future_scenario`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ scenario: helperFutureScenario }),
+        });
+
+        console.log("Submitted Future Scenario:", helperFutureScenario);
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Future scenario return data:", data);
+
+        showMessage("success", "Scenario deployed successfully ✅");
+        handleReset();
+      } catch (error) {
+        console.error("Future scenario submission error:", error);
+        showMessage("error", "⚠️ Error deploying scenario!");
+      } finally {
+        setFutureScenarioLoading(false);
+      }
+    }
   };
 
   const renderChart = () => {
@@ -177,8 +218,7 @@ const FuturePage = ({
             </div>
 
             {/* Future Scenario Input */}
-            <input
-              type="text"
+            <textarea
               placeholder="Enter future scenario..."
               className="w-full p-6 h-[250px] border border-gray-700 bg-gray-800 rounded text-white placeholder-gray-400 resize-none"
               value={futureScenario}
@@ -187,14 +227,27 @@ const FuturePage = ({
 
             {/* Submit Button */}
             <button
-              onClick={handleSubmitScenario}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md transition"
+              onClick={handleFutureSubmit}
+              className={`w-full text-white py-3 rounded-md transition
+                ${
+                  futureScenario.length < 5 || futureScenarioLoading
+                    ? "bg-gray-700 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
+              disabled={futureScenario.length < 5 || futureScenarioLoading}
             >
-              Submit Scenario
+              Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Loading Overlay during Future Scenario submit */}
+      {(futureScenarioLoading || isLoading) && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <LoadingIndicator />
+        </div>
+      )}
     </div>
   );
 };

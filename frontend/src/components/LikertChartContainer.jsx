@@ -12,7 +12,7 @@ import Statistics from "./StatisticsContainer";
  * - futureData: Array of objects representing future scenario data for each question.
  */
 
-const LikertChartContainer = ({ chartsData }) => {
+const LikertChartContainer = ({ chartsData, futureData = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Tracks which chart/question is currently displayed
 
   // If no data is provided, show a placeholder message
@@ -50,6 +50,7 @@ const LikertChartContainer = ({ chartsData }) => {
       <div className="w-full mb-6 overflow-x-auto">
         <LikertBar
           data={chartsData[currentIndex].data}
+          futureData={futureData[currentIndex]?.data || []}
           question={chartsData[currentIndex].question}
         />
       </div>
@@ -70,9 +71,8 @@ const LikertChartContainer = ({ chartsData }) => {
       </p>
 
       {/* Renders statistics like median, mode, and variation ratio */}
-      <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 mt-8">
-        <h4 className="text-xl font-semibold mb-2">Statistics</h4>
-        <div className="Statistics">
+      <div className="flex justify-center items-center mt-4">
+        <div className="p-4 rounded-lg">
           <Statistics
             median={stats.median}
             mode={stats.mode}

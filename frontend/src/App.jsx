@@ -239,21 +239,22 @@ const App = () => {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
 
-      showMessage("success", "CSV submitted successfully! 📂👍");
+      // showMessage("success", "CSV submitted successfully! 📂👍");
       const data = await response.json();
 
       console.log("[DEBUG] Reached here #1");
 
       setDistribution(data.distributions);
+      setFutureDistribution(data.future_distributions);
 
-      if (data.distributions.length > 0) {
-        console.log("[DEBUG] Reached here #2, with Future distribution!");
+      if (data.future_distributions.length > 0) {
+        console.log("[DEBUG] Reached here #2, with futureDistribution!");
       }
 
       setCsvUploaded(true);
     } catch (error) {
       console.error("CSV submission error:", error);
-      showMessage("error", "⚠️ Could not submit CSV data");
+      // showMessage("error", "⚠️ Could not submit CSV data");
       setCsvUploaded(false);
     } finally {
       setIsLoading(false);
@@ -264,14 +265,13 @@ const App = () => {
   const showMessage = (type, text) => {
     setMessage({ type, text });
 
-    // Clear any existing timeout before setting a new one
     if (messageTimeoutRef.current) {
       clearTimeout(messageTimeoutRef.current);
     }
 
     messageTimeoutRef.current = setTimeout(() => {
       setMessage({ type: "", text: "" });
-      messageTimeoutRef.current = null; // Reset ref after clearing error
+      messageTimeoutRef.current = null;
     }, 5000);
   };
 
@@ -285,7 +285,7 @@ const App = () => {
             <a
               href="https://www.vttresearch.com/fi"
               target="_blank"
-              // This is a security measure
+              // Security best practice
               rel="noopener noreferrer"
               className="flex items-center space-x-2"
             >
@@ -296,7 +296,6 @@ const App = () => {
               />
             </a>
           </div>
-          {/* Logo End */}
 
           {/* Help Icon */}
           <div
@@ -312,7 +311,6 @@ const App = () => {
             >
               ?
             </div>
-            {/* Help Icon End*/}
 
             {/* Floating Modal */}
             {hovering && (
@@ -344,10 +342,8 @@ const App = () => {
                 </p>
               </div>
             )}
-            {/* Floating Modal End*/}
           </div>
         </header>
-        {/* Header End */}
 
         {/* Main Content */}
         <div className="pt-16">
@@ -377,13 +373,16 @@ const App = () => {
                   setCsvUploaded={setCsvUploaded}
                   submittedScenario={submittedScenario}
                   setSubmittedScenario={setSubmittedScenario}
+                  resetResponse={() => {
+                    setDistribution([]);
+                    setFutureDistribution([]);
+                  }}
                 />
               }
             />
           </Routes>
         </div>
       </div>
-      {/* Main Content End */}
     </Router>
   );
 };
