@@ -84,7 +84,11 @@ const FuturePage = ({
   };
 
   const renderChart = () => {
-    if (chartType === "likert") {
+    if (chartType === "likert-present") {
+      return <LikertChartContainer chartsData={response || []} />;
+    }
+
+    if (chartType === "likert-future") {
       return (
         <LikertChartContainer
           chartsData={response || []}
@@ -108,19 +112,45 @@ const FuturePage = ({
             Demographic Distribution
           </button>
 
+          {/* Present Answers Button */}
+          <div className="relative group">
+            <button
+              onClick={() => csvLoaded && setChartType("likert-present")}
+              disabled={!csvLoaded}
+              aria-describedby="csv-tip"
+              className={`rounded-md px-4 py-2 text-sm sm:text-base transition-colors
+                ${!csvLoaded ? "bg-gray-700 opacity-50 cursor-not-allowed" : chartType === "likert-present" ? "bg-blue-600" : "bg-gray-700"}`}
+            >
+              Present answers
+            </button>
+
+            {/* Tooltip if CSV not loaded */}
+            {!csvLoaded && (
+              <span
+                id="csv-tip"
+                role="tooltip"
+                className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2
+                  mb-2 whitespace-nowrap text-xs sm:text-sm bg-gray-800 text-white px-3 py-2 rounded-md shadow-md
+                  opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                Please provide CSV questions first
+              </span>
+            )}
+          </div>
+
           {/* Future Scenario Answers Button + Checkboxes + Help */}
           <div className="flex items-center gap-4">
             <div className="relative group">
               <button
                 onClick={() =>
-                  csvLoaded && submittedScenario && setChartType("likert")
+                  csvLoaded && submittedScenario && setChartType("likert-future")
                 }
                 disabled={!csvLoaded || !submittedScenario}
                 className={`rounded-md px-4 py-2 text-sm sm:text-base transition-colors
                   ${
                     !csvLoaded || !submittedScenario
                       ? "bg-gray-700 opacity-50 cursor-not-allowed"
-                      : chartType === "likert"
+                      : chartType === "likert-future"
                         ? "bg-blue-600"
                         : "bg-gray-700"
                   }`}
@@ -184,9 +214,10 @@ const FuturePage = ({
               {showChartHelp && (
                 <div className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 w-[90vw] max-w-md bg-gray-800 text-white p-4 rounded-xl shadow-xl border border-gray-700 text-sm leading-relaxed z-50">
                   <p>
-                    Toggle between demographic distribution and simulated future
+                    Toggle between demographic distribution, present answers and simulated future
                     answers here. Icons next to the buttons indicate the status
-                    of your CSV upload and future scenario submission. When both
+                    of your CSV upload and future scenario submission. 
+                    When CSV is uploaded, you can view the present answers and when both
                     are submitted, you can view the simulated future answers.
                   </p>
                 </div>
