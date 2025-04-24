@@ -158,7 +158,7 @@ const IndexPage = () => {
         {/* Divider Line */}
         <hr className="w-full border-t border-white/30 mt-12 sm:mt-16" />
 
-        {/* Present, Reset, and Future Buttons Section */}
+        {/* Reset and Dashboard Buttons Section */}
         <div
           className={`mt-10 sm:mt-12 ${
             !agentsCreated ? "opacity-30 pointer-events-none" : "opacity-100"
@@ -179,27 +179,17 @@ const IndexPage = () => {
             </button>
           </div>
 
-          {/* Present & Future Buttons */}
-          <div className="w-full max-w-4xl mx-auto flex flex-wrap justify-between gap-4 items-center px-4">
-            <button
-              onClick={() => navigate("/present", { state: { agents } })}
-              className={`${
-                agentsCreated
-                  ? "bg-blue-500 hover:bg-blue-600 scale-100"
-                  : "bg-gray-700 text-gray-400 scale-90"
-              } hover:scale-105 cursor-pointer transition transform duration-1000 ease-in-out text-white font-semibold py-2 px-4 rounded-lg shadow-md`}
-            >
-              📊 Present
-            </button>
+          {/* Dashboard Button */}
+          <div className="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-4 items-center mt-8 px-4">
             <button
               onClick={() => navigate("/future", { state: { agents } })}
               className={`${
                 agentsCreated
-                  ? "bg-purple-500 hover:bg-purple-700 scale-100"
+                  ? "bg-blue-500 hover:bg-blue-700 scale-100"
                   : "bg-gray-700 text-gray-400 scale-90"
               } hover:scale-105 cursor-pointer transition transform duration-1000 ease-in-out text-white font-semibold py-2 px-4 rounded-lg shadow-md`}
             >
-              Future 📈
+              Dashboard 📈
             </button>
           </div>
 
@@ -236,24 +226,38 @@ const IndexPage = () => {
                       >
                         What Do These Buttons Do?
                       </h2>
+                      {/* Dashboard explanation */}
                       <div className="flex items-start">
                         <span className="w-28 shrink-0 font-semibold">
-                          📊 Present
+                          📈 Dashboard
                         </span>
                         <span className="text-left">
-                          View current agent distributions like age, gender, and
-                          answers to your questions.
+                          Explore your customer base Click Demographic
+                          Distribution to see the age, income and location mix
+                          of the agents you just generated. This gives you a
+                          feel for who you’re “talking” to before you ask any
+                          questions. Upload a question set Use Upload CSV to
+                          import the Likert-scale questions you want your agents
+                          to answer. A green ✅ appears under the ❓ icon when
+                          the file is accepted. Review present-day answers Once
+                          a CSV is loaded, the Present Answers button unlocks.
+                          It renders a stacked-bar Likert chart so you can see
+                          how today’s customers feel. Run a what-if scenario
+                          Type a short description (≥ 5 chars) in “Enter future
+                          scenario…”—for example, “Price rises 10% and delivery
+                          time halves.” Hit Submit 🔓 to let the model predict
+                          how attitudes might change. Compare future vs. present
+                          After the scenario is processed you’ll get another ✅
+                          (under 📝). The Scenario Answers button becomes active
+                          and shows both charts side-by-side so you can spot
+                          shifts instantly. Download templates or results Need a
+                          starting CSV or want to save your edits? Download CSV
+                          takes care of that. Reset whenever you like The red ⟲
+                          button at the top of the start page wipes agents and
+                          unlocks everything so you can run a fresh simulation.
                         </span>
                       </div>
-                      <div className="flex items-start">
-                        <span className="w-28 shrink-0 font-semibold">
-                          📈 Future
-                        </span>
-                        <span className="text-left">
-                          Simulate future agent responses to your questions
-                          based on a defined scenario.
-                        </span>
-                      </div>
+                      {/* ⟲ Reset explanation */}
                       <div className="flex items-start">
                         <span className="w-28 shrink-0 font-semibold">
                           ⟲ Reset
