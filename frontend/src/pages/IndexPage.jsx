@@ -232,29 +232,7 @@ const IndexPage = () => {
                           📈 Dashboard
                         </span>
                         <span className="text-left">
-                          Explore your customer base Click Demographic
-                          Distribution to see the age, income and location mix
-                          of the agents you just generated. This gives you a
-                          feel for who you’re “talking” to before you ask any
-                          questions. Upload a question set Use Upload CSV to
-                          import the Likert-scale questions you want your agents
-                          to answer. A green ✅ appears under the ❓ icon when
-                          the file is accepted. Review present-day answers Once
-                          a CSV is loaded, the Present Answers button unlocks.
-                          It renders a stacked-bar Likert chart so you can see
-                          how today’s customers feel. Run a what-if scenario
-                          Type a short description (≥ 5 chars) in “Enter future
-                          scenario…”—for example, “Price rises 10% and delivery
-                          time halves.” Hit Submit 🔓 to let the model predict
-                          how attitudes might change. Compare future vs. present
-                          After the scenario is processed you’ll get another ✅
-                          (under 📝). The Scenario Answers button becomes active
-                          and shows both charts side-by-side so you can spot
-                          shifts instantly. Download templates or results Need a
-                          starting CSV or want to save your edits? Download CSV
-                          takes care of that. Reset whenever you like The red ⟲
-                          button at the top of the start page wipes agents and
-                          unlocks everything so you can run a fresh simulation.
+                          Go to the agent interaction screen where you can ask questions, enter a future scenario, and export both current and future responses as CSV.
                         </span>
                       </div>
                       {/* ⟲ Reset explanation */}

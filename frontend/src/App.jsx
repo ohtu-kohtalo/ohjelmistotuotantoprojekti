@@ -139,14 +139,27 @@ const App = () => {
                     ×
                   </button>
                 </div>
-                <p className="text-sm leading-relaxed">
-                  This is a software development project for VTT by a team of
-                  students at Helsinki University. The program can be used to
-                  help predict consumer behaviour by creating agents based on
-                  historical data and simulating their answers with LLMs. Users
-                  can query agents and receive Likert scale chart responses, or
-                  export results as CSV.
-                </p>
+                <div className="text-sm leading-relaxed">
+                  This application, developed by a team of University of Helsinki students for VTT,  
+                  simulates consumer behavior by creating AI agents from questionnaire data.  
+                  <br /><br />
+
+                  <strong>Agents can:</strong>
+                  <ul className="list-disc list-inside ml-4">
+                    <li>Answer questions beyond the original survey using large language models (LLMs).</li>
+                    <li>Provide responses on a Likert scale (1–5).</li>
+                    <li>Be transformed under hypothetical future scenarios to predict behavioral shifts.</li>
+                  </ul>
+
+                  <strong>Tool features:</strong>
+                  <ul className="list-disc list-inside ml-4">
+                    <li>Visualize agent responses through interactive graphs.</li>
+                    <li>Export both current and future agent responses as CSV files for deeper analysis.</li>
+                  </ul>
+
+                  <br />
+                  Use this tool to explore and compare consumer insights under various scenarios.
+                </div>
               </div>
             )}
           </div>
