@@ -211,43 +211,48 @@ const IndexPage = () => {
                 >
                   <span className="text-xl font-bold text-white">?</span>
                 </div>
+
                 {/* Floating Modal */}
-                {showButtonHelp && (
-                  <div
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="button-help-title"
-                    className="absolute bottom-[3.5rem] left-1/2 -translate-x-1/2 w-[95vw] sm:w-[90vw] max-w-screen-md bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto"
-                  >
-                    <div className="space-y-4 text-sm leading-relaxed">
-                      <h2
-                        id="button-help-title"
-                        className="text-xl sm:text-2xl font-semibold text-center mb-4"
-                      >
-                        What Do These Buttons Do?
-                      </h2>
-                      {/* Dashboard explanation */}
-                      <div className="flex items-start">
-                        <span className="w-28 shrink-0 font-semibold">
-                          📈 Dashboard
-                        </span>
-                        <span className="text-left">
-                          Go to the agent interaction screen where you can ask questions, enter a future scenario, and export both current and future responses as CSV.
-                        </span>
-                      </div>
-                      {/* ⟲ Reset explanation */}
-                      <div className="flex items-start">
-                        <span className="w-28 shrink-0 font-semibold">
-                          ⟲ Reset
-                        </span>
-                        <span className="text-left">
-                          Clears current agents and unlocks the top section to
-                          start over.
-                        </span>
-                      </div>
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="button-help-title"
+                  className={`absolute bottom-[3.5rem] left-1/2 -translate-x-1/2 w-[95vw] sm:w-[90vw] max-w-screen-md bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto transition-all duration-[600ms] ease-in-out transform ${
+                    showButtonHelp
+                      ? "opacity-100 pointer-events-auto translate-y-0"
+                      : "opacity-0 pointer-events-none translate-y-4"
+                  }`}
+                >
+                  <div className="space-y-4 text-sm leading-relaxed">
+                    <h2
+                      id="button-help-title"
+                      className="text-xl sm:text-2xl font-semibold text-center mb-4"
+                    >
+                      What Do These Buttons Do?
+                    </h2>
+                    {/* Dashboard explanation */}
+                    <div className="flex items-start">
+                      <span className="w-28 shrink-0 font-semibold">
+                        📈 Dashboard
+                      </span>
+                      <span className="text-left">
+                        Go to the agent interaction screen where you can ask
+                        questions, enter a future scenario, and export both
+                        current and future responses as CSV.
+                      </span>
+                    </div>
+                    {/* ⟲ Reset explanation */}
+                    <div className="flex items-start">
+                      <span className="w-28 shrink-0 font-semibold">
+                        ⟲ Reset
+                      </span>
+                      <span className="text-left">
+                        Clears current agents and unlocks the top section to
+                        start over.
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

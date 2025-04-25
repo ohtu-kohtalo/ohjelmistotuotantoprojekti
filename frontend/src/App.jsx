@@ -1,8 +1,68 @@
 import React, { useState, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+/* NOTE: BrowserRouter, Routes, Route, and useLocation all come from
+   react-router-dom in v6. */
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import IndexPage from "./pages/IndexPage";
 import FuturePage from "./pages/FuturePage";
+import PageTransition from "./components/PageTransition";
 import "./index.css";
+
+/**
+ * Helper function for page-transition animations
+ * Moved outside of App to avoid unnecessary re-renders.
+ */
+const AnimatedRoutes = ({
+  handleCsvSubmit,
+  isLoading,
+  distribution,
+  futureDistribution,
+  showMessage,
+  setCsvUploaded,
+  submittedScenario,
+  setSubmittedScenario,
+  resetResponse,
+}) => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route
+          path="/"
+          element={
+            <PageTransition>
+              <IndexPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/future"
+          element={
+            <PageTransition>
+              <FuturePage
+                handleCsvSubmit={handleCsvSubmit}
+                isLoading={isLoading}
+                response={distribution}
+                futureResponse={futureDistribution}
+                showMessage={showMessage}
+                setCsvUploaded={setCsvUploaded}
+                submittedScenario={submittedScenario}
+                setSubmittedScenario={setSubmittedScenario}
+                resetResponse={resetResponse}
+              />
+            </PageTransition>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 const App = () => {
   const [hovering, setHovering] = useState(false);
@@ -82,25 +142,40 @@ const App = () => {
     }, 5000);
   };
 
+  /* ------------------------------------------------------------------ */
+
   return (
     <Router>
       <div className="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
         {/* Fixed Header */}
         <header className="fixed w-full h-16 bg-gray-900 flex items-center justify-between px-4 sm:px-8 z-50">
-          {/* Logo */}
+          {/* Logo Mock */}
           <div className="flex items-center space-x-2">
             <a
               href="https://www.vttresearch.com/fi"
               target="_blank"
               /* Security best practice */
               rel="noopener noreferrer"
-              className="flex items-center space-x-2"
+              className="relative flex items-center space-x-2 group"
             >
-              <img
-                src="/src/assets/vtt_logo.png"
-                alt="VTT Logo"
-                className="h-10 w-auto object-contain"
-              />
+              {/* text-based logo instead of image */}
+              <h2
+                className="text-3xl font-extrabold tracking-wider
+                 transform transition-transform duration-1000
+                 group-hover:scale-105"
+              >
+                VTT
+              </h2>
+
+              {/* Hover tooltip */}
+              <span
+                className="absolute top-full left-1/2 -translate-x-1/2 mt-1
+                 px-2 py-1 text-xs text-white bg-gray-800 rounded
+                 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                 pointer-events-none whitespace-nowrap"
+              >
+                Visit VTT webpage
+              </span>
             </a>
           </div>
 
@@ -120,75 +195,80 @@ const App = () => {
             </div>
 
             {/* Floating Modal */}
-            {hovering && (
-              <div
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="help-modal-title"
-                className="absolute right-0 mt-3 w-[90vw] max-w-screen-lg bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto z-50"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h2 id="help-modal-title" className="text-2xl font-semibold">
-                    About Future Customer: A Simulator and Prediction Tool
-                  </h2>
-                  <button
-                    onClick={() => setHovering(false)}
-                    aria-label="Close Help"
-                    className="text-white text-xl font-bold hover:text-red-400"
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="text-sm leading-relaxed">
-                  This application, developed by a team of University of Helsinki students for VTT,  
-                  simulates consumer behavior by creating AI agents from questionnaire data.  
-                  <br /><br />
-
-                  <strong>Agents can:</strong>
-                  <ul className="list-disc list-inside ml-4">
-                    <li>Answer questions beyond the original survey using large language models (LLMs).</li>
-                    <li>Provide responses on a Likert scale (1–5).</li>
-                    <li>Be transformed under hypothetical future scenarios to predict behavioral shifts.</li>
-                  </ul>
-
-                  <strong>Tool features:</strong>
-                  <ul className="list-disc list-inside ml-4">
-                    <li>Visualize agent responses through interactive graphs.</li>
-                    <li>Export both current and future agent responses as CSV files for deeper analysis.</li>
-                  </ul>
-
-                  <br />
-                  Use this tool to explore and compare consumer insights under various scenarios.
-                </div>
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="help-modal-title"
+              className={`absolute right-0 mt-3 w-[90vw] max-w-screen-lg bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto z-50 transform transition-all duration-800 ease-in-out ${
+                hovering
+                  ? "opacity-100 pointer-events-auto translate-y-0"
+                  : "opacity-0 pointer-events-none -translate-y-4"
+              }`}
+            >
+              {/* Modal Content */}
+              <div className="flex justify-between items-start mb-4">
+                <h2 id="help-modal-title" className="text-2xl font-semibold">
+                  About Future Customer: A Simulator and Prediction Tool
+                </h2>
+                <button
+                  onClick={() => setHovering(false)}
+                  aria-label="Close Help"
+                  className="text-white text-xl font-bold hover:text-red-400"
+                >
+                  ×
+                </button>
               </div>
-            )}
+              <div className="text-sm leading-relaxed">
+                This application, developed by a team of University of Helsinki
+                students for VTT, simulates consumer behavior by creating AI
+                agents from questionnaire data.
+                <br />
+                <br />
+                <strong>Agents can:</strong>
+                <ul className="list-disc list-inside ml-4">
+                  <li>
+                    Answer questions beyond the original survey using large
+                    language models (LLMs).
+                  </li>
+                  <li>Provide responses on a Likert scale (1–5).</li>
+                  <li>
+                    Be transformed under hypothetical future scenarios to
+                    predict behavioral shifts.
+                  </li>
+                </ul>
+                <strong>Tool features:</strong>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Visualize agent responses through interactive graphs.</li>
+                  <li>
+                    Export both current and future agent responses as CSV files
+                    for deeper analysis.
+                  </li>
+                </ul>
+                <br />
+                Use this tool to explore and compare consumer insights under
+                various scenarios.
+              </div>
+            </div>
           </div>
         </header>
 
         {/* Main Content */}
         <div className="pt-16">
-          <Routes>
-            <Route path="/" element={<IndexPage />} />
-            <Route
-              path="/future"
-              element={
-                <FuturePage
-                  handleCsvSubmit={handleCsvSubmit}
-                  isLoading={isLoading}
-                  response={distribution}
-                  futureResponse={futureDistribution}
-                  showMessage={showMessage}
-                  setCsvUploaded={setCsvUploaded}
-                  submittedScenario={submittedScenario}
-                  setSubmittedScenario={setSubmittedScenario}
-                  resetResponse={() => {
-                    setDistribution([]);
-                    setFutureDistribution([]);
-                  }}
-                />
-              }
-            />
-          </Routes>
+          {/* Render animated routes */}
+          <AnimatedRoutes
+            handleCsvSubmit={handleCsvSubmit}
+            isLoading={isLoading}
+            distribution={distribution}
+            futureDistribution={futureDistribution}
+            showMessage={showMessage}
+            setCsvUploaded={setCsvUploaded}
+            submittedScenario={submittedScenario}
+            setSubmittedScenario={setSubmittedScenario}
+            resetResponse={() => {
+              setDistribution([]);
+              setFutureDistribution([]);
+            }}
+          />
         </div>
       </div>
     </Router>

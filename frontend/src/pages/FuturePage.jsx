@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+/* NOTE: we now import useNavigate so the new “Back to Home” button can change routes */
+import { useLocation, useNavigate } from "react-router-dom";
 import InitialDistribution from "../components/InitialDistribution";
 import LikertChartContainer from "../components/LikertChartContainer";
 import CsvUpload from "../components/CsvUpload";
@@ -25,6 +26,7 @@ const FuturePage = ({
   const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
   const tempMessageTimeout = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate(); // NEW
   const agents = location.state?.agents ?? [];
 
   const handleCsvSuccess = (message) => {
@@ -107,7 +109,9 @@ const FuturePage = ({
         <div className="flex gap-4 items-center mb-2">
           <button
             onClick={() => setChartType("initial")}
-            className={`${chartType === "initial" ? "bg-blue-600" : "bg-gray-700"} rounded-md px-4 py-2 text-sm sm:text-base transition-colors`}
+            className={`${
+              chartType === "initial" ? "bg-blue-600" : "bg-gray-700"
+            } rounded-md px-4 py-2 text-sm sm:text-base transition-all duration-1000 transform hover:scale-105 disabled:scale-95 cursor-pointer`}
           >
             Demographic Distribution
           </button>
@@ -118,8 +122,14 @@ const FuturePage = ({
               onClick={() => csvLoaded && setChartType("likert-present")}
               disabled={!csvLoaded}
               aria-describedby="csv-tip"
-              className={`rounded-md px-4 py-2 text-sm sm:text-base transition-colors
-                ${!csvLoaded ? "bg-gray-700 opacity-50 cursor-not-allowed" : chartType === "likert-present" ? "bg-blue-600" : "bg-gray-700"}`}
+              className={`rounded-md px-4 py-2 text-sm sm:text-base transition-all duration-1000 transform hover:scale-105 disabled:scale-95 cursor-pointer disabled:cursor-not-allowed
+                ${
+                  !csvLoaded
+                    ? "bg-gray-700 opacity-50"
+                    : chartType === "likert-present"
+                      ? "bg-blue-600"
+                      : "bg-gray-700"
+                }`}
             >
               Present answers
             </button>
@@ -148,10 +158,10 @@ const FuturePage = ({
                   setChartType("likert-future")
                 }
                 disabled={!csvLoaded || !submittedScenario}
-                className={`rounded-md px-4 py-2 text-sm sm:text-base transition-colors
+                className={`rounded-md px-4 py-2 text-sm sm:text-base transition-all duration-1000 transform hover:scale-105 disabled:scale-95 cursor-pointer disabled:cursor-not-allowed
                   ${
                     !csvLoaded || !submittedScenario
-                      ? "bg-gray-700 opacity-50 cursor-not-allowed"
+                      ? "bg-gray-700 opacity-50"
                       : chartType === "likert-future"
                         ? "bg-blue-600"
                         : "bg-gray-700"
@@ -182,7 +192,11 @@ const FuturePage = ({
                 <span>❓</span>
                 <div
                   className={`w-5 h-5 rounded border flex items-center justify-center text-lg
-                    ${csvLoaded ? "bg-green-600 border-green-400 text-white" : "bg-gray-800 border-gray-600"}`}
+                    ${
+                      csvLoaded
+                        ? "bg-green-600 border-green-400 text-white"
+                        : "bg-gray-800 border-gray-600"
+                    }`}
                 >
                   {csvLoaded ? "✅" : ""}
                 </div>
@@ -193,7 +207,11 @@ const FuturePage = ({
                 <span>📝</span>
                 <div
                   className={`w-5 h-5 rounded border flex items-center justify-center text-lg
-                    ${submittedScenario ? "bg-green-600 border-green-400 text-white" : "bg-gray-800 border-gray-600"}`}
+                    ${
+                      submittedScenario
+                        ? "bg-green-600 border-green-400 text-white"
+                        : "bg-gray-800 border-gray-600"
+                    }`}
                 >
                   {submittedScenario ? "✅" : ""}
                 </div>
@@ -208,7 +226,7 @@ const FuturePage = ({
             >
               <button
                 aria-label="Explain Future Page"
-                className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-md text-xl font-bold cursor-pointer"
+                className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-md text-xl font-bold cursor-pointer transform transition-all duration-1000 hover:scale-105 disabled:scale-95"
               >
                 ?
               </button>
@@ -219,21 +237,27 @@ const FuturePage = ({
                   <ul className="list-disc list-inside space-y-2">
                     <li>
                       <strong>Demographic Distribution: </strong>
-                      Bar charts showing the age or gender distribution of the agents, toggled by the buttons on the top left of the chart.
+                      Bar charts showing the age or gender distribution of the
+                      agents, toggled by the buttons on the top left of the
+                      chart.
                     </li>
                     <li>
-                      <strong>Present Answers: </strong>  
-                      Once you’ve uploaded a CSV of questions, this renders a bar graph of the Likert-scale answers for each question, letting you see how today’s customers respond on a 1–5 scale.  
+                      <strong>Present Answers: </strong>
+                      Once you’ve uploaded a CSV of questions, this renders a
+                      bar graph of the Likert-scale answers for each question,
+                      letting you see how today’s customers respond on a 1–5
+                      scale.
                     </li>
                     <li>
-                      <strong>Future Scenario Answers: </strong>  
-                      After entering and submitting your “what-if” scenario, this view shows  
-                      side-by-side Likert charts of current vs. predicted responses, so  
-                      you can instantly spot shifts in sentiment under your scenario.
+                      <strong>Future Scenario Answers: </strong>
+                      After entering and submitting your “what-if” scenario,
+                      this view shows side-by-side Likert charts of current vs.
+                      predicted responses, so you can instantly spot shifts in
+                      sentiment under your scenario.
                     </li>
                   </ul>
                   <p className="mt-3">
-                    Status icons next to these buttons indicate steps completed:  
+                    Status icons next to these buttons indicate steps completed:
                     ❓ CSV loaded, 📝 scenario submitted.
                   </p>
                 </div>
@@ -259,7 +283,7 @@ const FuturePage = ({
               >
                 <button
                   aria-label="Explain Upload/Download/Scenario"
-                  className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-md text-xl font-bold cursor-pointer"
+                  className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-md text-xl font-bold cursor-pointer transform transition-all duration-1000 hover:scale-105 disabled:scale-95"
                 >
                   ?
                 </button>
@@ -268,26 +292,30 @@ const FuturePage = ({
                   <div className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 w-[90vw] max-w-md bg-gray-800 text-white p-4 rounded-xl shadow-xl border border-gray-700 text-sm leading-relaxed z-50">
                     <h4 className="text-sm font-semibold mb-2">Data Source</h4>
                     <p className="text-xs mb-3">
-                      Agents are built from VTT’s Gen Z food‐system survey—please frame questions  
-                      around food consumption topics.
+                      Agents are built from VTT’s Gen Z food‐system
+                      survey—please frame questions around food consumption
+                      topics.
                     </p>
                     <hr className="border-gray-700 mb-3" />
 
                     <ul className="list-disc list-inside space-y-2">
                       <li>
-                        <strong>Upload CSV:</strong> Click “Upload CSV” to import your prepared  
-                        question file (<em>no header row, one question per row</em>). A green ✅  
-                        appears under the ❓ icon when accepted.
+                        <strong>Upload CSV:</strong> Click “Upload CSV” to
+                        import your prepared question file (
+                        <em>no header row, one question per row</em>). A green
+                        ✅ appears under the ❓ icon when accepted.
                       </li>
                       <li>
-                        <strong>Download CSV:</strong> Use “Download CSV” to export your current  
-                        questions and any loaded responses for offline analysis.
+                        <strong>Download CSV:</strong> Use “Download CSV” to
+                        export your current questions and any loaded responses
+                        for offline analysis.
                       </li>
                       <li>
-                        <strong>Future Scenario:</strong> In the “Enter future scenario…” field,  
-                        type at least 5 characters describing a “what-if” (e.g. “Price rises 10%  
-                        and delivery time halves”), then click 🔓 to simulate how agent responses  
-                        might change.
+                        <strong>Future Scenario:</strong> In the “Enter future
+                        scenario…” field, type at least 5 characters describing
+                        a “what-if” (e.g. “Price rises 10% and delivery time
+                        halves”), then click Submit 🔓 to simulate how agent
+                        responses might change.
                       </li>
                     </ul>
                   </div>
@@ -312,18 +340,30 @@ const FuturePage = ({
 
             <button
               onClick={handleFutureSubmit}
-              className={`w-full text-white py-3 rounded-md transition ${
+              disabled={futureScenario.length < 5 || futureScenarioLoading}
+              className={`w-full sm:w-1/2 md:w-1/3 lg:w-1/4 min-w-[8rem] text-white py-3 rounded-md
+              transform transition-all duration-1000 hover:scale-105 disabled:scale-95
+              cursor-pointer disabled:cursor-not-allowed
+              ${
                 futureScenario.length < 5 || futureScenarioLoading
-                  ? "bg-gray-700 cursor-not-allowed"
+                  ? "bg-gray-700"
                   : "bg-blue-600 hover:bg-blue-700"
               }`}
-              disabled={futureScenario.length < 5 || futureScenarioLoading}
             >
               Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
+            </button>
+
+            {/* NEW — Back to Index Page */}
+            <button
+              onClick={() => navigate("/")}
+              className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 min-w-[8rem] text-white py-3 rounded-md bg-blue-600 hover:bg-blue-700 transform transition-all duration-1000 hover:scale-105 disabled:scale-95 cursor-pointer whitespace-nowrap"
+            >
+              ⬅️ Go Back
             </button>
           </div>
         </div>
       </div>
+
       {(futureScenarioLoading || isLoading) && (
         <div
           className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center

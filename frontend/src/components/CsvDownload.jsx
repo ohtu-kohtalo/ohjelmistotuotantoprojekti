@@ -28,7 +28,7 @@ const CsvDownload = ({
           },
           // Payload with the question objects
           body: JSON.stringify({ questions, future_questions }),
-        },
+        }
       );
 
       // Check for response errors
@@ -88,7 +88,7 @@ const CsvDownload = ({
       <button
         onClick={handleDownload}
         disabled={loading || disabled}
-        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 transition-colors rounded-md font-medium"
+        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transform transition-all duration-1000 hover:scale-105 cursor-pointer"
       >
         {loading ? "Downloading..." : "Download CSV"}
       </button>
