@@ -298,7 +298,7 @@ def download_agent_response_csv() -> Response:
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
         agent_info = agent.get_agent_info()
-        row = [f"Agent {i}", agent_info.get("Age", ""), agent_info.get("Gender", "")]
+        row = [str(i), agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "questions"):
             for question in header_current[3:]:
                 value = agent.questions.get(question, "")
@@ -343,7 +343,7 @@ def download_agent_response_csv() -> Response:
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
         agent_info = agent.get_agent_info()
-        row = [f"Agent {i}", agent_info.get("Age", ""), agent_info.get("Gender", "")]
+        row = [str(i), agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "future_questions"):
             for question in header_future[3:]:
                 value = agent.future_questions.get(question, "")
