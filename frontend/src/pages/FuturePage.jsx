@@ -143,7 +143,9 @@ const FuturePage = ({
             <div className="relative group">
               <button
                 onClick={() =>
-                  csvLoaded && submittedScenario && setChartType("likert-future")
+                  csvLoaded &&
+                  submittedScenario &&
+                  setChartType("likert-future")
                 }
                 disabled={!csvLoaded || !submittedScenario}
                 className={`rounded-md px-4 py-2 text-sm sm:text-base transition-colors
@@ -214,11 +216,12 @@ const FuturePage = ({
               {showChartHelp && (
                 <div className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 w-[90vw] max-w-md bg-gray-800 text-white p-4 rounded-xl shadow-xl border border-gray-700 text-sm leading-relaxed z-50">
                   <p>
-                    Toggle between demographic distribution, present answers and simulated future
-                    answers here. Icons next to the buttons indicate the status
-                    of your CSV upload and future scenario submission. 
-                    When CSV is uploaded, you can view the present answers and when both
-                    are submitted, you can view the simulated future answers.
+                    Toggle between demographic distribution, present answers and
+                    simulated future answers here. Icons next to the buttons
+                    indicate the status of your CSV upload and future scenario
+                    submission. When CSV is uploaded, you can view the present
+                    answers and when both are submitted, you can view the
+                    simulated future answers.
                   </p>
                 </div>
               )}
@@ -227,12 +230,14 @@ const FuturePage = ({
         </div>
 
         {/* Chart and Upload Section */}
-        <div className="flex flex-row w-full gap-8">
-          <div className="flex-1 flex flex-col items-start gap-4">
-            <div className="w-full max-w-[70vw]">{renderChart()}</div>
+        <div className="flex flex-col md:flex-row w-full gap-4 md:gap-6 lg:gap-8">
+          <div className="order-2 md:order-1 flex-1 flex flex-col items-start gap-4">
+            <div className="w-full lg:max-w-[70vw] xl:max-w-[75vw] 2xl:max-w-[80vw]">
+              {renderChart()}
+            </div>
           </div>
 
-          <div className="w-[400px] flex flex-col items-center gap-8 mt-2">
+          <div className="order-1 md:order-2 w-full md:w-72 lg:w-80 xl:w-96 2xl:w-[28rem] flex flex-col items-center gap-8 mt-2">
             <div className="w-full flex flex-row items-center justify-center gap-4">
               <div
                 onMouseEnter={() => setShowUploadHelp(true)}
