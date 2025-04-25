@@ -335,7 +335,7 @@ def download_agent_response_csv() -> Response:
             )
 
     # Create headers
-    header_future = ["Agent"] + list(future_questions_payload.keys())
+    header_future = ["Agent", "Age", "Gender"] + list(future_questions_payload.keys())
     si_future = io.StringIO()
     writer_future = csv.writer(si_future)
     writer_future.writerow(header_future)
