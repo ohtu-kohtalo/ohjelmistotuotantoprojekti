@@ -26,7 +26,7 @@ const FuturePage = ({
   const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
   const tempMessageTimeout = useRef(null);
   const location = useLocation();
-  const navigate = useNavigate(); // NEW
+  const navigate = useNavigate();
   const agents = location.state?.agents ?? [];
 
   const handleCsvSuccess = (message) => {
@@ -44,6 +44,13 @@ const FuturePage = ({
     setCsvUploaded(false);
     setFutureScenario("");
     resetResponse();
+  };
+
+  // FIX THIS: This is a temporary solution to avoid the "double message" issue.
+  // GO BACK BUTTON SHOULD RESET EVERYTHING
+  const handleGoBack = () => {
+    handleReset();
+    navigate("/", { replace: true });
   };
 
   const handleFutureSubmit = async () => {
@@ -231,37 +238,48 @@ const FuturePage = ({
                 ?
               </button>
 
-              {showChartHelp && (
-                <div className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 w-[90vw] max-w-md bg-gray-800 text-white p-4 rounded-xl shadow-xl border border-gray-700 text-sm leading-relaxed z-50">
-                  <h3 className="text-lg font-semibold mb-2">View Options</h3>
-                  <ul className="list-disc list-inside space-y-2">
-                    <li>
-                      <strong>Demographic Distribution: </strong>
-                      Bar charts showing the age or gender distribution of the
-                      agents, toggled by the buttons on the top left of the
-                      chart.
-                    </li>
-                    <li>
-                      <strong>Present Answers: </strong>
-                      Once you’ve uploaded a CSV of questions, this renders a
-                      bar graph of the Likert-scale answers for each question,
-                      letting you see how today’s customers respond on a 1–5
-                      scale.
-                    </li>
-                    <li>
-                      <strong>Future Scenario Answers: </strong>
-                      After entering and submitting your “what-if” scenario,
-                      this view shows side-by-side Likert charts of current vs.
-                      predicted responses, so you can instantly spot shifts in
-                      sentiment under your scenario.
-                    </li>
-                  </ul>
-                  <p className="mt-3">
-                    Status icons next to these buttons indicate steps completed:
-                    ❓ CSV loaded, 📝 scenario submitted.
-                  </p>
-                </div>
-              )}
+              {/* Floating Modal */}
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="chart-help-title"
+                className={`absolute top-[3.5rem] left-1/2 -translate-x-1/2 w-[70vw] sm:w-[50vw] max-w-screen-md bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto transition-all duration-[600ms] ease-in-out transform ${
+                  showChartHelp
+                    ? "opacity-100 pointer-events-auto translate-y-0 z-50"
+                    : "opacity-0 pointer-events-none translate-y-4 z-10"
+                }`}
+              >
+                <h3
+                  id="chart-help-title"
+                  className="text-lg sm:text-xl font-semibold text-center mb-4"
+                >
+                  View Options
+                </h3>
+                <ul className="list-disc list-inside space-y-2 text-sm leading-relaxed">
+                  <li>
+                    <strong>Demographic Distribution: </strong>
+                    Bar charts showing the age or gender distribution of the
+                    agents, toggled by the buttons on the top left of the chart.
+                  </li>
+                  <li>
+                    <strong>Present Answers: </strong>
+                    Once you’ve uploaded a CSV of questions, this renders a bar
+                    graph of the Likert-scale answers for each question, letting
+                    you see how today’s customers respond on a 1–5 scale.
+                  </li>
+                  <li>
+                    <strong>Future Scenario Answers: </strong>
+                    After entering and submitting your “what-if” scenario, this
+                    view shows side-by-side Likert charts of current vs.
+                    predicted responses, so you can instantly spot shifts in
+                    sentiment under your scenario.
+                  </li>
+                </ul>
+                <p className="mt-3 text-sm">
+                  Status icons next to these buttons indicate steps completed:
+                  ❓ CSV loaded, 📝 scenario submitted.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -288,38 +306,50 @@ const FuturePage = ({
                   ?
                 </button>
 
-                {showUploadHelp && (
-                  <div className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 w-[90vw] max-w-md bg-gray-800 text-white p-4 rounded-xl shadow-xl border border-gray-700 text-sm leading-relaxed z-50">
-                    <h4 className="text-sm font-semibold mb-2">Data Source</h4>
-                    <p className="text-xs mb-3">
-                      Agents are built from VTT’s Gen Z food‐system
-                      survey—please frame questions around food consumption
-                      topics.
-                    </p>
-                    <hr className="border-gray-700 mb-3" />
+                {/* Floating Modal */}
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="upload-help-title"
+                  className={`absolute top-[3.5rem] right-1/2 w-[80vw] sm:w-[60vw] max-w-screen-md bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto transition-all duration-[600ms] ease-in-out transform ${
+                    showUploadHelp
+                      ? "opacity-100 pointer-events-auto translate-y-0"
+                      : "opacity-0 pointer-events-none translate-y-4"
+                  }`}
+                >
+                  <h4
+                    id="upload-help-title"
+                    className="text-lg sm:text-xl font-semibold text-center mb-4"
+                  >
+                    Data Source
+                  </h4>
+                  <p className="text-xs mb-3">
+                    Agents are built from VTT’s Gen Z food‐system survey—please
+                    frame questions around food consumption topics.
+                  </p>
+                  <hr className="border-gray-700 mb-3" />
 
-                    <ul className="list-disc list-inside space-y-2">
-                      <li>
-                        <strong>Upload CSV:</strong> Click “Upload CSV” to
-                        import your prepared question file (
-                        <em>no header row, one question per row</em>). A green
-                        ✅ appears under the ❓ icon when accepted.
-                      </li>
-                      <li>
-                        <strong>Download CSV:</strong> Use “Download CSV” to
-                        export your current questions and any loaded responses
-                        for offline analysis.
-                      </li>
-                      <li>
-                        <strong>Future Scenario:</strong> In the “Enter future
-                        scenario…” field, type at least 5 characters describing
-                        a “what-if” (e.g. “Price rises 10% and delivery time
-                        halves”), then click Submit 🔓 to simulate how agent
-                        responses might change.
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                  <ul className="list-disc list-inside space-y-2 text-sm leading-relaxed">
+                    <li>
+                      <strong>Upload CSV:</strong> Click “Upload CSV” to import
+                      your prepared question file (
+                      <em>no header row, one question per row</em>). A green ✅
+                      appears under the ❓ icon when accepted.
+                    </li>
+                    <li>
+                      <strong>Download CSV:</strong> Use “Download CSV” to
+                      export your current questions and any loaded responses for
+                      offline analysis.
+                    </li>
+                    <li>
+                      <strong>Future Scenario:</strong> In the “Enter future
+                      scenario…” field, type at least 5 characters describing a
+                      “what-if” (e.g. “Price rises 10% and delivery time
+                      halves”), then click Submit 🔓 to simulate how agent
+                      responses might change.
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               <CsvUpload
@@ -353,9 +383,9 @@ const FuturePage = ({
               Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
             </button>
 
-            {/* NEW — Back to Index Page */}
+            {/* Back to Index Page */}
             <button
-              onClick={() => navigate("/")}
+              onClick={handleGoBack}
               className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 min-w-[8rem] text-white py-3 rounded-md bg-blue-600 hover:bg-blue-700 transform transition-all duration-1000 hover:scale-105 disabled:scale-95 cursor-pointer whitespace-nowrap"
             >
               ⬅️ Go Back

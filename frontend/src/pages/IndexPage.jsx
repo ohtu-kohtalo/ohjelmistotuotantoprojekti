@@ -85,11 +85,11 @@ const IndexPage = () => {
         <div
           className={`${agentsCreated ? "opacity-30 pointer-events-none" : ""} transition-opacity duration-300`}
         >
-          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold text-center">
+          <h1 className="text-3xl sm:text-4xl lg:text-4xl font-bold text-center mb-4 mt-4 sm:mt-6">
             Future Customer: A Simulator and Prediction Tool
           </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl mt-10 sm:mt-16 max-w-2xl mx-auto text-center leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl mt-6 sm:mt-10 max-w-2xl mx-auto text-center leading-relaxed">
             Welcome to our application!
             <br />
             <br />
@@ -100,7 +100,7 @@ const IndexPage = () => {
             in the top-right corner.
           </p>
 
-          <p className="text-lg mt-12 max-w-2xl mx-auto text-center leading-relaxed">
+          <p className="text-lg mt-6 sm:mt-8 max-w-2xl mx-auto text-center leading-relaxed">
             Begin by selecting the number of agents you want to create.
           </p>
 

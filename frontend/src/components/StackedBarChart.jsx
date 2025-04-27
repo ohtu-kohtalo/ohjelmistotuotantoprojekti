@@ -2,15 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 /**
- * StackedBarChart animated on first mount and whenever xAxis toggles.
+ * StackedBarChart
+ * ────────────────────────────────────────────────────────────────────────────
+ * • Skips animation on the very first mount of the component.
+ * • Animates normally whenever the xAxis view toggles afterwards.
  */
 const StackedBarChart = ({ data = [], xAxis = "age" }) => {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const [dims, setDims] = useState({ width: 0, height: 0 });
 
-  /** Tracks whether **the current view** (age or gender) has already animated */
+  /** Has the *current* view (age / gender) already animated? */
   const hasAnimated = useRef(false);
+  /** Tracks the very first mount of the component. */
+  const firstMount = useRef(true);
 
   /* ——— Reset the flag whenever the view switches ——— */
   useEffect(() => {
@@ -194,8 +199,10 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
         d3.select(this).attr("stroke-width", 1);
       });
 
-    /* —— Animate once per view —— */
-    if (!hasAnimated.current) {
+    /* —— Animate unless this is the very first mount —— */
+    const shouldAnimate = !hasAnimated.current && !firstMount.current;
+
+    if (shouldAnimate) {
       bars
         .attr("y", y(0))
         .attr("height", 0)
@@ -208,7 +215,11 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       bars
         .attr("y", (d) => y(d.count))
         .attr("height", (d) => height - margin.bottom - y(d.count));
+      hasAnimated.current = true;
     }
+
+    /* Mark that the first render has happened */
+    if (firstMount.current) firstMount.current = false;
 
     return () => tooltip.remove();
   }, [data, xAxis, dims]);

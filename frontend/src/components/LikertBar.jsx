@@ -286,14 +286,14 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
     }
 
     // Chart Title
-    const titleFontSize = Math.max(12, Math.min(20, width / 60)); // NEW
+    const titleFontSize = Math.max(12, Math.min(20, width / 70));
     svg
       .append("text")
       .attr("x", width / 2)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
       .attr("fill", "white")
-      .style("font-size", `${titleFontSize}px`) // NEW
+      .style("font-size", `${titleFontSize}px`)
       .style("font-weight", "bold")
       .text(question);
 
