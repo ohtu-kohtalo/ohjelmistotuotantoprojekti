@@ -8,6 +8,7 @@ authors = [
     {name = "Iida Häkkinen", email = "iida.hakkinen@gmail.com"},
     {name = "Jaakko Airikkala", email = "jaakkel@gmail.com"},
     {name = "Sampsa Ollikainen", email = "sampsa.ollikainen@gmail.com"},
+    {name = "Sonja Olkkonen", email = "sonja.olkkonen@gmail.com"},
     {name = "Emmi Koponen"}
 ]
 readme = "README.md"
