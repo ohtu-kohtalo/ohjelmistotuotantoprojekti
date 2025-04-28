@@ -93,7 +93,9 @@ class GetData:
         distribution = add_statistics(distribution)
         return distribution
 
-    def _convert_to_frontend_form(self, distributions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _convert_to_frontend_form(
+        self, distributions: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Helper function for get_answer_distributions. This function converts the
         distributions to the form, that can be sent to frontend"""
         new_distributions = []
