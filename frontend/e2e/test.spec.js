@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // App and fixtures
-const APP_URL = "http://localhost:5173";
+const APP_URL = "http://localhost:5174";
 const QUESTIONS_FIXTURE = path.resolve(__dirname, "fixtures", "questions.csv");
 
 // Zip validation helper
@@ -100,7 +100,6 @@ test(
 );
 
 // Future scenario test
-// Also confirms that future scenario resets questions
 test(
   "Future Scenario upload successful and unlocks Future Scenario answers",
   async ({ page }) => {
@@ -112,14 +111,6 @@ test(
     await page.getByRole("button", { name: "Submit" }).click();
     await page.getByRole("button", { name: "Dashboard 📈" }).click();
     await expect(page).toHaveURL(`${APP_URL}/future`);
-
-    // Initial CSV upload
-    await page.setInputFiles("#csvFileInput", QUESTIONS_FIXTURE);
-    await page.getByRole("button", { name: "Upload CSV" }).click();
-    await expect(
-      page.locator("span:has-text(\"❓\") + div.bg-green-600.border-green-400.text-white"),
-      { timeout: 10000 }
-    ).toBeVisible();
 
     const futureBtn = page.getByRole("button", { name: "Future Scenario Answers" });
     await expect(futureBtn).toBeDisabled();
@@ -134,19 +125,25 @@ test(
     const overlay = page.locator("div.fixed.inset-0.z-50.bg-black\\/30");
     await overlay.waitFor({ state: "hidden", timeout: 20000 });
 
-    // Re-upload CSV
-    await page.setInputFiles("#csvFileInput", QUESTIONS_FIXTURE);
-    await page.getByRole("button", { name: "Upload CSV" }).click();
-    await expect(
-      page.locator("span:has-text(\"❓\") + div.bg-green-600.border-green-400.text-white"),
-      { timeout: 10000 }
-    ).toBeVisible();
-
     const scenarioIndicator = page.locator(
       "span:has-text(\"📝\") + div.bg-green-600.border-green-400.text-white"
     );
     await expect(scenarioIndicator).toHaveCount(1);
     await expect(scenarioIndicator).toBeVisible();
+
+    await expect(futureBtn).toBeDisabled();
+
+    // Upload CSV
+    await page.setInputFiles("#csvFileInput", QUESTIONS_FIXTURE);
+    await page.getByRole("button", { name: "Upload CSV" }).click();
+
+    const csvIndicator = page.locator(
+      "span:has-text(\"❓\") + div.bg-green-600.border-green-400.text-white"
+    );
+    await expect(csvIndicator).toHaveCount(1);
+    await expect(csvIndicator).toBeVisible();
+
+    // Button should unlock
     await expect(futureBtn).toBeEnabled();
   }
 );
