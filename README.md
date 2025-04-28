@@ -1,6 +1,16 @@
 # Ohtuprojekti
 
-This program is being developed for [VTT](https://www.vttresearch.com/en) as part of a University of Helsinki course project.
+This application, developed by a team of University of Helsinki students for [VTT](https://www.vttresearch.com/), simulates consumer behavior by creating AI agents from questionnaire data.
+The application allows for researchers and and analysts to:
+
+- Interact with virtual respondents
+  - Pose questions to a diverse pool of AI agents whose profiles (age, gender, past answers) are drawn directly from [real survey data](https://www.vttresearch.com/en/news-and-ideas/activists-sceptics-many-faces-gen-z-changing-food-system).
+- Model “what-if” futures
+  - Define a hypothetical scenario—economic shift, new product launch, cultural trend, etc.—and automatically transform each agent’s attributes and answer patterns to project how opinions might evolve.
+- Visualize responses
+  - View current vs. future answer distributions side-by-side in interactive charts. Quickly spot shifts in sentiment, emerging consensus, or areas of high uncertainty.
+- Export raw data
+  - Download both current and future agent responses as CSV files (bundled in a ZIP), complete with demographics, for further statistical analysis or reporting.
 
 ![Prettier](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/black.yml/badge.svg)
 ![Black](https://github.com/ohtu-kohtalo/ohjelmistotuotantoprojekti/actions/workflows/prettier.yml/badge.svg)
@@ -13,6 +23,7 @@ This program is being developed for [VTT](https://www.vttresearch.com/en) as par
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Documentation](/docs/)
+- [Backlog](https://github.com/orgs/ohtu-kohtalo/projects/1)
 
 ## Prerequisites
 

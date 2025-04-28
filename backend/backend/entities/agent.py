@@ -1,3 +1,6 @@
+from typing import Dict, Any, Optional
+
+
 class Agent:
     """This class represents individual agents.
 
@@ -11,7 +14,7 @@ class Agent:
 
     _id_counter = 0  # Class variable to keep track of the last assigned ID
 
-    def __init__(self, info: dict):
+    def __init__(self, info: Dict[str, Any]) -> None:
         """Creates an agent with automatically assigned ID.
 
         Args:
@@ -28,16 +31,16 @@ class Agent:
         """Returns the unique identifier of the agent."""
         return self.__id
 
-    def get_agent_info(self) -> dict:
+    def get_agent_info(self) -> Dict[str, Any]:
         """Returns only the agent's basic information (age, gender, and latent variables)."""
         return self.__info
 
-    def get_agent_future_info(self) -> dict:
+    def get_agent_future_info(self) -> Dict[str, Dict[str, Any]]:
         """Returns the latent varibles and answers for the agent, after it has been transformed
         to the future."""
         return self.__future_info
 
-    def get_answer(self, question: str) -> str | None:
+    def get_answer(self, question: str) -> Optional[str]:
         """Returns the answer for the given question or **None**, if the given question does
         not exist.
 
@@ -50,18 +53,18 @@ class Agent:
         return self.__info.get(question, None)
 
     # NO FUNCTIONALITY YET
-    def get_all_answers(self) -> dict:
+    def get_all_answers(self) -> Dict[str, Any]:
         """Returns all of the questions and answers."""
         return self.__info
 
-    def delete_future_info_and_questions(self):
+    def delete_future_info_and_questions(self) -> None:
         """Overwrites the `future_info`, `questions` and future `future_questions` attributes
         with empty dictionaries. Returns `None`."""
         self.__future_info = {"Answers": {}}
         self.questions = {}
         self.future_questions = {}
 
-    def save_new_future_latent_variables(self, new_variables: dict):
+    def save_new_future_latent_variables(self, new_variables: Dict[str, Any]) -> None:
         """Save new future latent variables into the __future_into argument.
 
         Args:

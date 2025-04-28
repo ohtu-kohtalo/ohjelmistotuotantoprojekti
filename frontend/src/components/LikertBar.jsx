@@ -1,279 +1,311 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-const LikertBar = ({ data, futureData, question }) => {
+const LikertBar = ({ data = [], futureData = [], question = "" }) => {
   const svgRef = useRef();
+  const wrapperRef = useRef();
+  const [dims, setDims] = useState({ width: 0, height: 0 });
+  const hasAnimated = useRef(false);
+  const prevQuestion = useRef(question); // Track the previous question
+
+  // Responsive sizing
+  useEffect(() => {
+    const ro = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+      if (!w) return;
+      const rawH = Math.round(w * 0.6);
+      const h = Math.max(320, Math.min(rawH, window.innerHeight * 0.8));
+      setDims({ width: w, height: h });
+    });
+    if (wrapperRef.current) ro.observe(wrapperRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // Reset animation ONLY if question changes
+  useEffect(() => {
+    if (question !== prevQuestion.current) {
+      hasAnimated.current = false;
+      prevQuestion.current = question;
+    }
+  }, [question]);
 
   useEffect(() => {
-    if (!data || data.length === 0) return;
+    if (!data.length || !dims.width) return;
 
-    const width = 600;
-    const height = 350;
-    const margin = { top: 40, right: 80, bottom: 80, left: 30 };
+    const { width, height } = dims;
+    const margin = { top: 80, right: 80, bottom: 40, left: 40 };
 
-    d3.select(svgRef.current).selectAll("*").remove();
-
-    // Calculate the max value from both data and futureData
-    const maxValue = Math.max(
-      d3.max(data, (d) => d.value),
-      futureData && futureData.length > 0
-        ? d3.max(futureData, (d) => d.value)
-        : 0,
-    );
-
-    // Create SVG element
     const svg = d3
       .select(svgRef.current)
-      .attr("width", width)
-      .attr("height", height)
-      .attr("class", "likert-bar-chart");
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("preserveAspectRatio", "xMidYMid meet")
+      .classed("rounded-xl", true);
 
-    // Define scales
-    const xScale = d3
+    svg.selectAll("*").remove();
+
+    // Fade-in animation
+    svg.style("opacity", 0).transition().duration(1000).style("opacity", 1);
+
+    const maxVal = Math.max(
+      d3.max(data, (d) => d.value),
+      futureData.length ? d3.max(futureData, (d) => d.value) : 0,
+    );
+
+    const x = d3
       .scaleBand()
       .domain(data.map((d) => d.label))
       .range([margin.left, width - margin.right])
       .padding(0.3);
 
-    const yScale = d3
+    const y = d3
       .scaleLinear()
-      .domain([0, maxValue * 1.1])
+      .domain([0, maxVal * 1.1])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    // Define color scheme for current data
-    const colorScale = d3
-      .scaleOrdinal()
-      .domain([
-        "Strongly Disagree",
-        "Disagree",
-        "Neutral",
-        "Agree",
-        "Strongly Agree",
-      ])
-      .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
-
-    // Define colors for current and future data
-    const currentColor = "#4682B4"; // Current data color (blue)
-    const futureColor = "#8A2BE2"; // Future data color (purple)
-
-    // Y gridlines
+    // Grid
     svg
       .append("g")
-      .attr("class", "grid")
       .attr("transform", `translate(${margin.left},0)`)
       .call(
         d3
-          .axisLeft(yScale)
+          .axisLeft(y)
           .tickSize(-width + margin.left + margin.right)
           .tickFormat(""),
       )
       .selectAll("line")
-      .attr("stroke", "#ddd")
-      .attr("stroke-dasharray", "3,3");
+      .attr("stroke", "#444")
+      .attr("stroke-dasharray", "4,4");
 
-    // Add X axis with white tick labels
-    const xAxisElement = svg
+    // Axes
+    const xAxisG = svg
       .append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(xScale))
-      .attr("class", "axis");
+      .call(d3.axisBottom(x));
+    xAxisG.selectAll("text").attr("fill", "white");
 
-    // Add Y axis with white tick labels
-    const yAxisElement = svg
+    const yAxisG = svg
       .append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(yScale).tickFormat((d) => (d % 1 === 0 ? d : "")))
-      .attr("class", "axis");
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("d")));
+    yAxisG.selectAll("text").attr("fill", "white");
 
-    yAxisElement.selectAll("text").attr("fill", "white");
-
-    // Create tooltip
+    // Tooltip
+    d3.select("body").selectAll(".chart-tooltip").remove();
     const tooltip = d3
       .select("body")
       .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("visibility", "hidden");
+      .attr(
+        "class",
+        "chart-tooltip fixed z-50 pointer-events-none rounded-md bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg",
+      )
+      .style("visibility", "hidden")
+      .style("transform", "translate(-50%, -100%)");
 
-    if (futureData && futureData.length > 0) {
-      // Grouped bar chart: if futureData not empty
-      const groupedData = data.map((d) => ({
+    const currentColor = "#4682B4";
+    const futureColor = "#8A2BE2";
+
+    if (futureData.length) {
+      // Grouped bars (Present + Future)
+      const grouped = data.map((d) => ({
         label: d.label,
         current: d.value,
         future: futureData.find((f) => f.label === d.label)?.value || 0,
       }));
 
-      // Create bars for grouped bar chart
-      svg
+      const group = svg
         .selectAll(".bar-group")
-        .data(groupedData)
+        .data(grouped)
         .enter()
         .append("g")
         .attr("class", "bar-group")
-        .attr("transform", (d) => `translate(${xScale(d.label)},0)`)
-        .each(function (d) {
-          const group = d3.select(this);
+        .attr("transform", (d) => `translate(${x(d.label)},0)`);
 
-          group
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", (d) => yScale(d.current))
-            .attr("width", xScale.bandwidth() / 2)
-            .attr("height", (d) => height - margin.bottom - yScale(d.current))
-            .attr("fill", currentColor)
-            .on("mouseover", function (event, d) {
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "2px");
-              tooltip
-                .html(`Current Count: ${d.current}`)
-                .style("visibility", "visible")
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px");
-
-              d3.select(this).attr("fill", d3.rgb(currentColor).darker(0.8));
-            })
-            .on("mousemove", function (event) {
-              tooltip
-                .style("top", `${event.pageY - 10}px`)
-                .style("left", `${event.pageX + 10}px`);
-            })
-            .on("mouseout", function (event, d) {
-              tooltip.style("visibility", "hidden");
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "1px")
-                .attr("fill", currentColor);
-            });
-
-          group
-            .append("rect")
-            .attr("x", xScale.bandwidth() / 2)
-            .attr("y", (d) => yScale(d.future))
-            .attr("width", xScale.bandwidth() / 2)
-            .attr("height", (d) => height - margin.bottom - yScale(d.future))
-            .attr("fill", futureColor)
-            .on("mouseover", function (event, d) {
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "2px");
-              tooltip
-                .html(`Future Count: ${d.future}`)
-                .style("visibility", "visible")
-                .style("top", event.pageY - 10 + "px")
-                .style("left", event.pageX + 10 + "px");
-
-              d3.select(this).attr("fill", d3.rgb(futureColor).darker(0.8));
-            })
-            .on("mousemove", function (event) {
-              tooltip
-                .style("top", `${event.pageY - 10}px`)
-                .style("left", `${event.pageX + 10}px`);
-            })
-            .on("mouseout", function (event, d) {
-              tooltip.style("visibility", "hidden");
-              d3.select(this)
-                .transition()
-                .duration(200)
-                .attr("stroke-width", "1px")
-                .attr("fill", futureColor);
-            });
-
-          svg
-            .append("circle")
-            .attr("cx", width - margin.right + 20)
-            .attr("cy", margin.top + 90)
-            .attr("r", 8)
-            .style("fill", currentColor);
-
-          svg
-            .append("text")
-            .attr("x", width - margin.right + 35)
-            .attr("y", margin.top + 90)
-            .text("Present")
-            .style("font-size", "12px")
-            .attr("fill", "white")
-            .attr("alignment-baseline", "middle");
-
-          svg
-            .append("circle")
-            .attr("cx", width - margin.right + 20)
-            .attr("cy", margin.top + 110)
-            .attr("r", 8)
-            .style("fill", futureColor);
-
-          svg
-            .append("text")
-            .attr("x", width - margin.right + 35)
-            .attr("y", margin.top + 110)
-            .text("Future")
-            .style("font-size", "12px")
-            .attr("fill", "white")
-            .attr("alignment-baseline", "middle");
+      const presentBars = group
+        .append("rect")
+        .attr("x", 0)
+        .attr("width", x.bandwidth() / 2)
+        .attr("fill", currentColor)
+        .on("mouseenter", function (event, d) {
+          const rect = this.getBoundingClientRect();
+          tooltip
+            .html(`<strong>Present:</strong> ${d.current}`)
+            .style("visibility", "visible")
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+        })
+        .on("mousemove", function () {
+          const rect = this.getBoundingClientRect();
+          tooltip
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+        })
+        .on("mouseleave", function () {
+          tooltip.style("visibility", "hidden");
+          d3.select(this).attr("stroke", "none");
         });
-    } else {
-      // Standard bar chart (original behavior)
+
+      const futureBars = group
+        .append("rect")
+        .attr("x", x.bandwidth() / 2)
+        .attr("width", x.bandwidth() / 2)
+        .attr("fill", futureColor)
+        .on("mouseenter", function (event, d) {
+          const rect = this.getBoundingClientRect();
+          tooltip
+            .html(`<strong>Future:</strong> ${d.future}`)
+            .style("visibility", "visible")
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+        })
+        .on("mousemove", function () {
+          const rect = this.getBoundingClientRect();
+          tooltip
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+        })
+        .on("mouseleave", function () {
+          tooltip.style("visibility", "hidden");
+          d3.select(this).attr("stroke", "none");
+        });
+
+      // Animate bars
+      if (!hasAnimated.current) {
+        presentBars
+          .attr("y", y(0))
+          .attr("height", 0)
+          .transition()
+          .duration(800)
+          .attr("y", (d) => y(d.current))
+          .attr("height", (d) => height - margin.bottom - y(d.current));
+
+        futureBars
+          .attr("y", y(0))
+          .attr("height", 0)
+          .transition()
+          .duration(800)
+          .attr("y", (d) => y(d.future))
+          .attr("height", (d) => height - margin.bottom - y(d.future))
+          .on("end", () => (hasAnimated.current = true));
+      } else {
+        presentBars
+          .attr("y", (d) => y(d.current))
+          .attr("height", (d) => height - margin.bottom - y(d.current));
+        futureBars
+          .attr("y", (d) => y(d.future))
+          .attr("height", (d) => height - margin.bottom - y(d.future));
+      }
+
+      // Legend
       svg
+        .append("circle")
+        .attr("cx", width - margin.right + 20)
+        .attr("cy", margin.top)
+        .attr("r", 8)
+        .style("fill", currentColor);
+      svg
+        .append("text")
+        .attr("x", width - margin.right + 35)
+        .attr("y", margin.top)
+        .attr("alignment-baseline", "middle")
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("Present");
+
+      svg
+        .append("circle")
+        .attr("cx", width - margin.right + 20)
+        .attr("cy", margin.top + 20)
+        .attr("r", 8)
+        .style("fill", futureColor);
+      svg
+        .append("text")
+        .attr("x", width - margin.right + 35)
+        .attr("y", margin.top + 20)
+        .attr("alignment-baseline", "middle")
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("Future");
+    } else {
+      // Single Likert distribution
+      const colour = d3
+        .scaleOrdinal()
+        .domain([
+          "Strongly Disagree",
+          "Disagree",
+          "Neutral",
+          "Agree",
+          "Strongly Agree",
+        ])
+        .range(["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#006400"]);
+
+      const bars = svg
         .selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
-        .attr("x", (d) => xScale(d.label))
-        .attr("y", (d) => yScale(d.value))
-        .attr("width", xScale.bandwidth())
-        .attr("height", (d) => height - margin.bottom - yScale(d.value))
-        .attr("fill", (d) => colorScale(d.label))
-        .on("mouseover", function (event, d) {
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", "2px");
+        .attr("x", (d) => x(d.label))
+        .attr("width", x.bandwidth())
+        .attr("fill", (d) => colour(d.label))
+        .on("mouseenter", function (event, d) {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .html(`Count: ${d.value}`)
+            .html(`<strong>${d.label}:</strong> ${d.value}`)
             .style("visibility", "visible")
-            .style("top", event.pageY - 10 + "px")
-            .style("left", event.pageX + 10 + "px");
-
-          d3.select(this).attr("fill", d3.rgb(colorScale(d.label)).darker(0.8));
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
+          d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
         })
-        .on("mousemove", function (event) {
+        .on("mousemove", function () {
+          const rect = this.getBoundingClientRect();
           tooltip
-            .style("top", `${event.pageY - 10}px`)
-            .style("left", `${event.pageX + 10}px`);
+            .style("left", `${rect.left + rect.width / 2}px`)
+            .style("top", `${rect.top}px`);
         })
-        .on("mouseout", function (event, d) {
+        .on("mouseleave", function () {
           tooltip.style("visibility", "hidden");
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("stroke-width", "1px")
-            .attr("fill", colorScale(d.label));
+          d3.select(this).attr("stroke", "none");
         });
+
+      if (!hasAnimated.current) {
+        bars
+          .attr("y", y(0))
+          .attr("height", 0)
+          .transition()
+          .duration(800)
+          .attr("y", (d) => y(d.value))
+          .attr("height", (d) => height - margin.bottom - y(d.value))
+          .on("end", () => (hasAnimated.current = true));
+      } else {
+        bars
+          .attr("y", (d) => y(d.value))
+          .attr("height", (d) => height - margin.bottom - y(d.value));
+      }
     }
 
-    // Add chart title
+    // Chart Title
+    const titleFontSize = Math.max(12, Math.min(20, width / 70));
     svg
       .append("text")
-      .attr("class", "likert-chart-title")
       .attr("x", width / 2)
       .attr("y", margin.top / 2)
       .attr("text-anchor", "middle")
       .attr("fill", "white")
+      .style("font-size", `${titleFontSize}px`)
+      .style("font-weight", "bold")
       .text(question);
 
-    // Cleanup: remove tooltip on unmount
-    return () => {
-      tooltip.remove();
-    };
-  }, [data, futureData, question]);
+    return () => tooltip.remove();
+  }, [data, futureData, question, dims]);
 
   return (
-    <div className="likert-bar-chart-container">
-      <svg ref={svgRef}></svg>
+    <div ref={wrapperRef} className="w-full relative">
+      <svg
+        ref={svgRef}
+        className="w-full h-auto select-none transition-opacity duration-500"
+      />
     </div>
   );
 };

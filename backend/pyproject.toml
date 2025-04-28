@@ -8,6 +8,7 @@ authors = [
     {name = "Iida Häkkinen", email = "iida.hakkinen@gmail.com"},
     {name = "Jaakko Airikkala", email = "jaakkel@gmail.com"},
     {name = "Sampsa Ollikainen", email = "sampsa.ollikainen@gmail.com"},
+    {name = "Sonja Olkkonen", email = "sonja.olkkonen@gmail.com"},
     {name = "Emmi Koponen"}
 ]
 readme = "README.md"
@@ -21,7 +22,8 @@ dependencies = [
     "pyreadstat (>=1.2.8,<2.0.0)",
     "invoke (>=2.2.0,<3.0.0)",
     "gunicorn (>=23.0.0,<24.0.0)",
-    "openai (>=1.65.3,<2.0.0)"
+    "openai (>=1.65.3,<2.0.0)",
+    "token-count (>=0.2.1,<0.3.0)"
 ]
 
 [build-system]

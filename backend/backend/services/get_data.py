@@ -1,4 +1,5 @@
 from statistics import mode, median
+from typing import Tuple, Dict, List, Any
 
 
 class GetData:
@@ -6,7 +7,9 @@ class GetData:
     GetData class provides methods to manipulate agents answer data.
     """
 
-    def get_all_distributions(self, agents: list, index=0):
+    def get_all_distributions(
+        self, agents: List[Any], index: int = 0
+    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
         Returns both current and future distributions for a list of agents.
 
@@ -26,7 +29,9 @@ class GetData:
 
         return current, future
 
-    def get_answer_distributions(self, index, agents: list, future=False) -> list:
+    def get_answer_distributions(
+        self, index: int, agents: List[Any], future: bool = False
+    ) -> List[Dict[str, Any]]:
         """Return the answer distributions
 
         Args:
@@ -54,8 +59,8 @@ class GetData:
         return distributions
 
     def get_single_answer_distribution(
-        self, question, index, agents: list, future=False
-    ) -> list:
+        self, question: str, index: int, agents: List[Any], future: bool = False
+    ) -> Dict[str, Any]:
         """Returns answer distribution for a given question in dictionary form"""
         distribution = {
             "question": question,
@@ -88,7 +93,9 @@ class GetData:
         distribution = add_statistics(distribution)
         return distribution
 
-    def _convert_to_frontend_form(self, distributions: list) -> list:
+    def _convert_to_frontend_form(
+        self, distributions: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Helper function for get_answer_distributions. This function converts the
         distributions to the form, that can be sent to frontend"""
         new_distributions = []
@@ -115,7 +122,7 @@ class GetData:
         return new_distributions
 
 
-def add_statistics(data):
+def add_statistics(data: Dict[str, Any]) -> Dict[str, Any]:
     """Adds statistics to the distribution. Statistics include median, mode and
     variation ratio
 
@@ -135,7 +142,7 @@ def add_statistics(data):
     return data
 
 
-def convert_dictionary_values_to_list(data):
+def convert_dictionary_values_to_list(data: Dict[str, Any]) -> List[int]:
     """Converts distribution dictionary values to a list"""
     answers = data["answers"]
     values = []
@@ -145,7 +152,7 @@ def convert_dictionary_values_to_list(data):
     return values
 
 
-def map_likert_str_to_numbers(data):
+def map_likert_str_to_numbers(data: str) -> int:
     """Maps likert-scale str to numbers"""
     answer_map = {
         "Strongly disagree": 1,
@@ -157,17 +164,17 @@ def map_likert_str_to_numbers(data):
     return answer_map[data]
 
 
-def calculate_mode(data):
+def calculate_mode(data: List[int]) -> int:
     """Returns mode for given list of data"""
     return mode(data)
 
 
-def calculate_median(data):
+def calculate_median(data: List[int]) -> float:
     """Returns median for given list of data"""
     return median(data)
 
 
-def calculate_variation_ratio(data):
+def calculate_variation_ratio(data: List[int]) -> float:
     """Returns variation ratio for given list of data"""
     moodi = calculate_mode(data)
     mode_observations = data.count(moodi)

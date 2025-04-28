@@ -88,7 +88,7 @@ const CsvDownload = ({
       <button
         onClick={handleDownload}
         disabled={loading || disabled}
-        className="csv-download-button"
+        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transform transition-all duration-1000 hover:scale-105 cursor-pointer"
       >
         {loading ? "Downloading..." : "Download CSV"}
       </button>

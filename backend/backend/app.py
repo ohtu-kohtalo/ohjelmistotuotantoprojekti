@@ -3,8 +3,9 @@ import io
 import csv
 import zipfile
 import pandas as pd
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
 from flask_cors import CORS
+from typing import Tuple
 
 from .key_config import (
     CSV_FILE_PATH,
@@ -30,7 +31,7 @@ agents = []
 
 
 @app.route("/", methods=["GET"])
-def create_agents():
+def create_agents() -> Tuple[Response, int]:
     """
     Creates 50 agents based on the CSV-data in backend.
 
@@ -46,13 +47,18 @@ def create_agents():
     """
 
     try:
+
+        # Get the number of agents requested from the query parameters
+        requested = request.args.get("agents", default=50, type=int)
+        agent_count = min(max(requested, 1), 100)  # enforce 1–100 bounds
+
         # Declare the list of agents to be a global variable, so that other functions can access it
         global agents
 
         df = pd.read_csv(csv_file)
 
         # Select random 50 rows
-        df = df.sample(50)
+        df = df.sample(agent_count)
 
         # Convert integer columns to strings
         int_cols = df.select_dtypes(include=["int"]).columns
@@ -112,7 +118,7 @@ def create_agents():
 
 
 @app.route("/receive_user_csv", methods=["POST"])
-def receive_user_csv():
+def receive_user_csv() -> Tuple[Response, int]:
     """Receives the user's questions and returns answer distributions and statistics
     for those questions.
 
@@ -146,7 +152,7 @@ def receive_user_csv():
     global agents
 
     data = request.get_json()
-    print(data, flush=True)
+    # print(data, flush=True)
 
     if not data:
         print("No data provided")
@@ -161,18 +167,28 @@ def receive_user_csv():
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
     questions = extract_questions_from_csv(data)
+    # print(f"\nquestions:\n{questions}", flush=True)
 
     if not isinstance(questions, list):
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
 
-    responses = llm_handler.get_agents_responses(agents, questions)
+    if questions == []:
+        return jsonify({"error": "'questions' must not be an empty list"}), 400
+
+    i = 1
+    for question in questions:
+        print(f"Asking question {i}: {question}", flush=True)
+        i += 1
+        responses = llm_handler.get_agents_responses(agents, [question])
+    print("\nAll questions asked\nGetting distributions...", flush=True)
 
     get_data = GetData()
     current_distributions, future_distributions = get_data.get_all_distributions(agents)
-    print("[DEBUG] Current distributions:", current_distributions, flush=True)
-    print("[DEBUG] Future distributions:", future_distributions, flush=True)
+    # print("[DEBUG] Current distributions:", current_distributions, flush=True)
+    # print("[DEBUG] Future distributions:", future_distributions, flush=True)
 
+    print("\nReturning distributions. Good bye.\n", flush=True)
     return jsonify(
         {
             "status": "success",
@@ -183,7 +199,7 @@ def receive_user_csv():
 
 
 @app.route("/receive_future_scenario", methods=["POST"])
-def receive_future_scenario():
+def receive_future_scenario() -> Tuple[Response, int]:
     """Receives the user's future scenario. Transforms the agents to the future and
     saves the new agent variables into the agent object
 
@@ -234,10 +250,11 @@ def receive_future_scenario():
 
 
 @app.route("/download_agent_response_csv", methods=["POST"])
-def download_agent_response_csv():
+def download_agent_response_csv() -> Response:
     """
-    Endpoint to generate and download a CSV files containing current and future agent responses.
-    The CSVs will have one row per agent, where the first column is the agent identifier,
+    Endpoint to generate and download a CSV files containing current and future agent responses
+    along with the agent's age and gender.
+    The CSVs will have one row per agent, where the first columns are the agent identifier, age, gender,
     and subsequent columns correspond to each question.
 
     AGE AND GENDER TODO
@@ -275,7 +292,7 @@ def download_agent_response_csv():
             return jsonify({"error": "No questions available from agents"}), 400
 
     # Create headers
-    header_current = ["Agent"] + list(questions_payload.keys())
+    header_current = ["Agent", "Age", "Gender"] + list(questions_payload.keys())
     # In-memory CSV
     si_current = io.StringIO()
     writer_current = csv.writer(si_current)
@@ -283,14 +300,15 @@ def download_agent_response_csv():
 
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
-        row = [f"Agent {i}"]
+        agent_info = agent.get_agent_info()
+        row = [str(i), agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "questions"):
-            for question in header_current[1:]:
+            for question in header_current[3:]:
                 value = agent.questions.get(question, "")
                 row.append(value)
         else:
             # Replace empty questions with empty strings
-            row.extend(["" for _ in header_current[1:]])
+            row.extend(["" for _ in header_current[3:]])
         writer_current.writerow(row)
     # Retrieve CSV content
     csv_content_current = si_current.getvalue()
@@ -320,21 +338,22 @@ def download_agent_response_csv():
             )
 
     # Create headers
-    header_future = ["Agent"] + list(future_questions_payload.keys())
+    header_future = ["Agent", "Age", "Gender"] + list(future_questions_payload.keys())
     si_future = io.StringIO()
     writer_future = csv.writer(si_future)
     writer_future.writerow(header_future)
 
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
-        row = [f"Agent {i}"]
+        agent_info = agent.get_agent_info()
+        row = [str(i), agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "future_questions"):
-            for question in header_future[1:]:
+            for question in header_future[3:]:
                 value = agent.future_questions.get(question, "")
                 row.append(value)
         else:
             # Replace empty questions with empty strings
-            row.extend(["" for _ in header_future[1:]])
+            row.extend(["" for _ in header_future[3:]])
         writer_future.writerow(row)
     # Retrieve CSV content
     csv_content_future = si_future.getvalue()
@@ -350,12 +369,13 @@ def download_agent_response_csv():
     # Create HTTP response with zip payload
     output = make_response(zip_buffer.read())
     output.headers["Content-Disposition"] = "attachment; filename=agent_responses.zip"
+    output.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
     output.headers["Content-Type"] = "application/zip"
     return output
 
 
 @app.route("/health", methods=["GET"])
-def health_check():
+def health_check() -> Tuple[str, int]:
     return "OK", 200
 
 
