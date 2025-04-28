@@ -2,6 +2,7 @@
 
 This application, developed by a team of University of Helsinki students for [VTT](https://www.vttresearch.com/), simulates consumer behavior by creating AI agents from questionnaire data.
 The application allows for researchers and and analysts to:
+
 - Interact with virtual respondents
   - Pose questions to a diverse pool of AI agents whose profiles (age, gender, past answers) are drawn directly from [real survey data](https://www.vttresearch.com/en/news-and-ideas/activists-sceptics-many-faces-gen-z-changing-food-system).
 - Model “what-if” futures

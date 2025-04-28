@@ -15,7 +15,7 @@ graph LR
         d3
         papaparse
     end
-    
+
     main[main.jsx] --> App[App.jsx]
 
     App --> react-router-dom
