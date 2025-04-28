@@ -42,7 +42,22 @@ def test_no_questions(capsys):
 
 
 def test_too_many_questions(capsys):
-    data = {"questions": ["q1", "q2", "q3", "q4", "q5", "q6", "q6","q7", "q8", "q9", "q10", "q11"]}
+    data = {
+        "questions": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10",
+            "q11",
+        ]
+    }
     result = extract_questions_from_csv(data)
 
     assert result == []
@@ -52,7 +67,7 @@ def test_too_many_questions(capsys):
 
 
 def test_question_too_long(capsys):
-    data = {"questions": ["a"*201]}
+    data = {"questions": ["a" * 201]}
     result = extract_questions_from_csv(data)
 
     assert result == []
