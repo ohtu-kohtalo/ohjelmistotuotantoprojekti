@@ -47,13 +47,18 @@ def create_agents() -> Tuple[Response, int]:
     """
 
     try:
+
+        # Get the number of agents requested from the query parameters
+        requested = request.args.get("agents", default=50, type=int)
+        agent_count = min(max(requested, 1), 100)  # enforce 1–100 bounds
+
         # Declare the list of agents to be a global variable, so that other functions can access it
         global agents
 
         df = pd.read_csv(csv_file)
 
         # Select random 50 rows
-        df = df.sample(50)
+        df = df.sample(agent_count)
 
         # Convert integer columns to strings
         int_cols = df.select_dtypes(include=["int"]).columns
@@ -147,7 +152,7 @@ def receive_user_csv() -> Tuple[Response, int]:
     global agents
 
     data = request.get_json()
-    print(data, flush=True)
+    # print(data, flush=True)
 
     if not data:
         print("No data provided")
@@ -162,18 +167,25 @@ def receive_user_csv() -> Tuple[Response, int]:
         return jsonify({"error": "Missing 'questions' field in payload"}), 400
 
     questions = extract_questions_from_csv(data)
+    # print(f"\nquestions:\n{questions}", flush=True)
 
     if not isinstance(questions, list):
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
 
-    responses = llm_handler.get_agents_responses(agents, questions)
+    i = 1
+    for question in questions:
+        print(f"Asking question {i}: {question}", flush=True)
+        i += 1
+        responses = llm_handler.get_agents_responses(agents, [question])
+    print("\nAll questions asked\nGetting distributions...", flush=True)
 
     get_data = GetData()
     current_distributions, future_distributions = get_data.get_all_distributions(agents)
-    print("[DEBUG] Current distributions:", current_distributions, flush=True)
-    print("[DEBUG] Future distributions:", future_distributions, flush=True)
+    # print("[DEBUG] Current distributions:", current_distributions, flush=True)
+    # print("[DEBUG] Future distributions:", future_distributions, flush=True)
 
+    print("\nReturning distributions. Good bye.\n", flush=True)
     return jsonify(
         {
             "status": "success",
@@ -286,7 +298,7 @@ def download_agent_response_csv() -> Response:
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
         agent_info = agent.get_agent_info()
-        row = [f"Agent {i}", agent_info.get("Age", ""), agent_info.get("Gender", "")]
+        row = [str(i), agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "questions"):
             for question in header_current[3:]:
                 value = agent.questions.get(question, "")
@@ -323,7 +335,7 @@ def download_agent_response_csv() -> Response:
             )
 
     # Create headers
-    header_future = ["Agent"] + list(future_questions_payload.keys())
+    header_future = ["Agent", "Age", "Gender"] + list(future_questions_payload.keys())
     si_future = io.StringIO()
     writer_future = csv.writer(si_future)
     writer_future.writerow(header_future)
@@ -331,7 +343,7 @@ def download_agent_response_csv() -> Response:
     # Iterate over agents and write responses
     for i, agent in enumerate(agents, start=1):
         agent_info = agent.get_agent_info()
-        row = [f"Agent {i}", agent_info.get("Age", ""), agent_info.get("Gender", "")]
+        row = [str(i), agent_info.get("Age", ""), agent_info.get("Gender", "")]
         if hasattr(agent, "future_questions"):
             for question in header_future[3:]:
                 value = agent.future_questions.get(question, "")

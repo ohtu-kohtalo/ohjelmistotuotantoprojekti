@@ -1,6 +1,5 @@
 from typing import Dict, Any, Optional
 
-
 class Agent:
     """This class represents individual agents.
 

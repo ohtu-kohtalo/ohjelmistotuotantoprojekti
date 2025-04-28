@@ -38,7 +38,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
           if (row.length !== 1) {
             onCsvError?.(
-              `Row ${i + 1} can only contain one column. Found ${row.length}.`,
+              `Row ${i + 1} can only contain one column. Found ${row.length}.`
             );
             setFileName("");
             event.target.value = null;
@@ -74,17 +74,22 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
   };
 
   return (
-    <div className="csv-upload-file-container">
-      <div className="csv-upload-file">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".csv"
-          id="csvFileInput"
-          onChange={handleFileChange}
-        />
-      </div>
-    </div>
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        id="csvFileInput"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+      <button
+        onClick={handleButtonClick}
+        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transform transition-all duration-1000 hover:scale-105 cursor-pointer"
+      >
+        Upload CSV
+      </button>
+    </>
   );
 };
 

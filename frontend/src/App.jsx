@@ -1,14 +1,72 @@
-import React, { useRef, useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router";
+import React, { useState, useRef } from "react";
+/* NOTE: BrowserRouter, Routes, Route, and useLocation all come from
+   react-router-dom in v6. */
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import IndexPage from "./pages/IndexPage";
+import FuturePage from "./pages/FuturePage";
+import PageTransition from "./components/PageTransition";
 import "./index.css";
-import ErrorMessage from "./components/ErrorMessage";
-import SuccessMessage from "./components/SuccessMessage";
-import HelpPage from "./pages/HelpPage";
-import InitialDistribution from "./pages/InitialDistribution";
-import AddQuery from "./pages/AddQuery";
-import CsvDownload from "./components/CsvDownload";
+
+/**
+ * Helper function for page-transition animations
+ * Moved outside of App to avoid unnecessary re-renders.
+ */
+const AnimatedRoutes = ({
+  handleCsvSubmit,
+  isLoading,
+  distribution,
+  futureDistribution,
+  showMessage,
+  setCsvUploaded,
+  submittedScenario,
+  setSubmittedScenario,
+  resetResponse,
+}) => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route
+          path="/"
+          element={
+            <PageTransition>
+              <IndexPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/future"
+          element={
+            <PageTransition>
+              <FuturePage
+                handleCsvSubmit={handleCsvSubmit}
+                isLoading={isLoading}
+                response={distribution}
+                futureResponse={futureDistribution}
+                showMessage={showMessage}
+                setCsvUploaded={setCsvUploaded}
+                submittedScenario={submittedScenario}
+                setSubmittedScenario={setSubmittedScenario}
+                resetResponse={resetResponse}
+              />
+            </PageTransition>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 const App = () => {
+  const [hovering, setHovering] = useState(false);
+
   // Initial state for distributions + scenario
   const [distribution, setDistribution] = useState([]);
   const [futureDistribution, setFutureDistribution] = useState([]);
@@ -19,50 +77,8 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messageTimeoutRef = useRef(null);
 
-  // Initial state for agents
-  const [agents, setAgentCreation] = useState([]);
-
   // State for checking whether csv has been uploaded
   const [csvUploaded, setCsvUploaded] = useState(false);
-
-  useEffect(() => {
-    /**
-     * Asynchronously creates agents by fetching data from the backend.
-     *
-     * This function attempts to initiate a create-agent route on the backend side.
-     * Upon successful fetch, it logs the status message and displays success message to user.
-     *
-     * @async
-     * @function createAgents
-     * @returns {Promise<void>} A promise that resolves when the agents are created.
-     * @throws Will throw an error if the fetch request fails.
-     */
-    const createAgents = async () => {
-      try {
-        const BACKEND_URL =
-          import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
-        const response = await fetch(`${BACKEND_URL}/`);
-        if (!response.ok) throw new Error(`Error: ${response.status}`);
-
-        const agentsData = await response.json(); // ✅ Expect actual agent data now
-        console.log("Agents created!", agentsData);
-
-        setAgentCreation(agentsData); // ✅ Set agent data into state
-        showMessage(
-          "success",
-          "Agents successfully created from backend CSV! ✅",
-        );
-      } catch (error) {
-        console.error("Error creating agents:", error);
-        showMessage(
-          "error",
-          "⚠️ Could not create agents from initial backend CSV-file",
-        );
-      }
-    };
-
-    createAgents();
-  }, []);
 
   /**
    * Handles the submission of a CSV file containing questions to the backend.
@@ -90,7 +106,7 @@ const App = () => {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
 
-      showMessage("success", "CSV submitted successfully! 📂👍");
+      // showMessage("success", "CSV submitted successfully! 📂👍");
       const data = await response.json();
 
       console.log("[DEBUG] Reached here #1");
@@ -105,7 +121,7 @@ const App = () => {
       setCsvUploaded(true);
     } catch (error) {
       console.error("CSV submission error:", error);
-      showMessage("error", "⚠️ Could not submit CSV data");
+      // showMessage("error", "⚠️ Could not submit CSV data");
       setCsvUploaded(false);
     } finally {
       setIsLoading(false);
@@ -116,73 +132,146 @@ const App = () => {
   const showMessage = (type, text) => {
     setMessage({ type, text });
 
-    // Clear any existing timeout before setting a new one
     if (messageTimeoutRef.current) {
       clearTimeout(messageTimeoutRef.current);
     }
 
     messageTimeoutRef.current = setTimeout(() => {
       setMessage({ type: "", text: "" });
-      messageTimeoutRef.current = null; // Reset ref after clearing error
+      messageTimeoutRef.current = null;
     }, 5000);
   };
 
+  /* ------------------------------------------------------------------ */
+
   return (
-    <BrowserRouter>
-      {/* Render messages above the app-container so they aren’t affected by its hover effect */}
-      {message && (
-        <>
-          {message.type === "error" && <ErrorMessage message={message.text} />}
-          {message.type === "success" && (
-            <SuccessMessage message={message.text} />
-          )}
-        </>
-      )}
-      <div className="app-container">
-        <div className="sidebar">
-          <Link to="/" className="sidebar-link">
-            Help Page
-          </Link>
-          <Link to="/initialDistribution" className="sidebar-link">
-            Initial Distribution
-          </Link>
-          <Link to="/addQuery" className="sidebar-link">
-            Add Query
-          </Link>
-          <div className="sidebar-csv-download">
-            <CsvDownload fileName="agent_answers.zip" disabled={!csvUploaded} />
+    <Router>
+      <div className="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
+        {/* Fixed Header */}
+        <header className="fixed w-full h-16 bg-gray-900 flex items-center justify-between px-4 sm:px-8 z-50">
+          {/* Logo Mock */}
+          <div className="flex items-center space-x-2">
+            <a
+              href="https://www.vttresearch.com/fi"
+              target="_blank"
+              /* Security best practice */
+              rel="noopener noreferrer"
+              className="relative flex items-center space-x-2 group"
+            >
+              {/* text-based logo instead of image */}
+              <h2
+                className="text-3xl font-extrabold tracking-wider
+                 transform transition-transform duration-1000
+                 group-hover:scale-105"
+              >
+                VTT
+              </h2>
+
+              {/* Hover tooltip */}
+              <span
+                className="absolute top-full left-1/2 -translate-x-1/2 mt-1
+                 px-2 py-1 text-xs text-white bg-gray-800 rounded
+                 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                 pointer-events-none whitespace-nowrap"
+              >
+                Visit VTT webpage
+              </span>
+            </a>
           </div>
-        </div>
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<HelpPage />} />
-            <Route
-              path="/initialDistribution"
-              element={<InitialDistribution data={agents} />}
-            />
-            <Route
-              path="/addQuery"
-              element={
-                <AddQuery
-                  handleCsvSubmit={handleCsvSubmit}
-                  isLoading={isLoading}
-                  response={distribution}
-                  futureResponse={futureDistribution}
-                  showMessage={showMessage}
-                  resetResponse={() => {
-                    setDistribution([]);
-                    setFutureDistribution([]);
-                  }}
-                  setCsvUploaded={setCsvUploaded}
-                  submittedScenario={submittedScenario}
-                  setSubmittedScenario={setSubmittedScenario}
-                />
-              }
-            />
-          </Routes>
+
+          {/* Help Icon */}
+          <div
+            className="relative"
+            onMouseEnter={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+          >
+            <div
+              role="button"
+              aria-label="Help"
+              tabIndex={0}
+              className="bg-gray-800 hover:bg-gray-700 py-2 px-4 rounded-full shadow-lg cursor-pointer outline-none text-xl font-bold"
+            >
+              ?
+            </div>
+
+            {/* Floating Modal */}
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="help-modal-title"
+              className={`absolute right-0 mt-3 w-[90vw] max-w-screen-lg bg-gray-800 text-white p-6 rounded-xl shadow-xl border border-gray-700 max-h-[80vh] overflow-y-auto z-50 transform transition-all duration-800 ease-in-out ${
+                hovering
+                  ? "opacity-100 pointer-events-auto translate-y-0"
+                  : "opacity-0 pointer-events-none -translate-y-4"
+              }`}
+            >
+              {/* Modal Content */}
+              <div className="flex justify-between items-start mb-4">
+                <h2 id="help-modal-title" className="text-2xl font-semibold">
+                  About Future Customer: A Simulator and Prediction Tool
+                </h2>
+                <button
+                  onClick={() => setHovering(false)}
+                  aria-label="Close Help"
+                  className="text-white text-xl font-bold hover:text-red-400"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="text-sm leading-relaxed">
+                This application, developed by a team of University of Helsinki
+                students for VTT, simulates consumer behavior by creating AI
+                agents from questionnaire data.
+                <br />
+                <br />
+                <strong>Agents can:</strong>
+                <ul className="list-disc list-inside ml-4">
+                  <li>
+                    Answer questions beyond the original survey using large
+                    language models (LLMs).
+                  </li>
+                  <li>Provide responses on a Likert scale (1–5).</li>
+                  <li>
+                    Be transformed under hypothetical future scenarios to
+                    predict behavioral shifts.
+                  </li>
+                </ul>
+                <strong>Tool features:</strong>
+                <ul className="list-disc list-inside ml-4">
+                  <li>Visualize agent responses through interactive graphs.</li>
+                  <li>
+                    Export both current and future agent responses as CSV files
+                    for deeper analysis.
+                  </li>
+                </ul>
+                <br />
+                Use this tool to explore and compare consumer insights under
+                various scenarios.
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <div className="pt-16">
+          {/* Render animated routes */}
+          <AnimatedRoutes
+            handleCsvSubmit={handleCsvSubmit}
+            isLoading={isLoading}
+            distribution={distribution}
+            futureDistribution={futureDistribution}
+            showMessage={showMessage}
+            setCsvUploaded={setCsvUploaded}
+            submittedScenario={submittedScenario}
+            setSubmittedScenario={setSubmittedScenario}
+            resetResponse={() => {
+              setDistribution([]);
+              setFutureDistribution([]);
+            }}
+          />
         </div>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 };
 

@@ -9,109 +9,153 @@
 
 ```mermaid
 graph LR
-    App[App.jsx] -->|uses| ErrorMessage[ErrorMessage.jsx]
-    App -->|uses| SuccessMessage[SuccessMessage.jsx]
-    App -->|uses| HelpPage[HelpPage.jsx]
-    App -->|uses| InitialDistribution[IntialDistribution.jsx]
-    App -->|uses| AddQuery[AddQuery.jsx]
-    App -->|uses| FutureDistribution[FutureDistribution.jsx]
-    App -->|uses| CsvDownload[CsvDownload.jsx]
-
-    InitialDistribution -->|uses| PlotContainer[PlotContainer.jsx]
-
-    AddQuery -->|uses| Title[Title.jsx]
-    AddQuery -->|uses| CsvUpload[CsvUpload.jsx]
-    AddQuery -->|uses| LoadingIndicator[LoadingIndicator.jsx]
-    AddQuery -->|uses| LikertChartContainer[LikertChartContainer.jsx]
-
-    CsvDownload -->|uses| ErrorMessage
-
-    LikertChartContainer -->|uses| LikertBar[LikertBar.jsx]
-    LikertChartContainer -->|uses| StatisticsContainer[StatisticsContainer.jsx]
-
-    PlotContainer -->|uses| StackedBarChart[StackedBarChart.jsx]
-
-    main[main.jsx] -->|renders| App
-
     subgraph Third-Party Libraries
-        papaparse
+        react-router-dom
+        framer-motion
         d3
-        react-router
+        papaparse
     end
+    
+    main[main.jsx] --> App[App.jsx]
 
-    CsvUpload -->|imports| papaparse
-    LikertBar -->|imports| d3
-    StackedBarChart -->|imports| d3
-    App -->|imports| react-router
+    App --> react-router-dom
+    App --> framer-motion
 
+    App --> IndexPage[IndexPage.jsx]
+    App --> FuturePage[FuturePage.jsx]
+    App --> PageTransition[PageTransition.jsx]
+
+    IndexPage --> react-router-dom
+
+    FuturePage --> react-router-dom
+
+    FuturePage --> InitialDistribution[InitialDistribution.jsx]
+    FuturePage --> LikertChartContainer[LikertChartContainer.jsx]
+    FuturePage --> CsvUpload[CsvUpload.jsx]
+    FuturePage --> CsvDownload[CsvDownload.jsx]
+    FuturePage --> LoadingIndicator[LoadingIndicator.jsx]
+
+    PageTransition --> framer-motion
+
+    InitialDistribution --> StackedBarChart[StackedBarChart.jsx]
+
+    StackedBarChart --> d3
+
+    LikertChartContainer --> LikertBar[LikertBar.jsx]
+    LikertChartContainer --> StatisticsContainer[StatisticsContainer.jsx]
+
+    LikertBar --> d3
+
+    CsvUpload --> papaparse
+
+    CsvDownload --> ErrorMessage[ErrorMessage.jsx]
 ```
 
 ### Backend
 
 ```mermaid
 graph LR
-    app[app.py] -->|imports| key_config[key_config.py]
-    app -->|imports| llm_config[llm_config.py]
-    app -->|imports| agent[agent.py]
-    app -->|imports| get_data[get_data.py]
-    app -->|imports| gemini_service[gemini_service.py]
-    app -->|imports| llm_handler[llm_handler.py]
-    app -->|imports| csv_service[csv_service.py]
+  subgraph Standard Library
+    os
+    io
+    csv
+    zipfile
+    typing
+    statistics
+    asyncio
+    threading
+  end
 
-    llm_handler -->|imports| llm_config
-    llm_handler -->|imports| agent
+  subgraph Third-Party Libraries
+    pandas
+    flask
+    flask_cors
+    python-dotenv
+    google.generativeai
+    token_count
+  end
 
-    openai_service[openai_service.py] -->|imports| key_config
+  subgraph Production
+    wsgi[wsgi.py]
+  end
 
-    llm_config -->|imports| openai_service
-    llm_config -->|imports| gemini_service
+  %% Core app wiring
+  wsgi --> app[app.py]
 
-    subgraph Production
-        wsgi[wsgi.py]
-    end
+  app --> os
+  app --> io
+  app --> csv
+  app --> zipfile
+  app --> typing
 
-    wsgi -->|imports| app
+  app --> pandas
+  app --> flask
+  app --> flask_cors
 
-    subgraph Standard Library
-        os
-        asyncio
-        threading
-        statistics
-        io
-        csv
-    end
+  app --> key_config[key_config.py]
+  app --> llm_config[llm_config.py]
+  app --> agent[agent.py]
+  app --> get_data[get_data.py]
+  app --> gemini_service[gemini_service.py]
+  app --> llm_handler[llm_handler.py]
+  app --> csv_service[csv_service.py]
+  app --> agent_transformer[agent_transformer.py]
 
-    subgraph Third-Party Libraries
-        openai
-        pandas
-        flask
-        flask_cors
-        python-dotenv
-        google.generativeai
-    end
+  key_config --> os
+  key_config --> python-dotenv
 
-    gemini_service -->|imports| asyncio
-    gemini_service -->|imports| threading
+  llm_config --> os
+  llm_config --> typing
+  llm_config --> google.generativeai
+  llm_config --> gemini_service
+  llm_config --> openai_service
 
-    get_data -->|imports| statistics
+  agent --> typing
 
-    openai_service -->|imports| asyncio
-    openai_service -->|imports| threading
-    openai_service -->|imports| openai
+  get_data --> statistics
+  get_data --> typing
 
-    app -->|imports| os
-    app -->|imports| io
-    app -->|imports| csv
-    app -->|imports| pandas
-    app -->|imports| flask
-    app -->|imports| flask_cors
+  gemini_service --> asyncio
+  gemini_service --> threading
+  gemini_service --> typing
 
-    key_config -->|imports| os
-    key_config -->|imports| python-dotenv
+  llm_handler --> typing
+  llm_handler --> llm_config
+  llm_handler --> agent
+  llm_handler --> agent_transformer
 
-    llm_config -->|imports| os
-    llm_config -->|imports| google.generativeai
+  csv_service --> typing
 
+  agent_transformer --> token_count
+  agent_transformer --> typing
+  agent_transformer --> llm_config
+  agent_transformer --> agent
+
+  %% Make all text black
+  classDef default  fill:#ffffff,stroke:#888,stroke-width:1px,color:#000;
+  classDef stdlib   fill:#e8f1fa,stroke:#1f77b4,stroke-width:2px,color:#000;
+  classDef third    fill:#e8faea,stroke:#2ca02c,stroke-width:2px,color:#000;
+  classDef core     fill:#fae8e8,stroke:#d62728,stroke-width:2px,color:#000;
+  classDef prod     fill:#f2f2f2,stroke:#7f7f7f,stroke-width:2px,color:#000;
+
+  class os,io,csv,zipfile,typing,statistics,asyncio,threading stdlib
+  class pandas,flask,flask_cors,python-dotenv,google.generativeai,token_count third
+  class key_config,llm_config,agent,get_data,gemini_service,llm_handler,csv_service,agent_transformer core
+  class wsgi,app prod
+
+  %% Edge coloring
+  linkStyle 0                stroke:#e63946,stroke-width:2px
+  linkStyle 1,2,3,4,5        stroke:#ff7f0e,stroke-width:2px
+  linkStyle 6,7,8            stroke:#2ca02c,stroke-width:2px
+  linkStyle 9,10,11,12,13,14,15,16  stroke:#1f77b4,stroke-width:2px
+  linkStyle 17,18            stroke:#9467bd,stroke-width:2px
+  linkStyle 19,20,21,22,23   stroke:#8c564b,stroke-width:2px
+  linkStyle 24               stroke:#e377c2,stroke-width:2px
+  linkStyle 25,26            stroke:#17becf,stroke-width:2px
+  linkStyle 27,28,29         stroke:#bcbd22,stroke-width:2px
+  linkStyle 30,31,32,33      stroke:#7f7f7f,stroke-width:2px
+  linkStyle 34               stroke:#d33682,stroke-width:2px
+  linkStyle 35,36,37,38      stroke:#ff1493,stroke-width:2px
 
 ```
 

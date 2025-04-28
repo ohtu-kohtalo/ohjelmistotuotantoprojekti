@@ -107,9 +107,7 @@ anything else.
             llm: The LLM model. By default uses the model defined in the .env file."""
         self.__llm = llm
 
-    def transform_agents_to_future(
-        self, agents: List[Agent], future_scenario: str
-    ) -> bool:
+    def transform_agents_to_future(self, agents: List[Agent], future_scenario: str) -> bool:
         """Transforms agents to future. Takes a future scenario and a list of agent-objects as
         arguments. Then asks an LLM to create new info variables for the agents based on the future
         scenario and the original info variables of the agents. The new info varibles are then
@@ -123,20 +121,27 @@ anything else.
             bool: **True** if future transformation was successful for all agents and **False**
             otherwise.
         """
-        length_in_tokens = self.count_token_length(future_scenario)
-        print(f"Length of future scenario: {length_in_tokens} tokens", flush=True)
-        if length_in_tokens > 10000:
-            raise RuntimeError(
-                f"Future scenario was too long. It was {length_in_tokens} tokens."
-            )
+        # print("\nfuture scenario\n", future_scenario, flush=True)
         if future_scenario == "default":
             future_scenario = self.FUTURE_SCENARIO
+
+        length_in_tokens = self.count_token_length(future_scenario)
+        if length_in_tokens > 10000:
+            raise RuntimeError(
+                f"Future scenario was too long. It was {length_in_tokens} tokens. Maximum is 10000."
+            )
+        print(f"\nLength of the future scenario: {length_in_tokens} tokens", flush=True)
 
         # Get the latent variables in a list
         latent_variables = self._get_latent_variables(agents[0])
 
         prompt = self.create_prompt(agents, future_scenario, latent_variables)
-        print("\nPrompt:\n", prompt, flush=True)
+        # print("\nPrompt:\n", prompt, flush=True)
+
+        print(
+            f"Length of the prompt: {self.count_token_length(prompt)} tokens",
+            flush=True,
+        )
 
         try:
             response = self.__llm.get_response(prompt)
@@ -151,9 +156,10 @@ anything else.
                 response, len(agents), latent_variables
             )
         except Exception as exc:
-            raise RuntimeError(
-                "Something went wrong while parsing the LLM's answer"
-            ) from exc
+            msg = "Something went wrong while parsing the LLM's answer. "
+            msg += "Here are the first 200 characters of the LLM's response:\n"
+            msg += f"{response[0:200]}"
+            raise RuntimeError(msg) from exc
 
         # Delete old questions and the latent variables based on the previous future scenario
         self._delete_old_variables_and_questions(agents)
@@ -202,9 +208,7 @@ anything else.
 
         return latent_variables
 
-    def _add_agent_variable_values(
-        self, agents: List[Agent], latent_variables: List[str]
-    ) -> str:
+    def _add_agent_variable_values(self, agents: List[Agent], latent_variables: List[str]) -> str:
         """
         Lists the latent variable values of the agents.
 
@@ -345,9 +349,7 @@ anything else.
         for agent in agents:
             agent.delete_future_info_and_questions()
 
-    def _save_new_variables_to_agents(
-        self, new_latent_variables: Dict[int, Dict[str, Any]], agents: List[Agent]
-    ) -> None:
+    def _save_new_variables_to_agents(self, new_latent_variables: Dict[int, Dict[str, Any]], agents: List[Agent]) -> None:
         """Saves the created latent variables into the Agent-objects.
 
         Args:

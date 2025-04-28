@@ -9,7 +9,7 @@ test.describe("Agent Creation on Form Submission", () => {
     await page.click('button:has-text("Submit")');
 
     await expect(
-      page.locator("text=10 agents created successfully! ✅"),
+      page.locator("text=10 agents created successfully! ✅")
     ).toBeVisible({ timeout: 10000 });
   });
 });
