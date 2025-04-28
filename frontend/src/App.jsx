@@ -27,6 +27,7 @@ const AnimatedRoutes = ({
   submittedScenario,
   setSubmittedScenario,
   resetResponse,
+  message,
 }) => {
   const location = useLocation();
 
@@ -55,6 +56,7 @@ const AnimatedRoutes = ({
                 submittedScenario={submittedScenario}
                 setSubmittedScenario={setSubmittedScenario}
                 resetResponse={resetResponse}
+                message={message}
               />
             </PageTransition>
           }
@@ -106,7 +108,7 @@ const App = () => {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
 
-      // showMessage("success", "CSV submitted successfully! 📂👍");
+      showMessage("success", "CSV submitted successfully! 📂👍");
       const data = await response.json();
 
       console.log("[DEBUG] Reached here #1");
@@ -121,7 +123,7 @@ const App = () => {
       setCsvUploaded(true);
     } catch (error) {
       console.error("CSV submission error:", error);
-      // showMessage("error", "⚠️ Could not submit CSV data");
+      showMessage("error", "⚠️ Could not submit CSV data");
       setCsvUploaded(false);
     } finally {
       setIsLoading(false);
@@ -139,7 +141,7 @@ const App = () => {
     messageTimeoutRef.current = setTimeout(() => {
       setMessage({ type: "", text: "" });
       messageTimeoutRef.current = null;
-    }, 5000);
+    }, 3000);
   };
 
   /* ------------------------------------------------------------------ */
@@ -268,6 +270,7 @@ const App = () => {
               setDistribution([]);
               setFutureDistribution([]);
             }}
+            message={message}
           />
         </div>
       </div>

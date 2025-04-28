@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-/* NOTE: we now import useNavigate so the new “Back to Home” button can change routes */
+/* Import useNavigate so the new “Back to Home” button changes routes */
 import { useLocation, useNavigate } from "react-router-dom";
 import InitialDistribution from "../components/InitialDistribution";
 import LikertChartContainer from "../components/LikertChartContainer";
@@ -17,6 +17,7 @@ const FuturePage = ({
   setCsvUploaded,
   submittedScenario,
   setSubmittedScenario,
+  message,
 }) => {
   const [chartType, setChartType] = useState("initial");
   const [showChartHelp, setShowChartHelp] = useState(false);
@@ -55,10 +56,18 @@ const FuturePage = ({
 
   const handleFutureSubmit = async () => {
     if (futureScenario.length >= 5) {
+      if (csvLoaded) {
+        const ok = window.confirm(
+          "Submitting a future scenario will reset the currently loaded CSV-file." +
+            " You must re-enter the CSV-file in order to see the Future answers. Proceed?"
+        );
+        if (!ok) return; // User declined the confirmation
+      }
+
       resetResponse();
       const helperFutureScenario = futureScenario;
 
-      showMessage("Scenario submitted 📨");
+      showMessage("Scenario submitted successfully 📨");
       setFutureScenarioLoading(true);
       setSubmittedScenario(futureScenario);
       setFutureScenario("");
@@ -85,7 +94,10 @@ const FuturePage = ({
         handleReset();
       } catch (error) {
         console.error("Future scenario submission error:", error);
-        showMessage("error", "⚠️ Error deploying scenario!");
+        showMessage(
+          "error",
+          "⚠️ Error deploying scenario! Message: " + error.message
+        );
       } finally {
         setFutureScenarioLoading(false);
       }
@@ -400,6 +412,15 @@ const FuturePage = ({
                pointer-events-auto overflow-hidden"
         >
           <LoadingIndicator />
+        </div>
+      )}
+
+      {/* Full-screen Message overlay AFTER loading */}
+      {!futureScenarioLoading && !isLoading && message.text && (
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center">
+          <div className="text-lg px-8 py-6 max-w-lg w-full text-center mx-4">
+            {message.text}
+          </div>
         </div>
       )}
     </div>

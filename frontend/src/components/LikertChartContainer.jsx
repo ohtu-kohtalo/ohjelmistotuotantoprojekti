@@ -20,10 +20,12 @@ const LikertChartContainer = ({ chartsData, futureData = [] }) => {
     return (
       <div className="w-full min-h-[80vh] p-4 bg-gray-800 border-2 border-gray-600 rounded-lg shadow-lg">
         <p className="text-center text-gray-400 text-lg mt-8">
-          Choose and upload a CSV file with questions on it to see Likert Scale
-          charts.
+          Choose and upload a CSV-file with questions on it to see Likert Scale
+          charts. If you provided a CSV-file before applying your future
+          scenario, re-enter the same CSV-file again to see the charts for the
+          agents transferred to the future.
           <br />
-          Correct format for the file is one question per row in the first
+          Correct format for the CSV-file is one question per row in the first
           column.
         </p>
       </div>
@@ -40,7 +42,7 @@ const LikertChartContainer = ({ chartsData, futureData = [] }) => {
   // Move to the previous chart/question, wrapping around if at the beginning
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 

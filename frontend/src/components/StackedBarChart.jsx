@@ -4,7 +4,7 @@ import * as d3 from "d3";
 /**
  * StackedBarChart
  * ────────────────────────────────────────────────────────────────────────────
- * • Skips animation on the very first mount of the component.
+ * • Skips animation on the very first mount of the component. This is to prevent double animation 'trigger' on page load.
  * • Animates normally whenever the xAxis view toggles afterwards.
  */
 const StackedBarChart = ({ data = [], xAxis = "age" }) => {
@@ -12,9 +12,9 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
   const wrapperRef = useRef();
   const [dims, setDims] = useState({ width: 0, height: 0 });
 
-  /** Has the *current* view (age / gender) already animated? */
+  /** Has the *current* view (age / gender) already animated? See comment above */
   const hasAnimated = useRef(false);
-  /** Tracks the very first mount of the component. */
+  /** Tracks the very first mount of the component. See comment above */
   const firstMount = useRef(true);
 
   /* ——— Reset the flag whenever the view switches ——— */
@@ -64,7 +64,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       cats = ["Male", "Female", "Other"];
       grouped = { Male: [], Female: [], Other: [] };
       data.forEach((d) =>
-        (grouped[d.gender] || grouped.Other).push(d.response),
+        (grouped[d.gender] || grouped.Other).push(d.response)
       );
     }
     const summary = cats.map((c) => ({
@@ -115,7 +115,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
         d3
           .axisLeft(y)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#444")
@@ -160,7 +160,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr(
         "class",
         "chart-tooltip fixed z-50 pointer-events-none rounded-md " +
-          "bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg",
+          "bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg"
       )
       .style("visibility", "hidden")
       .style("transform", "translate(-50%, -100%)");
