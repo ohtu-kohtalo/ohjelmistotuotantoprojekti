@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // App and fixtures
-const APP_URL = "http://localhost:5174";
+const APP_URL = "http://localhost:5173";
 const QUESTIONS_FIXTURE = path.resolve(__dirname, "fixtures", "questions.csv");
 
 // Zip validation helper
