@@ -38,12 +38,12 @@ jobs:
 
       - name: Create backend .env file
         env:
-          OPENAI_API_KEY: abc123
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: abc123
         run: |
           mkdir -p backend/backend
           cat <<EOF > backend/backend/.env
-          LLM_PROVIDER=gemini
+          LLM_PROVIDER=openai
           OPENAI_API_KEY=$OPENAI_API_KEY
           GEMINI_API_KEY=$GEMINI_API_KEY
           CSV_FILE_PATH=../data/TESTDATA.csv
