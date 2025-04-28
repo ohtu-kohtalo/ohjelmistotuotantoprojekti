@@ -346,7 +346,10 @@ const FuturePage = ({
                       <strong>Upload CSV:</strong> Click “Upload CSV” to import
                       your prepared question file (
                       <em>no header row, one question per row</em>). A green ✅
-                      appears under the ❓ icon when accepted.
+                      appears under the ❓ icon when accepted. The maximum length 
+                      of one question is 200 characters and the maximum number of 
+                      questions at a time is 10. You can upload many csv files to 
+                      ask for more questions and you can also repeat questions.
                     </li>
                     <li>
                       <strong>Download CSV:</strong> Use “Download CSV” to

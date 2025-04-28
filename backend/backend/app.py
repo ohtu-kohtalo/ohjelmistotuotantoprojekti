@@ -173,6 +173,9 @@ def receive_user_csv() -> Tuple[Response, int]:
         print("'questions' must be an object (list)")
         return jsonify({"error": "'questions' must be an object (list)"}), 400
 
+    if questions == []:
+        return jsonify({"error": "'questions' must not be an empty list"}), 400
+
     i = 1
     for question in questions:
         print(f"Asking question {i}: {question}", flush=True)

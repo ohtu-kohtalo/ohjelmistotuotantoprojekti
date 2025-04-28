@@ -39,3 +39,23 @@ def test_no_questions(capsys):
 
     debug = capsys.readouterr().out
     assert "No valid questions found in the CSV!" in debug
+
+
+def test_too_many_questions(capsys):
+    data = {"questions": ["q1", "q2", "q3", "q4", "q5", "q6", "q6","q7", "q8", "q9", "q10", "q11"]}
+    result = extract_questions_from_csv(data)
+
+    assert result == []
+
+    debug = capsys.readouterr().out
+    assert "[ERROR] Too many questions found in the CSV! (more than 10)" in debug
+
+
+def test_question_too_long(capsys):
+    data = {"questions": ["a"*201]}
+    result = extract_questions_from_csv(data)
+
+    assert result == []
+
+    debug = capsys.readouterr().out
+    assert "Question too long in the CSV! (length more than 200)" in debug
