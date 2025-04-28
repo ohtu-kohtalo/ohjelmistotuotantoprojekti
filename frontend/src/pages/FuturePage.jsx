@@ -59,7 +59,7 @@ const FuturePage = ({
       if (csvLoaded) {
         const ok = window.confirm(
           "Submitting a future scenario will reset the currently loaded CSV-file." +
-            " You must re-enter the CSV-file in order to see the Future answers. Proceed?"
+            " You must re-enter the CSV-file in order to see the Future answers. Proceed?",
         );
         if (!ok) return; // User declined the confirmation
       }
@@ -96,7 +96,7 @@ const FuturePage = ({
         console.error("Future scenario submission error:", error);
         showMessage(
           "error",
-          "⚠️ Error deploying scenario! Message: " + error.message
+          "⚠️ Error deploying scenario! Message: " + error.message,
         );
       } finally {
         setFutureScenarioLoading(false);
