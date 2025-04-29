@@ -236,7 +236,8 @@ const IndexPage = () => {
                         📈 Dashboard
                       </span>
                       <span className="text-left">
-                        Go to the agent interaction screen where you can upload statements, enter a future scenario, and export both
+                        Go to the agent interaction screen where you can upload
+                        statements, enter a future scenario, and export both
                         current and future responses as CSV.
                       </span>
                     </div>
