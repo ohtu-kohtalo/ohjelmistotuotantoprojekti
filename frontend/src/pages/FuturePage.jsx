@@ -162,7 +162,7 @@ const FuturePage = ({
                   mb-2 whitespace-nowrap text-xs sm:text-sm bg-gray-800 text-white px-3 py-2 rounded-md shadow-md
                   opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                Please provide CSV questions first
+                Please provide CSV statements first
               </span>
             )}
           </div>
@@ -275,8 +275,8 @@ const FuturePage = ({
                   </li>
                   <li>
                     <strong>Present Answers: </strong>
-                    Once you’ve uploaded a CSV of questions, this renders a bar
-                    graph of the Likert-scale answers for each question, letting
+                    Once you’ve uploaded a CSV of statements, this renders a bar
+                    graph of the Likert-scale answers for each statement, letting
                     you see how today’s customers respond on a 1–5 scale.
                   </li>
                   <li>
@@ -336,32 +336,31 @@ const FuturePage = ({
                     Data Source
                   </h4>
                   <p className="text-xs mb-3">
-                    Agents are built from VTT’s Gen Z food‐system survey—please
-                    frame questions around food consumption topics.
+                    Agents are based on VTT’s Gen Z food system survey — please
+                    frame statements around sustainability and food consumption topics.
                   </p>
                   <hr className="border-gray-700 mb-3" />
 
                   <ul className="list-disc list-inside space-y-2 text-sm leading-relaxed">
                     <li>
                       <strong>Upload CSV:</strong> Click “Upload CSV” to import
-                      your prepared question file (
-                      <em>no header row, one question per row</em>). A green ✅
+                      your prepared statement file (
+                      <em>no header row, one statement per row</em>). A green ✅
                       appears under the ❓ icon when accepted. The maximum
-                      length of one question is 200 characters and the maximum
-                      number of questions at a time is 10. You can upload many
-                      csv files to ask for more questions and you can also
-                      repeat questions.
+                      length of one statement is 200 characters and the maximum
+                      number of statements at a time is 10. You can upload multiple
+                      CSV files to add more statements. You can also
+                      repeat statements.
                     </li>
                     <li>
                       <strong>Download CSV:</strong> Use “Download CSV” to
-                      export your current questions and any loaded responses for
+                      export your current statements and any loaded responses for
                       offline analysis.
                     </li>
                     <li>
                       <strong>Future Scenario:</strong> In the “Enter future
                       scenario…” field, type at least 5 characters describing a
-                      “what-if” (e.g. “Price rises 10% and delivery time
-                      halves”), then click Submit 🔓 to simulate how agent
+                      “what-if” (e.g. “Resource prices surge”), then click Submit 🔓 to simulate how agent
                       responses might change.
                     </li>
                   </ul>

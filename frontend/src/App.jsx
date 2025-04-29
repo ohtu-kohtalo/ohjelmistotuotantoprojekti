@@ -229,7 +229,7 @@ const App = () => {
                 <strong>Agents can:</strong>
                 <ul className="list-disc list-inside ml-4">
                   <li>
-                    Answer questions beyond the original survey using large
+                    Answer statements beyond the original survey using large
                     language models (LLMs).
                   </li>
                   <li>Provide responses on a Likert scale (1–5).</li>
