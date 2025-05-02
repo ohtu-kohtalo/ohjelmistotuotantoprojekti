@@ -17,7 +17,7 @@ When the user submits a future scenario, the latent values of each agent are tra
 # Export
 
 The user is able to download a zip file containing two csv files, one for current answers and one for future answers. In the case that no future scenario has been submitted, only the current answers file will be populated. The structure of these files is the following:
-|  Agent  |  Age  |  Gender  |  Question 1  |  Question 2  |
-|  -----  |  -----  |  -----  |  -----  |  -----  |
-|  1  |  21  |  Female  |  4  |  1  |
-|  2  | 27  |  Male  | 3  |  5  |
+| Agent | Age | Gender | Question 1 | Question 2 |
+| ----- | ----- | ----- | ----- | ----- |
+| 1 | 21 | Female | 4 | 1 |
+| 2 | 27 | Male | 3 | 5 |
