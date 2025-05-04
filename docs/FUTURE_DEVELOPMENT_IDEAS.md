@@ -1,5 +1,6 @@
 # Future Development Ideas
 
+- Implement support for multiple simultaneous users
 - Testing and analyzing the program with various training datasets and language models
 - Reducing the number of agents by using clustering (to achieve a more relevant agent sample)
 - Facilitating the change of the agent training data (enabling users to easily add their own training data for the agents within the program)
