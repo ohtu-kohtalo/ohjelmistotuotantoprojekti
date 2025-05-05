@@ -1,12 +1,44 @@
+/**
+ * @file InitialDistribution.jsx
+ *
+ * Dashboard-style card that visualises the **initial demographic profile**
+ * of a respondent pool.  It renders:
+ *
+ * A small KPI block (total entries, average age, gender breakdown).
+ * A pair of toggle buttons that switch the X-axis between *Age* and *Gender*.
+ * A responsive `<StackedBarChart>` for the chosen metric, or a grey placeholder when the dataset is empty.
+ *
+ * Tailwind classes keep the layout scalable.
+ *
+ * Expected data shape
+ * -------------------
+ * ```ts
+ * type Record =
+ * {
+ *   age:    number | string; // parsed to integer
+ *   gender: string;          // 'male', 'female' or 'other'
+ * }
+ * ```
+ *
+ * @module InitialDistribution
+ */
+
 import React, { useState } from "react";
 import StackedBarChart from "./StackedBarChart";
 
-/** Initial demographic card */
+/**
+ * Card component for demographic distributions.
+ *
+ * @param {Object}   props
+ * @param {Array}    [props.data=[]] – Array of demographic records (see above).
+ *
+ * @returns {JSX.Element}
+ */
 const InitialDistribution = ({ data = [] }) => {
   const [selectedX, setSelectedX] = useState("age");
   const chartType = "bar";
 
-  /* ---------- helpers ---------- */
+  /* ---------- Helpers ---------- */
   const clean = data.map((a) => ({
     ...a,
     age: typeof a.age === "string" ? parseInt(a.age, 10) : a.age,
@@ -26,7 +58,7 @@ const InitialDistribution = ({ data = [] }) => {
         if (!g) return acc;
         acc[g] = (acc[g] || 0) + 1;
         return acc;
-      }, {}),
+      }, {})
     )
       .map(([g, n]) => `${g[0].toUpperCase() + g.slice(1)}: ${n}`)
       .join(", ");
@@ -38,7 +70,7 @@ const InitialDistribution = ({ data = [] }) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         {/* left : title + buttons */}
         <div className="flex flex-col gap-4">
-          {/* grows at lg (≈1024) then 2xl (≈1536) – nothing at xl */}
+          {/* Scaling: at lg (≈1024) then 2xl (≈1536) – nothing at xl */}
           <h3 className="font-semibold text-lg lg:text-xl 2xl:text-3xl">
             Initial demographic distributions
           </h3>

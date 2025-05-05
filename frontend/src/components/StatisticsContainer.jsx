@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * Lightweight component for displaying statistical, numerical information regarding agents likert-scale answers.
+ */
+
 const Statistics = (props) => {
   return (
     <div>

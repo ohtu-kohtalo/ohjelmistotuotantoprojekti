@@ -1,17 +1,47 @@
+/**
+ * @file LikertChartContainer.jsx
+ *
+ * The component:
+ * Cycles through a set of Likert-scale questions and renders each one as an animated `<LikertBar>` (current-vs-future, if provided).
+ * Displays basic descriptive statistics (median, mode, variation ratio) using Statistics-component.
+ * Provides ⇦ / ⇨ buttons to move between questions, with wrap-around logic.
+ *
+ * Data:
+ * ------
+ * Empty-state
+ * -----------
+ * When `chartsData` is missing or empty, the component shows a grey instructional panel describing the expected CSV format.
+ * When chartsData is provided, it displays the data using the `<LikertBar>` component.
+ *
+ * Props
+ * -----
+ * @prop {Array<{
+ *   question:   string,
+ *   data:       Array<{ label: string, value: number }>,
+ *   statistics: { median: string|number, mode: string|number, "variation ratio": number }
+ * }>} chartsData
+ *
+ * @prop {Array<{
+ *   data: Array<{ label: string, value: number }>
+ * }>} [futureData=[]]
+ *     Optional future-scenario data aligned by index with `chartsData`.
+ *
+ * @module LikertChartContainer
+ */
+
 import React, { useState } from "react";
 import LikertBar from "./LikertBar";
 import Statistics from "./StatisticsContainer";
 
 /**
- * LikertChartContainer is responsible for rendering a visual representation
- * of Likert-scale responses using horizontal bar charts. It also shows
- * statistical summaries and allows navigation between multiple questions.
+ * Holds one Likert chart at a time with nav + stats.
  *
- * Props:
- * - chartsData: Array of objects representing each question's current agent data.
- * - futureData: Array of objects representing future scenario data for each question.
+ * @param {Object}   props
+ * @param {Array}    props.chartsData   – Present-day Likert datasets.
+ * @param {Array}    [props.futureData] – Future Likert datasets (optional).
+ *
+ * @returns {JSX.Element}
  */
-
 const LikertChartContainer = ({ chartsData, futureData = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Tracks which chart/question is currently displayed
 
@@ -42,7 +72,7 @@ const LikertChartContainer = ({ chartsData, futureData = [] }) => {
   // Move to the previous chart/question, wrapping around if at the beginning
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
     );
   };
 

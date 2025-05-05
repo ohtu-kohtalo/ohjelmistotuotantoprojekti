@@ -1,6 +1,37 @@
+/**
+ * @file LikertBar.jsx
+ *
+ * Responsive, animated bar/column chart built with D3 and rendered. It supports two modes:
+ *
+ * 1. **Single-series** – a standard Likert distribution (Strongly Disagree → Strongly Agree)
+ * 2. **Paired-series** – “Present” vs “Future” values for the same labels
+ *
+ * The component:
+ * 1. ResizeObserver – recalculates the SVG viewport whenever its wrapper width changes.
+ * 2. Entrance animation – bars grow from zero height the first time each question is shown
+ *  and then subsequently whenever question is changed (tracked via `hasAnimated` + `prevQuestion`).
+ * 3. Custom tooltip – lightweight, follows the cursor and shows the value of the bar currently hovered.
+ * 4. Adaptive title font-size – scales text so long questions fit.
+ *
+ * ```
+ * – `data` must contain at least the 5 Likert labels for single-series mode.
+ * – `futureData` is optional; if supplied, its `label`s must match those in `data`.
+ * @module LikertBar
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
+/**
+ * Likert / grouped-bar chart component.
+ *
+ * @param {Object}   props
+ * @param {BarDatum[]} [props.data=[]]        – Present-day counts.
+ * @param {BarDatum[]} [props.futureData=[]]  – Future counts (optional).
+ * @param {string}    [props.question=""]     – Chart title; changing it resets the animation.
+ *
+ * @returns {JSX.Element}
+ */
 const LikertBar = ({ data = [], futureData = [], question = "" }) => {
   const svgRef = useRef();
   const wrapperRef = useRef();
@@ -48,7 +79,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
 
     const maxVal = Math.max(
       d3.max(data, (d) => d.value),
-      futureData.length ? d3.max(futureData, (d) => d.value) : 0,
+      futureData.length ? d3.max(futureData, (d) => d.value) : 0
     );
 
     const x = d3
@@ -71,7 +102,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
         d3
           .axisLeft(y)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat(""),
+          .tickFormat("")
       )
       .selectAll("line")
       .attr("stroke", "#444")
@@ -97,7 +128,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
       .append("div")
       .attr(
         "class",
-        "chart-tooltip fixed z-50 pointer-events-none rounded-md bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg",
+        "chart-tooltip fixed z-50 pointer-events-none rounded-md bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg"
       )
       .style("visibility", "hidden")
       .style("transform", "translate(-50%, -100%)");
@@ -171,7 +202,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
           d3.select(this).attr("stroke", "none");
         });
 
-      // Animate bars
+      // Animated bars
       if (!hasAnimated.current) {
         presentBars
           .attr("y", y(0))
@@ -285,7 +316,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
       }
     }
 
-    // Chart Title
+    // Chart Title using dynamically scaling font size
     const titleFontSize = Math.max(12, Math.min(20, width / 70));
     svg
       .append("text")

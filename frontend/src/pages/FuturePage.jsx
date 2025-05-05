@@ -1,5 +1,30 @@
+/**
+ * @file FuturePage.jsx
+ *
+ * High-level “scenario builder” view that stitches together multiple components:
+ * InitialDistribution – demographic histograms for the agent pool.
+ * LikertChartContainer – present-day and scenario Likert charts.
+ * CsvUpload & CsvDownload – statement I/O.
+ * A text area + button for submitting a future scenario to the backend.
+ * Inline help pop-ups, success / error messages, and a blocking loading indicator.
+ *
+ * Props
+ * -----
+ * @prop {Function}  handleCsvSubmit      – Called with parsed statement list.
+ * @prop {Boolean}   isLoading            – Global loading flag.
+ * @prop {Function}  showMessage          – `(type, text)` toast helper for correct message displaying.
+ * @prop {Array}     response             – Present Likert data from backend.
+ * @prop {Array}     futureResponse       – Future Likert data from backend.
+ * @prop {Function}  resetResponse        – Clears both `response` arrays.
+ * @prop {Function}  setCsvUploaded       – Lifts CSV-loaded flag to parent.
+ * @prop {String}    submittedScenario    – Last scenario successfully POSTed.
+ * @prop {Function}  setSubmittedScenario – Setter for same.
+ * @prop {{text:string}} message          – Toast overlay content.
+ *
+ * @module FuturePage
+ */
+
 import React, { useState, useRef } from "react";
-/* Import useNavigate so the new “Back to Home” button changes routes */
 import { useLocation, useNavigate } from "react-router-dom";
 import InitialDistribution from "../components/InitialDistribution";
 import LikertChartContainer from "../components/LikertChartContainer";
@@ -59,7 +84,7 @@ const FuturePage = ({
       if (csvLoaded) {
         const ok = window.confirm(
           "Submitting a future scenario will reset the currently loaded CSV-file." +
-            " You must re-enter the CSV-file in order to see the Future answers. Proceed?",
+            " You must re-enter the CSV-file in order to see the Future answers. Proceed?"
         );
         if (!ok) return; // User declined the confirmation
       }
@@ -81,22 +106,16 @@ const FuturePage = ({
           body: JSON.stringify({ scenario: helperFutureScenario }),
         });
 
-        console.log("Submitted Future Scenario:", helperFutureScenario);
-
         if (!response.ok) {
           throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
-        const data = await response.json();
-        console.log("Future scenario return data:", data);
-
         showMessage("success", "Scenario deployed successfully ✅");
         handleReset();
       } catch (error) {
-        console.error("Future scenario submission error:", error);
         showMessage(
           "error",
-          "⚠️ Error deploying scenario! Message: " + error.message,
+          "⚠️ Error deploying scenario! Message: " + error.message
         );
       } finally {
         setFutureScenarioLoading(false);
