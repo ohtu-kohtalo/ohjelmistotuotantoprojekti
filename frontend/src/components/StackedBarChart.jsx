@@ -96,7 +96,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       cats = ["Male", "Female", "Other"];
       grouped = { Male: [], Female: [], Other: [] };
       data.forEach((d) =>
-        (grouped[d.gender] || grouped.Other).push(d.response)
+        (grouped[d.gender] || grouped.Other).push(d.response),
       );
     }
     const summary = cats.map((c) => ({
@@ -147,7 +147,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
         d3
           .axisLeft(y)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", "#444")
@@ -192,7 +192,7 @@ const StackedBarChart = ({ data = [], xAxis = "age" }) => {
       .attr(
         "class",
         "chart-tooltip fixed z-50 pointer-events-none rounded-md " +
-          "bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg"
+          "bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg",
       )
       .style("visibility", "hidden")
       .style("transform", "translate(-50%, -100%)");

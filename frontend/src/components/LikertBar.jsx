@@ -79,7 +79,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
 
     const maxVal = Math.max(
       d3.max(data, (d) => d.value),
-      futureData.length ? d3.max(futureData, (d) => d.value) : 0
+      futureData.length ? d3.max(futureData, (d) => d.value) : 0,
     );
 
     const x = d3
@@ -102,7 +102,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
         d3
           .axisLeft(y)
           .tickSize(-width + margin.left + margin.right)
-          .tickFormat("")
+          .tickFormat(""),
       )
       .selectAll("line")
       .attr("stroke", "#444")
@@ -128,7 +128,7 @@ const LikertBar = ({ data = [], futureData = [], question = "" }) => {
       .append("div")
       .attr(
         "class",
-        "chart-tooltip fixed z-50 pointer-events-none rounded-md bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg"
+        "chart-tooltip fixed z-50 pointer-events-none rounded-md bg-gray-900 text-white px-3 py-2 text-sm leading-tight shadow-lg",
       )
       .style("visibility", "hidden")
       .style("transform", "translate(-50%, -100%)");

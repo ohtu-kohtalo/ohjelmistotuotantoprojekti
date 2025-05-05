@@ -58,7 +58,7 @@ const InitialDistribution = ({ data = [] }) => {
         if (!g) return acc;
         acc[g] = (acc[g] || 0) + 1;
         return acc;
-      }, {})
+      }, {}),
     )
       .map(([g, n]) => `${g[0].toUpperCase() + g.slice(1)}: ${n}`)
       .join(", ");

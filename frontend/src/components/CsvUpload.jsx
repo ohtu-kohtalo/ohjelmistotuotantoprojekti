@@ -74,7 +74,7 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
 
           if (row.length !== 1) {
             onCsvError?.(
-              `Row ${i + 1} can only contain one column. Found ${row.length}.`
+              `Row ${i + 1} can only contain one column. Found ${row.length}.`,
             );
             setFileName("");
             event.target.value = null;

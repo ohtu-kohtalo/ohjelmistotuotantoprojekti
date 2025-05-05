@@ -72,7 +72,7 @@ const LikertChartContainer = ({ chartsData, futureData = [] }) => {
   // Move to the previous chart/question, wrapping around if at the beginning
   const handlePrev = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length
+      (prevIndex) => (prevIndex - 1 + chartsData.length) % chartsData.length,
     );
   };
 
