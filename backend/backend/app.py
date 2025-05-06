@@ -224,16 +224,23 @@ def receive_future_scenario() -> Tuple[Response, int]:
     if not isinstance(scenario, str):
         return jsonify({"error": "'scenario' must be an string"}), 400
 
-    agents_transformed = AgentTransformer().transform_agents_to_future(agents, scenario)
-    if agents_transformed:
-        print("Agent transformation succeeded\n", flush=True)
-    else:
-        print("Agent transformation failed\n", flush=True)
+    try:
+        AgentTransformer().transform_agents_to_future(agents, scenario)
+    except Exception:
+        return (
+            jsonify(
+                {
+                    "error": "Something went wrong during the agent transformation.",
+                }
+            ),
+            500,
+        )
 
     return jsonify(
         {
             "status": "success",
-        }
+        },
+        200,
     )
 
 
