@@ -1,3 +1,36 @@
+/**
+ * @file IndexPage.jsx
+ *
+ * Landing screen for the Future Customer tool.
+ * Lets a select agents (1 – 100) and then jump to the dashboard (FuturePage) once the backend responds.
+ *
+ * FLOW
+ * ---------
+ * 1. Top section asks “How many agents?”
+ * 2. Hitting **Submit** makes a `GET ${BACKEND_URL}/?agents=<count>` request.
+ * 3. While waiting, a blue ⟳ spinner shows; on error a red banner appears; on
+ *    success a green banner confirms “N agents created”.
+ * 4. Five seconds later the banner fades, the top section dims/locks, and two
+ *    new buttons become active:
+ *        - Dashboard 📈 – navigates to `/future` carrying the agent array
+ *        - ⟲ Reset – clears local state (agent array) so the user can start over
+ * 5. Two contextual ?-icons (one in-header (always visible), one near the new buttons) open
+ *    animated, keyboard-accessible pop-over dialogs explaining the UI.
+ *
+ * STATE
+ * -----
+ * `agents` (array) - data returned by the backend
+ * `agentCount` (string) - controlled input value
+ * `agentsCreated` (bool) - gates the “locked” vs. “interactive” sections
+ * `error` / `successMessage` - feedback for the user
+ * `loading` (bool) - shows spinner for atleast 2s even if agents created in less than a second
+ * `showButtonHelp` (bool) - toggles the bottom help pop-over
+ *
+ * PROPS
+ * -----
+ * This component is self-contained; it receives **no props**.
+ */
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -46,11 +79,9 @@ const IndexPage = () => {
       if (!response.ok) throw new Error(`Error: ${response.status}`);
 
       const agentsData = await response.json();
-      console.log("Agents created!", agentsData);
       setAgents(agentsData);
       setSuccessMessage(`${agentsData.length} agents created successfully! ✅`);
     } catch (error) {
-      console.error("[DEBUG] Error creating agents:", error);
       setError("⚠️ Could not create agents from initial backend CSV-file");
     } finally {
       // Makes loading indicator spin for atleast 2 seconds
@@ -61,6 +92,7 @@ const IndexPage = () => {
     }
   };
 
+  // Timer so messages shown to user do not immadetially disappear
   useEffect(() => {
     if (error || successMessage) {
       const timer = setTimeout(() => {
@@ -154,9 +186,12 @@ const IndexPage = () => {
             </button>
           </div>
         </div>
+        {/* 🔒 Top Section: dims & locks after agents are created END*/}
 
         {/* Divider Line */}
         <hr className="w-full border-t border-white/30 mt-12 sm:mt-16" />
+
+        {/* 🔒 Bottom Section: unlocks after agents are created */}
 
         {/* Reset and Dashboard Buttons Section */}
         <div
@@ -178,6 +213,7 @@ const IndexPage = () => {
               ⟲ Reset
             </button>
           </div>
+          {/* Reset Icon Button End*/}
 
           {/* Dashboard Button */}
           <div className="w-full max-w-4xl mx-auto flex flex-wrap justify-center gap-4 items-center mt-8 px-4">
@@ -192,11 +228,11 @@ const IndexPage = () => {
               Dashboard 📈
             </button>
           </div>
+          {/* Reset and Dashboard Buttons Section End*/}
 
+          {/* Bottom-Centered Help Icon with Floating Modal */}
           <div className="relative flex justify-center mt-2 z-40 w-full">
-            {/* Bottom-Centered Help Icon with Floating Modal */}
             <div className="relative flex justify-center mt-6 z-40">
-              {/* Hover Target is only the icon */}
               <div
                 onMouseEnter={() => setShowButtonHelp(true)}
                 onMouseLeave={() => setShowButtonHelp(false)}
@@ -212,7 +248,7 @@ const IndexPage = () => {
                   <span className="text-xl font-bold text-white">?</span>
                 </div>
 
-                {/* Floating Modal */}
+                {/* Floating Modal For Reset & Dashboard Buttons*/}
                 <div
                   role="dialog"
                   aria-modal="true"
@@ -253,10 +289,14 @@ const IndexPage = () => {
                     </div>
                   </div>
                 </div>
+                {/* Floating Modal For Reset & Dashboard Buttons End*/}
               </div>
             </div>
           </div>
+          {/* Bottom-Centered Help Icon with Floating Modal End*/}
         </div>
+
+        {/* 🔒 Bottom Section: unlocks after agents are created END*/}
       </header>
     </div>
   );

@@ -89,14 +89,24 @@ You need to put a CSV data file in the backend/data/ directory. The application 
 
 ## Usage
 
-1. Start the backend server in the backend/backend folder:
+1. Start the server in the backend folder:
 
-```bash
-poetry run invoke start
-```
+  - If you are using MacOs/Linux with:
+
+    ```bash
+    poetry run invoke start
+    ```
+
+  - If you are using Windows with:
+
+    ```bash
+    python -m backend.app
+    ```
 
 2. Start the frontend application in the frontend folder:
 
 ```bash
 npm run dev
 ```
+
+3. Now the application is ready to be used. Please hover over the ?-icons in the UI for further instructions.

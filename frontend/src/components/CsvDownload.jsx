@@ -40,6 +40,28 @@ const CsvDownload = ({
   const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
 
+  /**
+   * Handles the download of a CSV file by sending a POST request to the backend
+   * and triggering a file download in the browser.
+   *
+   * @async
+   * @function handleDownload
+   * @returns {Promise<void>} Resolves when the download process is complete.
+   *
+   * @throws {Error} Throws an error if the download fails or the response is invalid.
+   *
+   * @description
+   * - Sends a POST request to the backend endpoint with the provided questions and future_questions as payload.
+   * - Handles errors from the backend response and displays an appropriate error message.
+   * - Extracts the filename from the "Content-Disposition" header if available, or falls back to a default filename.
+   * - Creates a Blob from the response, generates a temporary object URL, and triggers the download.
+   *
+   * @example
+   * // Example usage:
+   * handleDownload()
+   *   .then(() => console.log("Download successful"))
+   *   .catch((error) => console.error("Download failed:", error));
+   */
   const handleDownload = async () => {
     setLoading(true);
     setError("");
@@ -54,7 +76,7 @@ const CsvDownload = ({
           },
           // Payload with the question objects
           body: JSON.stringify({ questions, future_questions }),
-        },
+        }
       );
 
       // Check for response errors

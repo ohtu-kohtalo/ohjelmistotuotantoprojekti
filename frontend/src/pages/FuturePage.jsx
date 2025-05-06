@@ -2,11 +2,11 @@
  * @file FuturePage.jsx
  *
  * High-level “scenario builder” view that stitches together multiple components:
- * InitialDistribution – demographic histograms for the agent pool.
- * LikertChartContainer – present-day and scenario Likert charts.
- * CsvUpload & CsvDownload – statement I/O.
+ * InitialDistribution – helps display demographic histograms for the agent pool.
+ * LikertChartContainer – helps display present-day and future scenario Likert charts.
+ * CsvUpload & CsvDownload – I/O.
  * A text area + button for submitting a future scenario to the backend.
- * Inline help pop-ups, success / error messages, and a blocking loading indicator.
+ * Inline help pop-ups (modals), success / error messages, and a blocking loading indicator.
  *
  * Props
  * -----
@@ -24,7 +24,7 @@
  * @module FuturePage
  */
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import InitialDistribution from "../components/InitialDistribution";
 import LikertChartContainer from "../components/LikertChartContainer";
@@ -50,7 +50,6 @@ const FuturePage = ({
   const [csvLoaded, setCsvLoaded] = useState(false);
   const [futureScenario, setFutureScenario] = useState("");
   const [futureScenarioLoading, setFutureScenarioLoading] = useState(false);
-  const tempMessageTimeout = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const agents = location.state?.agents ?? [];
@@ -79,12 +78,32 @@ const FuturePage = ({
     navigate("/", { replace: true });
   };
 
+  /**
+   * Handles the submission of a future scenario. Validates the scenario length,
+   * prompts the user for confirmation if a CSV file is loaded, and sends the scenario
+   * to the backend for processing. Displays success or error messages based on the outcome.
+   *
+   * @async
+   * @function handleFutureSubmit
+   * @returns {Promise<void>} Resolves when the submission process is complete.
+   *
+   * @throws {Error} Throws an error if the backend request fails.
+   *
+   * @description
+   * - If the `futureScenario` length is less than 5, the function does nothing.
+   * - If a CSV file is loaded, the user is prompted with a confirmation dialog.
+   * - Resets the response, clears the input field, and sets the loading state.
+   * - Sends the scenario to the backend endpoint `/receive_future_scenario`.
+   * - Displays a success message if the request is successful.
+   * - Displays an error message if the request fails.
+   * - Resets the loading state after the process is complete.
+   */
   const handleFutureSubmit = async () => {
     if (futureScenario.length >= 5) {
       if (csvLoaded) {
         const ok = window.confirm(
           "Submitting a future scenario will reset the currently loaded CSV-file." +
-            " You must re-enter the CSV-file in order to see the Future answers. Proceed?",
+            " You must re-enter the CSV-file in order to see the Future answers. Proceed?"
         );
         if (!ok) return; // User declined the confirmation
       }
@@ -115,7 +134,7 @@ const FuturePage = ({
       } catch (error) {
         showMessage(
           "error",
-          "⚠️ Error deploying scenario! Message: " + error.message,
+          "⚠️ Error deploying scenario! Message: " + error.message
         );
       } finally {
         setFutureScenarioLoading(false);
@@ -141,15 +160,15 @@ const FuturePage = ({
   };
 
   return (
+    // Main Div
     <div className="min-h-screen w-full bg-gray-900 text-white px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center space-y-12">
+      {/* Always Visible Content */}
       <div className="flex flex-col w-full gap-8">
         {/* Top Buttons */}
         <div className="flex gap-4 items-center mb-2">
           <button
             onClick={() => setChartType("initial")}
-            className={`${
-              chartType === "initial" ? "bg-blue-600" : "bg-gray-700"
-            } rounded-md px-4 py-2 text-sm sm:text-base transition-all duration-1000 transform hover:scale-105 disabled:scale-95 cursor-pointer`}
+            className={`${chartType === "initial" ? "bg-blue-600" : "bg-gray-700"} rounded-md px-4 py-2 text-sm sm:text-base transition-all duration-1000 transform hover:scale-105 disabled:scale-95 cursor-pointer`}
           >
             Demographic Distribution
           </button>
@@ -184,7 +203,9 @@ const FuturePage = ({
                 Please provide CSV statements first
               </span>
             )}
+            {/* Tooltip if CSV not loaded End */}
           </div>
+          {/* Present Answers Button End */}
 
           {/* Future Scenario Answers Button + Checkboxes + Help */}
           <div className="flex items-center gap-4">
@@ -222,6 +243,7 @@ const FuturePage = ({
                 </span>
               )}
             </div>
+            {/* Future Scenario Answers Button End */}
 
             {/* Checkboxes with icons on top */}
             <div className="flex items-center gap-2">
@@ -239,6 +261,7 @@ const FuturePage = ({
                   {csvLoaded ? "✅" : ""}
                 </div>
               </div>
+              {/* ❓ CSV Loaded End */}
 
               {/* 📝 Future Scenario */}
               <div className="flex flex-col items-center text-xs text-gray-300 space-y-1">
@@ -254,9 +277,11 @@ const FuturePage = ({
                   {submittedScenario ? "✅" : ""}
                 </div>
               </div>
+              {/* 📝 Future Scenario End */}
             </div>
+            {/* Checkboxes with icons on top End */}
 
-            {/* Help Icon */}
+            {/* Help Icon For Top Buttons */}
             <div
               onMouseEnter={() => setShowChartHelp(true)}
               onMouseLeave={() => setShowChartHelp(false)}
@@ -269,7 +294,7 @@ const FuturePage = ({
                 ?
               </button>
 
-              {/* Floating Modal */}
+              {/* Floating Modal for Top Buttons*/}
               <div
                 role="dialog"
                 aria-modal="true"
@@ -312,20 +337,29 @@ const FuturePage = ({
                   ❓ CSV loaded, 📝 scenario submitted.
                 </p>
               </div>
+              {/* Floating Modal For Top Buttons End */}
             </div>
+            {/* Help Icon For Top Buttons End */}
           </div>
+          {/* Future Scenario Answers Button + Checkboxes + Help End */}
         </div>
+        {/* Top Buttons End */}
 
-        {/* Chart and Upload Section */}
+        {/* Chart and Upload/Download/Scenario Section */}
         <div className="flex flex-col md:flex-row w-full gap-4 md:gap-6 lg:gap-8">
+          {/* Chart Container For Data Visualisation */}
           <div className="order-2 md:order-1 flex-1 flex flex-col items-start gap-4">
             <div className="w-full lg:max-w-[70vw] xl:max-w-[75vw] 2xl:max-w-[80vw]">
               {renderChart()}
             </div>
           </div>
+          {/* Chart Container For Data Visualisation End*/}
 
+          {/* Upload/Download/Scenario Section*/}
           <div className="order-1 md:order-2 w-full md:w-72 lg:w-80 xl:w-96 2xl:w-[28rem] flex flex-col items-center gap-8 mt-2">
+            {/* Buttons Above Scenario Input */}
             <div className="w-full flex flex-row items-center justify-center gap-4">
+              {/* Help Icon For Upload/Download/Scenario*/}
               <div
                 onMouseEnter={() => setShowUploadHelp(true)}
                 onMouseLeave={() => setShowUploadHelp(false)}
@@ -337,8 +371,9 @@ const FuturePage = ({
                 >
                   ?
                 </button>
+                {/* Help Icon For Upload/Download/Scenario Button Styling End */}
 
-                {/* Floating Modal */}
+                {/* Floating Modal For Upload/Download/Scenario Help Icon*/}
                 <div
                   role="dialog"
                   aria-modal="true"
@@ -386,6 +421,7 @@ const FuturePage = ({
                     </li>
                   </ul>
                 </div>
+                {/* Floating Modal For Upload/Download/Scenario Help Icon End */}
               </div>
 
               <CsvUpload
@@ -396,14 +432,18 @@ const FuturePage = ({
 
               <CsvDownload />
             </div>
+            {/* Buttons Above Scenario Input End */}
 
+            {/* Future Scenario Input Area*/}
             <textarea
               placeholder="Enter future scenario..."
               className="w-full p-6 h-[250px] border border-gray-700 bg-gray-800 rounded text-white placeholder-gray-400 resize-none"
               value={futureScenario}
               onChange={(e) => setFutureScenario(e.target.value)}
             />
+            {/* Future Scenario Input Area End */}
 
+            {/* Future Scenario Submit Button */}
             <button
               onClick={handleFutureSubmit}
               disabled={futureScenario.length < 5 || futureScenarioLoading}
@@ -418,18 +458,24 @@ const FuturePage = ({
             >
               Submit {futureScenario.length < 5 ? "🔒" : "🔓"}
             </button>
+            {/* Future Scenario Submit Button End*/}
 
-            {/* Back to Index Page */}
+            {/* Back to Index Page Button */}
             <button
               onClick={handleGoBack}
               className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 min-w-[8rem] text-white py-3 rounded-md bg-blue-600 hover:bg-blue-700 transform transition-all duration-1000 hover:scale-105 disabled:scale-95 cursor-pointer whitespace-nowrap"
             >
               ⬅️ Go Back
             </button>
+            {/* Back to Index Page Button End */}
           </div>
+          {/* Upload/Download/Scenario Section End */}
         </div>
+        {/* Chart and Upload/Download/Scenario Section End */}
       </div>
+      {/* Always Visible Content End */}
 
+      {/* Loading Indicator */}
       {(futureScenarioLoading || isLoading) && (
         <div
           className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center
@@ -438,8 +484,9 @@ const FuturePage = ({
           <LoadingIndicator />
         </div>
       )}
+      {/* Loading Indicator End */}
 
-      {/* Full-screen Message overlay AFTER loading */}
+      {/* Full-screen Message overlay */}
       {!futureScenarioLoading && !isLoading && message.text && (
         <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center">
           <div className="text-lg px-8 py-6 max-w-lg w-full text-center mx-4">
@@ -447,7 +494,9 @@ const FuturePage = ({
           </div>
         </div>
       )}
+      {/* Full-screen Message overlay End */}
     </div>
+    // Main Div End
   );
 };
 
