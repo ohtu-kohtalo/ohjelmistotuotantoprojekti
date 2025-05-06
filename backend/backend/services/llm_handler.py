@@ -163,7 +163,27 @@ class LlmHandler:
     def get_agents_responses(
         self, agents: List[Agent], questions: List[str]
     ) -> Optional[Dict[str, Dict[Any, Dict[str, int]]]]:
-        """Retrieves and processes responses from a language model."""
+        """
+        Creates a prompt, sends it to the LLM, receives the LLM's answer (which includes a Likert-
+        value between 1 and 5 for each agent) and saves each agent's answer to the agent-object. If
+        agents have been transformed to the future, does everything for both the original and future
+        agents.
+
+        Returns:
+            dict:
+                The answers by the agents. For example, with two agents that have been transformed
+                to future, the response could look like this:
+                {
+                    'original': {
+                        <Agent object_1>: {'Question': 1},
+                        <Agent object_2>: {'Question': 5}
+                    },
+                    'future': {
+                        <Agent object_1>: {'Question': 2},
+                        <Agent object_2>: {'Question': 4}
+                    }
+                }
+        """
 
         future_variables_exists = self.transformer.future_variables_exist(agents)
 
