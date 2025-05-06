@@ -76,7 +76,7 @@ const CsvDownload = ({
           },
           // Payload with the question objects
           body: JSON.stringify({ questions, future_questions }),
-        }
+        },
       );
 
       // Check for response errors

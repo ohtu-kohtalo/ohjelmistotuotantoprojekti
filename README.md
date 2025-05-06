@@ -91,17 +91,17 @@ You need to put a CSV data file in the backend/data/ directory. The application 
 
 1. Start the server in the backend folder:
 
-  - If you are using MacOs/Linux with:
+- If you are using MacOs/Linux with:
 
-    ```bash
-    poetry run invoke start
-    ```
+  ```bash
+  poetry run invoke start
+  ```
 
-  - If you are using Windows with:
+- If you are using Windows with:
 
-    ```bash
-    python -m backend.app
-    ```
+  ```bash
+  python -m backend.app
+  ```
 
 2. Start the frontend application in the frontend folder:
 
