@@ -249,6 +249,17 @@ anything else.
         Returns:
             dict: A dictionary containing the latent variables for each agent. An example:
             {1: {"variable1": 2.2, "variable2": -0.3}, 2: {"variable1": 1.4, "variable2": 0.5}}
+
+        Raises:
+            RuntimeError: If the LLM gives an id number, that does not match the id number of any
+                saved agent.
+            TypeError: If a latent variable given by the LLM cannot be converted to a float.
+            RuntimeError: If, for some agent, the LLM gives more latent variable values that there
+                were latent variables.
+            RuntimeError: If, for some agent, the LLM gives less latent variable values that there
+                were latent variables.
+            RuntimeError: If the LLM did not give new latent variable values for all agents, or gave
+                them for more agents than exists.
         """
         new_latent_values = {i: {} for i in range(1, number_of_agents + 1)}
 
@@ -272,6 +283,7 @@ anything else.
 
                 # The first value should be the id number of the agent (respondent)
                 if first_value:
+                    # Check that agent_id matches the id of any agent
                     if entry.find(str(agent_id)):
                         agent_id += 1
                         first_value = False
