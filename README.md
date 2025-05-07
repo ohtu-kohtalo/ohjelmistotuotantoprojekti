@@ -70,7 +70,7 @@ cd ../backend && poetry install
 
 ### Data file
 
-You need to put a CSV data file in the backend/data/ directory. The application uses the data to create agents. If you do not have a data file, you can still test the program by using the test_data.csv file that can be found in the backend/tests/data/ directory. Copy and paste the test_data.csv file into backend/data/ directory.
+You need to put a CSV data file in the backend/data/ directory. The application uses the data to create agents. If you do not have a data file, you can still test the program by using the `mock_survey.csv` file that can be found in the docs/ directory. Copy and paste the test_data.csv file into backend/data/ directory. With the `mock_survey.csv` file, you can only create a maximum of 10 agents when using the program.
 
 ### .env file
 
