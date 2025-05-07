@@ -12,7 +12,6 @@ def extract_questions_from_csv(data: Dict[str, Any]) -> List[str]:
         list: A list of questions.
     """
     questions = data.get("questions", [])
-    print(f"[DEBUG] Questions extracted from CSV: {questions}", flush=True)
 
     if not isinstance(questions, list) or len(questions) == 0:
         print("[ERROR] No valid questions found in the CSV!", flush=True)
