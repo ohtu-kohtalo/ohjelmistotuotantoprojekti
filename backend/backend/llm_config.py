@@ -1,11 +1,20 @@
 import os
+from typing import Union
 import google.generativeai as genai
 from .services.gemini_service import Gemini
 from .services.openai_service import OpenAI
-from typing import Union
 
 
 def get_llm_connection() -> Union[Gemini, OpenAI]:
+    """Returns an instance of class _Gemini_ or _OpenAI_. The returned class will be the LLM model, that
+    the program uses. The used model is specified in the .env-file.
+
+    Returns:
+        Union(Gemini, OpenAI): The LLM model used by the program.
+
+    Raises:
+        ValueError: If the .env-file does not specify the LLM model correctly.
+    """
     llm_provider = os.getenv("LLM_PROVIDER")
 
     if llm_provider == "gemini":
