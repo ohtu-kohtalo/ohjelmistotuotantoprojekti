@@ -1,7 +1,7 @@
+from typing import List, Dict, Any, Optional
 from ..llm_config import get_llm_connection
 from ..entities.agent import Agent
 from ..services.agent_transformer import AgentTransformer
-from typing import List, Dict, Any, Optional
 
 
 class LlmHandler:
@@ -201,11 +201,7 @@ class LlmHandler:
                 responses = [r.strip() for r in responses if r.strip()]
 
             if not responses or len(responses) != 2:
-                print(
-                    "[ERROR] Expected 2 responses from LLM, got:",
-                    len(responses),
-                    flush=True,
-                )
+                # Expected 2 responses from LLM, got len(responses)
                 return None
 
             original_response = responses[0]
@@ -216,7 +212,7 @@ class LlmHandler:
             future_parsed = self.parse_responses(future_response, agents, questions)
 
             if original_parsed is None or future_parsed is None:
-                print("[ERROR] Parsing failed for one or both responses", flush=True)
+                # Parsing failed for one or both responses
                 return None
 
             self.save_responses_to_agents(original_parsed, future=False)
@@ -244,7 +240,7 @@ class LlmHandler:
     ) -> Optional[Dict[Agent, Dict[str, int]]]:
         """Extracts and parses the responses from the LLM into structured data."""
         if not response:
-            print("[ERROR] LLM returned an empty response!", flush=True)
+            # LLM returned an empty response
             return None
 
         lines = response.strip().split("\n")
@@ -257,10 +253,7 @@ class LlmHandler:
         agent_responses = {}
         for i, line in enumerate(lines):
             if i >= len(agents):
-                print(
-                    f"[ERROR] Skipping response line {i+1} due to insufficient agent count.",
-                    flush=True,
-                )
+                # Skipping response line i+1 due to insufficient agent count
                 continue
             agent_response = self.parse_line(line, i, questions)
             if agent_response:
@@ -274,9 +267,7 @@ class LlmHandler:
 
         parts = line.split(":")
         if len(parts) < 2:
-            print(
-                f"[ERROR] Invalid response format at line {index+1}: {line}", flush=True
-            )
+            # Invalid response format at line index+1
             return None
 
         try:
@@ -285,10 +276,7 @@ class LlmHandler:
             ]
             return dict(zip(questions, answers))
         except ValueError:
-            print(
-                f"[ERROR] Conversion to integer failed at line {index+1}: {line}",
-                flush=True,
-            )
+            # Conversion to integer failed at line index+1
             return None
 
     def save_responses_to_agents(
