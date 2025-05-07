@@ -78,6 +78,7 @@ Respondent 2:
             )
 
     def test_create_prompt(self):
+        """Test that create_prompt creates a prompt with the correct format."""
         future_scenario = "future scenario"
         latent_variables = ["Overall happiness level"]
         result = AgentTransformer.create_prompt(
@@ -87,6 +88,7 @@ Respondent 2:
         self.assertEqual(compare, result)
 
     def test_get_latent_variables(self):
+        """Test that _get_latent_variables returns the list of latent variable names from an agent."""
         result = AgentTransformer._get_latent_variables(self, self.agents[0])
         self.assertEqual(["Overall happiness level"], result)
 

@@ -3,6 +3,7 @@ from backend.services.csv_service import extract_questions_from_csv
 
 
 def test_valid_questions(capsys):
+    """Test that extract_questions_from_csv returns the correct questions with a valid input."""
     data = {"questions": ["q1", "q2"]}
     result = extract_questions_from_csv(data)
 
@@ -12,6 +13,7 @@ def test_valid_questions(capsys):
 
 
 def test_empty_questions(capsys):
+    """Test that extract_questions_from_csv returns an empty list with an empty input."""
     data = {"questions": []}
     result = extract_questions_from_csv(data)
 
@@ -22,6 +24,7 @@ def test_empty_questions(capsys):
 
 
 def test_not_a_list(capsys):
+    """Test that extract_questions_from_csv returns an empty list with a non-list input."""
     data = {"questions": "test"}
     result = extract_questions_from_csv(data)
 
@@ -32,6 +35,7 @@ def test_not_a_list(capsys):
 
 
 def test_no_questions(capsys):
+    """Test that extract_questions_from_csv returns an empty list with no questions key."""
     data = {}
     result = extract_questions_from_csv(data)
 
@@ -42,6 +46,7 @@ def test_no_questions(capsys):
 
 
 def test_too_many_questions(capsys):
+    """Test that extract_questions_from_csv returns an empty list with too many questions."""
     data = {
         "questions": [
             "q1",
@@ -67,6 +72,7 @@ def test_too_many_questions(capsys):
 
 
 def test_question_too_long(capsys):
+    """Test that extract_questions_from_csv returns an empty list with a question that is too long."""
     data = {"questions": ["a" * 201]}
     result = extract_questions_from_csv(data)
 
