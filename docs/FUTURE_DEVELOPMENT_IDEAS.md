@@ -4,7 +4,7 @@
 - Implement better support for asking the agents the same question multiple times. Currently if the user asks the same question more than once, only one answer distribution will be visible on the website. However, the answers are correctly added to the downloadable csv-files.
 - Testing and analyzing the program with various training datasets and language models
 - Reducing the number of agents by using clustering (to achieve a more relevant agent sample)
-- Facilitating the change of the agent training data (enabling users to easily add their own training data for the agents within the program)
+- Facilitating the change of the agent training data (enabling users to easily add their own training data for the agents within the program). Note that currently the latent variables are hard-coded into the prompt in class `AgentTransformer` (backend/backend/services/agent_transformer.py) in the class variable `INTRO_END`. If the training data is changed (a new survey is used to create the agents) these variables must be updated to the corresponding variables in the new training data.
 - Testing with negative or adverse scenarios
 - Incorporating a theoretical framework and training the language model accordingly
 - Investigating the reasoning behind the language model’s responses (understanding why the LLM arrives at certain conclusions and what justifications it provides for its answers)
