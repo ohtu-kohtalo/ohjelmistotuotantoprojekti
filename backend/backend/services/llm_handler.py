@@ -5,6 +5,9 @@ from ..services.agent_transformer import AgentTransformer
 
 
 class LlmHandler:
+    """This class is responsible of asking questions from the LLM and saving the answers into the
+    agent-objects. This is implemented by method `get_agents_responses`."""
+
     def __init__(self) -> None:
         """Initializes the LLM connection using `llm_config.py`."""
         self.llm = get_llm_connection()
