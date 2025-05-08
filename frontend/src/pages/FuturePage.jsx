@@ -415,9 +415,14 @@ const FuturePage = ({
                     </li>
                     <li>
                       <strong>Future Scenario:</strong> In the “Enter future
-                      scenario…” field, type at least 5 characters describing a
-                      “what-if” (e.g. “Resource prices surge”), then click
-                      Submit 🔓 to simulate how agent responses might change.
+                      scenario…” field, type at least 5 characters (and a
+                      maximum of 10,000 tokens, roughly 7,500 words) describing
+                      a “what-if” (e.g. “Resource prices surge”), then click
+                      Submit 🔓 to simulate how agent responses might change. If
+                      you do not want to provide your own future scenario, you
+                      can type "default" in the field and the application will
+                      use a default future scenario concerning techological
+                      advancements in the production of cultured meat.
                     </li>
                   </ul>
                 </div>
