@@ -14,7 +14,7 @@ The dataset contains latent variables that have been derived from the original q
 
 # Statements
 
-By uploading a CSV file (no header row, one entry per row) containing statements, an LLM is tasked with giving Likert-scale answers to the statements based on the individual latent factors of each agent. Refer to the example file at `docs/examples/example_statements.csv` to see the expected format.
+By uploading a CSV file (no header row, one entry per row, no commas) containing statements, an LLM is tasked with giving Likert-scale answers to the statements based on the individual latent factors of each agent. Refer to the example file at `docs/examples/example_statements.csv` to see the expected format.
 
 # Future scenario
 
