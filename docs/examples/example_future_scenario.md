@@ -7,7 +7,6 @@ Matti, Jensen, Bontoux, Goran, Pistocchi, Salvi, Towards a fair and sustainable 
 social and economic choices in sustainability transitions, Publications Office of the European Union, Luxembourg,
 2023, doi:10.2760/804844, JRC133716
 
-
 # ECO-STATES
 
 In this scenario, Member States shape a social and economic
