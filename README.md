@@ -30,8 +30,8 @@ The application allows for researchers and and analysts to:
 - **Python 3.12 or higher**
 - **Poetry 2.0.0 or higher**
 - **Node.js and npm**
-- [**A Gemini API key**](https://ai.google.dev/gemini-api/docs/api-key)
-- [**A OpenAI API key**](https://openai.com/api/)
+- **A [Gemini](https://ai.google.dev/gemini-api/docs/api-key) API key
+  or an [OpenAI](https://openai.com/api/) API key**
 - **A CSV data file**
 
 ## Installation
@@ -70,11 +70,13 @@ cd ../backend && poetry install
 
 ### Data file
 
-You need to put a CSV data file in the backend/data/ directory. The application uses the data to create agents. If you do not have a data file, you can still test the program by using the `mock_survey.csv` file that can be found in the docs/ directory. Copy and paste the `mock_survey.csv` file into backend/data/ directory. Note that with the `mock_survey.csv` file, you can only create a maximum of 10 agents when using the application.
+You need to put a CSV data file in the `backend/data/` directory. The application uses the data to create agents. If you do not have a data file, you can still test the application by using the `mock_survey.csv` file that can be found in the `docs/examples/` directory. Copy and paste the mock_survey.csv file into backend/data/ directory. Note that when using the application with the mock_survey.csv file, you can create a maximum of 10 agents.
+
+If you want to use some other dataset than the VTT's Gen Z food study, you need to do some changes to the code. Specifically, in the file `backend/backend/services/agent_transformer.py` update the variables listed in the class variable `INTRO_END` to match the new variables in your dataset. These variables can be survey questions, statements, or latent variables derived from your data. The application has not been tested with any other data.
 
 ### .env file
 
-1. Create a `.env` file in the backend directory (not in the backend/backend directory).
+1. Create a `.env` file in the `backend/` directory (not in the backend/backend directory).
 
 2. Add the following lines into the `.env` file:
 
@@ -85,7 +87,7 @@ You need to put a CSV data file in the backend/data/ directory. The application 
    CSV_FILE_PATH=data/<file-name-here>
    ```
 
-   Just replace `<your-api-key-here>` and `<file-name-here>` with your actual API key and file name.
+   Choose either `gemini` or `openai` and replace `<your-api-key-here>` and `<file-name-here>` with your actual API key and file name.
 
 ## Usage
 
