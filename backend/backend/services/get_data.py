@@ -4,14 +4,15 @@ from typing import Tuple, Dict, List, Any
 
 class GetData:
     """
-    GetData class provides methods to manipulate agents answer data.
+    GetData class provides methods to get data about the answers of agents.
     """
 
     def get_all_distributions(
         self, agents: List[Any], index: int = 0
     ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         """
-        Returns both current and future distributions for a list of agents.
+        Returns both current and future distributions for a list of agents. If there are no future
+        agents, the future distributions is an empty list.
 
         Args:
             agents (list): List of Agent objects

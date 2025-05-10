@@ -1,6 +1,42 @@
+/**
+ * @file CsvUpload.jsx
+ *
+ * React component that lets a user pick a **header-less** CSV file,
+ * validates each row (exactly one column, non-empty after trimming),
+ * and then passes the parsed questions array upstream.
+ *
+ * The component:
+ * 1. A hidden `<input type="file">` is triggered by an **Upload CSV** button.
+ * 2. The selected file is parsed with **Papa Parse**:
+ *    - `header: false` ensures we read raw rows.
+ *    - `skipEmptyLines: true` ignores blank lines.
+ * 3. Every row is validated:
+ *    - Must contain exactly one column.
+ *    - That column must not be only whitespace.
+ * 4. On success, the component:
+ *    - Updates internal state (`fileName`, `questions`).
+ *    - Calls `onCsvSuccess` with a friendly message.
+ *    - Calls `handleCsvSubmit(questions)` so the parent can proceed.
+ * 5. On any error, the component:
+ *    - Clears local state and file input.
+ *    - Calls `onCsvError` with a descriptive message.
+ *
+ * @module CsvUpload
+ */
+
 import React, { useState, useRef } from "react";
 import Papa from "papaparse";
 
+/**
+ * Upload button + hidden file input for question CSVs.
+ *
+ * @param {Object}   props
+ * @param {function} [props.onCsvError]      – Callback fired with `(message)` when validation/parsing fails.
+ * @param {function} [props.onCsvSuccess]    – Callback fired with `(message)` when parsing succeeds.
+ * @param {function} props.handleCsvSubmit   – **Required.** Receives the parsed `questions` array on success.
+ *
+ * @returns {JSX.Element}
+ */
 const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
   const [fileName, setFileName] = useState("");
   const [questions, setQuestions] = useState([]);
@@ -85,7 +121,20 @@ const CsvUpload = ({ onCsvError, onCsvSuccess, handleCsvSubmit }) => {
       />
       <button
         onClick={handleButtonClick}
-        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transform transition-all duration-1000 hover:scale-105 cursor-pointer"
+        className="
+          px-3
+          py-1.5
+          text-white
+          bg-blue-600
+          hover:bg-blue-700
+          rounded-md
+          font-medium
+          transform
+          transition-all
+          duration-1000
+          hover:scale-105
+          cursor-pointer
+        "
       >
         Upload CSV
       </button>

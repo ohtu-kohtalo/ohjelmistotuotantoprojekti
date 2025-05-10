@@ -1,10 +1,13 @@
+from typing import List, Dict, Any, Optional
 from ..llm_config import get_llm_connection
 from ..entities.agent import Agent
 from ..services.agent_transformer import AgentTransformer
-from typing import List, Dict, Any, Optional
 
 
 class LlmHandler:
+    """This class is responsible of asking questions from the LLM and saving the answers into the
+    agent-objects. This is implemented by method `get_agents_responses`."""
+
     def __init__(self) -> None:
         """Initializes the LLM connection using `llm_config.py`."""
         self.llm = get_llm_connection()
@@ -163,7 +166,27 @@ class LlmHandler:
     def get_agents_responses(
         self, agents: List[Agent], questions: List[str]
     ) -> Optional[Dict[str, Dict[Any, Dict[str, int]]]]:
-        """Retrieves and processes responses from a language model."""
+        """
+        Creates a prompt, sends it to the LLM, receives the LLM's answer (which includes a Likert-
+        value between 1 and 5 for each agent) and saves each agent's answer to the agent-object. If
+        agents have been transformed to the future, does everything for both the original and future
+        agents.
+
+        Returns:
+            dict:
+                The answers by the agents. For example, with two agents that have been transformed
+                to future, the response could look like this:
+                {
+                    'original': {
+                        <Agent object_1>: {'Question': 1},
+                        <Agent object_2>: {'Question': 5}
+                    },
+                    'future': {
+                        <Agent object_1>: {'Question': 2},
+                        <Agent object_2>: {'Question': 4}
+                    }
+                }
+        """
 
         future_variables_exists = self.transformer.future_variables_exist(agents)
 
@@ -174,7 +197,6 @@ class LlmHandler:
                 self.create_prompt(agents, questions, future=True),
             ]
             responses = self.llm.get_parallel_responses(prompts)
-            print("[DEBUG] Content of responses:", responses)
 
             # If response is a single string, split it manually into two parts
             if isinstance(responses, str):
@@ -182,11 +204,7 @@ class LlmHandler:
                 responses = [r.strip() for r in responses if r.strip()]
 
             if not responses or len(responses) != 2:
-                print(
-                    "[ERROR] Expected 2 responses from LLM, got:",
-                    len(responses),
-                    flush=True,
-                )
+                # Expected 2 responses from LLM, got len(responses)
                 return None
 
             original_response = responses[0]
@@ -197,7 +215,7 @@ class LlmHandler:
             future_parsed = self.parse_responses(future_response, agents, questions)
 
             if original_parsed is None or future_parsed is None:
-                print("[ERROR] Parsing failed for one or both responses", flush=True)
+                # Parsing failed for one or both responses
                 return None
 
             self.save_responses_to_agents(original_parsed, future=False)
@@ -225,11 +243,10 @@ class LlmHandler:
     ) -> Optional[Dict[Agent, Dict[str, int]]]:
         """Extracts and parses the responses from the LLM into structured data."""
         if not response:
-            print("[ERROR] LLM returned an empty response!", flush=True)
+            # LLM returned an empty response
             return None
 
         lines = response.strip().split("\n")
-        print("[DEBUG] Splitting LLM response into lines:", lines, flush=True)
         return self.process_lines(lines, agents, questions)
 
     def process_lines(
@@ -239,10 +256,7 @@ class LlmHandler:
         agent_responses = {}
         for i, line in enumerate(lines):
             if i >= len(agents):
-                print(
-                    f"[ERROR] Skipping response line {i+1} due to insufficient agent count.",
-                    flush=True,
-                )
+                # Skipping response line i+1 due to insufficient agent count
                 continue
             agent_response = self.parse_line(line, i, questions)
             if agent_response:
@@ -256,9 +270,7 @@ class LlmHandler:
 
         parts = line.split(":")
         if len(parts) < 2:
-            print(
-                f"[ERROR] Invalid response format at line {index+1}: {line}", flush=True
-            )
+            # Invalid response format at line index+1
             return None
 
         try:
@@ -267,10 +279,7 @@ class LlmHandler:
             ]
             return dict(zip(questions, answers))
         except ValueError:
-            print(
-                f"[ERROR] Conversion to integer failed at line {index+1}: {line}",
-                flush=True,
-            )
+            # Conversion to integer failed at line index+1
             return None
 
     def save_responses_to_agents(
@@ -297,11 +306,6 @@ class LlmHandler:
                 else:
                     target[question].append(answer)
 
-            print(
-                f"[DEBUG] Agent {i+1} {'future_' if future else ''}questions updated:",
-                target,
-                flush=True,
-            )
             new_agent_responses[f"Agent_{i+1}"] = responses
 
         return new_agent_responses

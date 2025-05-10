@@ -1,6 +1,32 @@
+/**
+ * @file CsvDownload.jsx
+ *
+ * React component that triggers a CSV download from the backend.
+ * It packages two question-object payloads (`questions` and `future_questions`)
+ * into a POST request and streams the resulting CSV file to the user.
+ *
+ * The component:
+ * 1. Locates the backend URL from an environment variable (or defaults to localhost).
+ * 2. Sends the payload in JSON format.
+ * 3. Receives a Blob and converts it into a client-side download.
+ * 4. Handles loading / error UI state.
+ *
+ * @module CsvDownload
+ */
+
 import React, { useState } from "react";
 import ErrorMessage from "./ErrorMessage";
 
+/**
+ * Download button for CSV export of agent answers.
+ *
+ * @param {Object}   props
+ * @param {Object}   props.questions          – Already-answered questions keyed by ID.
+ * @param {Object}   props.future_questions   – Future / follow-up questions keyed by ID.
+ * @param {string}   [props.fileName]         – Default filename if the backend does not supply one.
+ * @param {boolean}  [props.disabled]         – Optional flag to disable the button.
+ * @returns {JSX.Element}
+ */
 const CsvDownload = ({
   questions = {},
   future_questions = {},
@@ -14,6 +40,28 @@ const CsvDownload = ({
   const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5500";
 
+  /**
+   * Handles the download of a CSV file by sending a POST request to the backend
+   * and triggering a file download in the browser.
+   *
+   * @async
+   * @function handleDownload
+   * @returns {Promise<void>} Resolves when the download process is complete.
+   *
+   * @throws {Error} Throws an error if the download fails or the response is invalid.
+   *
+   * @description
+   * - Sends a POST request to the backend endpoint with the provided questions and future_questions as payload.
+   * - Handles errors from the backend response and displays an appropriate error message.
+   * - Extracts the filename from the "Content-Disposition" header if available, or falls back to a default filename.
+   * - Creates a Blob from the response, generates a temporary object URL, and triggers the download.
+   *
+   * @example
+   * // Example usage:
+   * handleDownload()
+   *   .then(() => console.log("Download successful"))
+   *   .catch((error) => console.error("Download failed:", error));
+   */
   const handleDownload = async () => {
     setLoading(true);
     setError("");
@@ -88,7 +136,20 @@ const CsvDownload = ({
       <button
         onClick={handleDownload}
         disabled={loading || disabled}
-        className="px-3 py-1.5 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transform transition-all duration-1000 hover:scale-105 cursor-pointer"
+        className="
+          px-3
+          py-1.5
+          text-white
+          bg-blue-600
+          hover:bg-blue-700
+          rounded-md
+          font-medium
+          transform
+          transition-all
+          duration-1000
+          hover:scale-105
+          cursor-pointer
+        "
       >
         {loading ? "Downloading..." : "Download CSV"}
       </button>

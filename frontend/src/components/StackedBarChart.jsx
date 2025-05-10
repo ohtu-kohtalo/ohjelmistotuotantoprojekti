@@ -1,11 +1,43 @@
+/**
+ * @file StackedBarChart.jsx
+ *
+ * Responsive, conditionally animated column chart that shows the distribution
+ * of respondents by age (16 – 25) or gender (Male / Female / Other).
+ * It is rendered with D3 inside an SVG that automatically resizes to its wrapper’s width.
+ *
+ * Animation policy
+ * ----------------
+ * The very first mount of the component renders without the grow-in animation (avoids a double-trigger flash on initial page load).
+ * Every time the `xAxis` prop toggles between `"age"` and `"gender"`, the bars animate upward.
+ *
+ * Data
+ * -----
+ * Each element of `data` should have at least:
+ * ```ts
+ * {
+ *   age:    number | string,  // 16 … 25
+ *   gender: 'Male' | 'Female' | 'Other' // string,
+ *   response: string          // any value; only its presence counts
+ * }
+ * ```
+ *
+ * Props
+ * -----
+ * @prop {Array<Object>} [data=[]]  – Raw demographic records.
+ * @prop {'age' | 'gender'} [xAxis='age'] – Dimension to display.
+ *
+ * @module StackedBarChart
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 /**
- * StackedBarChart
- * ────────────────────────────────────────────────────────────────────────────
- * • Skips animation on the very first mount of the component. This is to prevent double animation 'trigger' on page load.
- * • Animates normally whenever the xAxis view toggles afterwards.
+ * Column chart with age/gender toggle.
+ *
+ * @param {Object} props
+ * @param {Array}  [props.data] – Demographic dataset.
+ * @param {string} [props.xAxis] – `'age'` or `'gender'`.
  */
 const StackedBarChart = ({ data = [], xAxis = "age" }) => {
   const svgRef = useRef();

@@ -1,6 +1,6 @@
-from ..llm_config import get_llm_connection
-from token_count import TokenCount
 from typing import List, Dict, Any
+from token_count import TokenCount
+from ..llm_config import get_llm_connection
 from ..entities.agent import Agent
 
 
@@ -110,20 +110,26 @@ anything else.
     def transform_agents_to_future(
         self, agents: List[Agent], future_scenario: str
     ) -> bool:
-        """Transforms agents to future. Takes a future scenario and a list of agent-objects as
-        arguments. Then asks an LLM to create new info variables for the agents based on the future
-        scenario and the original info variables of the agents. The new info varibles are then
-        saved into the agents.
+        """
+        Transforms agents to future. Takes a future scenario and a list of agent-objects as
+        arguments. Creates a prompt and asks the LLM to create new variables for the agents based on
+        the future scenario and the original variables of the agents. The new variables are then
+        saved into the agent-objects.
 
         Args:
             agents (list): A list of agent-objects.
-            future_scenario (str): A scenario by the user of the future.
+            future_scenario (str): A scenario by the user of the future. Maximum allowed length is
+                10000 tokens.
 
         Returns:
-            bool: **True** if future transformation was successful for all agents and **False**
-            otherwise.
+            bool: **True** if future transformation was successful for all agents.
+
+        Raises:
+            RuntimeError: If future scenario is too long.
+            RuntimeError: If an error occurs when asking a question from the LLM.
+            RuntimeError: If an error occurs when parsing the response given by the LLM.
         """
-        # print("\nfuture scenario\n", future_scenario, flush=True)
+
         if future_scenario == "default":
             future_scenario = self.FUTURE_SCENARIO
 
@@ -132,22 +138,14 @@ anything else.
             raise RuntimeError(
                 f"Future scenario was too long. It was {length_in_tokens} tokens. Maximum is 10000."
             )
-        print(f"\nLength of the future scenario: {length_in_tokens} tokens", flush=True)
 
-        # Get the latent variables in a list
+        # Get the labels of the latent variables in a list
         latent_variables = self._get_latent_variables(agents[0])
 
         prompt = self.create_prompt(agents, future_scenario, latent_variables)
-        # print("\nPrompt:\n", prompt, flush=True)
-
-        print(
-            f"Length of the prompt: {self.count_token_length(prompt)} tokens",
-            flush=True,
-        )
 
         try:
             response = self.__llm.get_response(prompt)
-        # print("\nLLM response:\n", response, flush=True)
         except Exception as exc:
             raise RuntimeError(
                 "Something went wrong when LLM was creating an answer"
@@ -175,18 +173,15 @@ anything else.
         """Creates a prompt that will ask the LLM to transform the agents into the future.
 
         Args:
-            agents (list): A list of agents
-            future_scenario (str): The future scenario given by the user
-            latent_variables (list): The latent variables
+            agents (list): A list of agents.
+            future_scenario (str): The future scenario given by the user.
+            latent_variables (list): The labels of the latent variables.
         """
         prompt = self.INTRO_BEGINNING
-        # The future scenario is currently hard coded into the prompt
         prompt += future_scenario
         prompt += self.INTRO_END
 
-        ### For now, the latent variables are hard coded into the prompt (in INTRO_END)
-        # prompt += self._add_latent_variables()
-
+        # For now, the labels of the latent variables are hard coded into the prompt (in INTRO_END)
         prompt += self._add_agent_variable_values(agents, latent_variables)
         prompt += self.PROMPT_END
 
@@ -194,8 +189,8 @@ anything else.
 
     def _get_latent_variables(self, agent: Agent) -> List[str]:
         """
-        Takes an agent as an argument, searches its latent variables and returns the latent
-        variable names in a list.
+        Takes an agent as an argument, searches its latent variables and returns the labels of the
+        latent variables in a list.
 
         Args:
             agent (Agent): An Agent object.
@@ -218,7 +213,7 @@ anything else.
 
         Args:
             agents (list): List of Agent objects.
-            latent_variables (list): List of latent variable names.
+            latent_variables (list): List of latent variable labels.
 
         Returns:
             str: A string with the latent variable values of the agents.
@@ -254,12 +249,22 @@ anything else.
         Returns:
             dict: A dictionary containing the latent variables for each agent. An example:
             {1: {"variable1": 2.2, "variable2": -0.3}, 2: {"variable1": 1.4, "variable2": 0.5}}
+
+        Raises:
+            RuntimeError: If the LLM gives an id number, that does not match the id number of any
+                saved agent.
+            TypeError: If a latent variable given by the LLM cannot be converted to a float.
+            RuntimeError: If, for some agent, the LLM gives more latent variable values that there
+                were latent variables.
+            RuntimeError: If, for some agent, the LLM gives less latent variable values that there
+                were latent variables.
+            RuntimeError: If the LLM did not give new latent variable values for all agents, or gave
+                them for more agents than exists.
         """
         new_latent_values = {i: {} for i in range(1, number_of_agents + 1)}
 
         response = response.split("Respondent")
         response = [values.split("\n") for values in response]
-        # print("\nParsed response:\n", response, flush=True)
 
         agent_id = 0
         for value_list in response:
@@ -278,6 +283,7 @@ anything else.
 
                 # The first value should be the id number of the agent (respondent)
                 if first_value:
+                    # Check that agent_id matches the id of any agent
                     if entry.find(str(agent_id)):
                         agent_id += 1
                         first_value = False
@@ -313,11 +319,6 @@ anything else.
                     f"Agent number {agent_id} got too few new latent variables. "
                     f"It got {number_given}."
                 )
-
-        # print("\nnew_latent_values:\n", flush=True)
-        # for key, values in new_latent_values.items():
-        #     print("\nAgent", key, flush=True)
-        #     print(values, flush=True)
 
         # Check that all agents got the new latent values
         if agent_id != number_of_agents:

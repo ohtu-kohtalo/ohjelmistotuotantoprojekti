@@ -12,22 +12,18 @@ def extract_questions_from_csv(data: Dict[str, Any]) -> List[str]:
         list: A list of questions.
     """
     questions = data.get("questions", [])
-    print(f"[DEBUG] Questions extracted from CSV: {questions}", flush=True)
 
     if not isinstance(questions, list) or len(questions) == 0:
-        print("[ERROR] No valid questions found in the CSV!", flush=True)
+        # No valid questions found in the CSV
         return []
 
     elif len(questions) > 10:
-        print("[ERROR] Too many questions found in the CSV! (more than 10)", flush=True)
+        # Too many questions found in the CSV
         return []
 
     for question in questions:
         if len(question) > 200:
-            print(
-                "[ERROR] Question too long in the CSV! (length more than 200)",
-                flush=True,
-            )
+            # Question too long in the CSV
             return []
 
     return questions

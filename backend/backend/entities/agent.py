@@ -52,11 +52,6 @@ class Agent:
         """
         return self.__info.get(question, None)
 
-    # NO FUNCTIONALITY YET
-    def get_all_answers(self) -> Dict[str, Any]:
-        """Returns all of the questions and answers."""
-        return self.__info
-
     def delete_future_info_and_questions(self) -> None:
         """Overwrites the `future_info`, `questions` and future `future_questions` attributes
         with empty dictionaries. Returns `None`."""

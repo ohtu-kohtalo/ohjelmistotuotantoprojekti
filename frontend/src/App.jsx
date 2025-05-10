@@ -1,3 +1,33 @@
+/**
+ * @file App.jsx
+ *
+ * Root component that wires together routing and shared state for the Future Customer tool.
+ *
+ * ROUTING & ANIMATION
+ * -------------------
+ * Uses **react-router v6** inside `<BrowserRouter>`.
+ * Two paths are defined:
+ *   “/”         ⟶ `<IndexPage>`   – agent creation screen
+ *   “/future”   ⟶ `<FuturePage>`  – scenario builder / dashboard
+ *
+ * Every page element is wrapped with `<PageTransition>` and rendered through
+ * `framer-motion`’s `<AnimatePresence>` for smooth cross-fade navigation.
+ *
+ * STATES
+ * ------------
+ * `distribution` / `futureDistribution` (arrays) hold present-day and scenario Likert data that comes from backend.
+ * `submittedScenario` (string) — last scenario the user posted if provided, backend comes back with simulated future data.
+ * `csvUploaded` (bool) — toggles UI elements that require CSV input first.
+ * `isLoading` (bool) — spinner flag set while network calls run.
+ * `message` ({type,text}) — handles correct visualisation of messaging to user, cleared after 3 s.
+ *
+ * SIDE EFFECTS
+ * ------------
+ * `handleCsvSubmit()`  POSTs `{questions:[…]}` to
+ *   `${VITE_BACKEND_URL || "http://127.0.0.1:5500"}/receive_user_csv` and populates the distribution arrays on success.
+ * `showMessage()` handles messaging to the user
+ */
+
 import React, { useState, useRef } from "react";
 /* NOTE: BrowserRouter, Routes, Route, and useLocation all come from
    react-router-dom in v6. */
@@ -111,18 +141,10 @@ const App = () => {
       showMessage("success", "CSV submitted successfully! 📂👍");
       const data = await response.json();
 
-      console.log("[DEBUG] Reached here #1");
-
       setDistribution(data.distributions);
       setFutureDistribution(data.future_distributions);
-
-      if (data.future_distributions.length > 0) {
-        console.log("[DEBUG] Reached here #2, with futureDistribution!");
-      }
-
       setCsvUploaded(true);
     } catch (error) {
-      console.error("CSV submission error:", error);
       showMessage("error", "⚠️ Could not submit CSV data");
       setCsvUploaded(false);
     } finally {
@@ -144,8 +166,6 @@ const App = () => {
     }, 3000);
   };
 
-  /* ------------------------------------------------------------------ */
-
   return (
     <Router>
       <div className="relative min-h-screen w-full bg-gray-900 text-white overflow-x-hidden">
@@ -160,7 +180,7 @@ const App = () => {
               rel="noopener noreferrer"
               className="relative flex items-center space-x-2 group"
             >
-              {/* text-based logo instead of image */}
+              {/* text-based logo instead of image for copyright purposes */}
               <h2
                 className="text-3xl font-extrabold tracking-wider
                  transform transition-transform duration-1000
@@ -181,7 +201,7 @@ const App = () => {
             </a>
           </div>
 
-          {/* Help Icon */}
+          {/* Help Icon + Floating Modal*/}
           <div
             className="relative"
             onMouseEnter={() => setHovering(true)}
@@ -196,7 +216,7 @@ const App = () => {
               ?
             </div>
 
-            {/* Floating Modal */}
+            {/* Floating Modal About Application*/}
             <div
               role="dialog"
               aria-modal="true"
@@ -229,7 +249,7 @@ const App = () => {
                 <strong>Agents can:</strong>
                 <ul className="list-disc list-inside ml-4">
                   <li>
-                    Answer questions beyond the original survey using large
+                    Answer statements beyond the original survey using large
                     language models (LLMs).
                   </li>
                   <li>Provide responses on a Likert scale (1–5).</li>
@@ -250,8 +270,11 @@ const App = () => {
                 Use this tool to explore and compare consumer insights under
                 various scenarios.
               </div>
+              {/* Modal Content End*/}
             </div>
+            {/* Floating Modal About Application End*/}
           </div>
+          {/* Help Icon + Modal End*/}
         </header>
 
         {/* Main Content */}

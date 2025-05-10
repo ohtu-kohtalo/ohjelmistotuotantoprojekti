@@ -11,7 +11,17 @@ aclient = GritAsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
 class OpenAI:
+    """Handles API for OpenAI"""
+
     def __init__(self, openai_api_key: str = None, model: str = "gpt-4o") -> None:
+        """Constructor for OpenAI.
+
+        Args:
+            openai_api_key (str, optional): API-key for the LLM. If no API-key is given, defaults
+                to **None** and the API-key specified in the .env-file is used instead.
+
+            model (str, optional): The OpenAI model. Defaults to "gpt-4o".
+        """
         self.openai_api_key = openai_api_key or OPENAI_API_KEY
         self.model = model
 

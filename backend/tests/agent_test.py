@@ -23,22 +23,12 @@ class TestAgent(unittest.TestCase):
         answer = self.agent.get_answer("non_existent")
         self.assertEqual(None, answer)
 
-    def test_get_all_answers_returns_all_answers(self):
-        """Test that get_all_answers returns all the answers."""
-        all_answers = self.agent.get_all_answers()
-        self.assertEqual(
-            all_answers,
-            {
-                "age": "40",
-                "gender": "male",
-                "when": "now",
-            },
-        )
-
     def test_get_agent_info_returns_info(self):
         """Test that get_agent_info returns the agent information"""
         info = self.agent.get_agent_info()
         expected = {"age": "40", "gender": "male", "when": "now"}
+
+        self.assertEqual(expected, info)
 
     def test_get_id(self):
         """Test that get_id returns the agent id"""
